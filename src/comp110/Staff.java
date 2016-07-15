@@ -24,4 +24,15 @@ public class Staff extends HashSet<Employee> {
     return copy;
   }
 
+  public boolean equals(Staff other) {
+    for (Employee myEmployee : this) {
+      for (Employee otherEmployee : other) {
+        if (myEmployee.equals(otherEmployee) == false) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
 }

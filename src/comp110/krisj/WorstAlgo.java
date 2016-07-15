@@ -13,12 +13,13 @@ public class WorstAlgo implements SchedulingAlgo {
 
   @Override
   public Schedule run(Schedule schedule, Random random) {
-
+    random = new Random();
     Week week = schedule.getWeek();
     Shift[] buckets = this.weekAsFlatArray(week);
 
     Staff staff = schedule.getStaff();
     for (Employee employee : staff) {
+      System.out.println(employee.getCapacity());
       for (int i = 0; i < employee.getCapacity(); i++) {
         int attempts = 0; // Don't loop forever if it won't work
         while (attempts < 100) {
@@ -34,7 +35,6 @@ public class WorstAlgo implements SchedulingAlgo {
     }
 
     return schedule;
-
   }
 
   private Shift[] weekAsFlatArray(Week week) {

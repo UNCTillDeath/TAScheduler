@@ -15,6 +15,20 @@ public class Week {
     }
   }
 
+  public boolean equals(Week other) {
+    boolean equals = _title.equals(other._title);
+    if (equals) {
+      for (int day = 0; day < _shifts.length; day++) {
+        for (int hour = 0; hour < _shifts[day].length; hour++) {
+          if (_shifts[day][hour].equals(other._shifts[day][hour]) == false) {
+            return false;
+          }
+        }
+      }
+    }
+    return equals;
+  }
+
   public String getTitle() {
     return _title;
   }

@@ -20,8 +20,16 @@ public class WorstAlgo implements SchedulingAlgo {
     Staff staff = schedule.getStaff();
     for (Employee employee : staff) {
       for (int i = 0; i < employee.getCapacity(); i++) {
-        int randomIndex = random.nextInt(buckets.length);
-        buckets[randomIndex].add(employee);
+        int attempts = 0; // Don't loop forever if it won't work
+        while (attempts < 100) {
+          int randomIndex = random.nextInt(buckets.length);
+          Shift shift = buckets[randomIndex];
+          if (employee.isAvailable(shift.getDay(), shift.getHour())) {
+            buckets[randomIndex].add(employee);
+            break;
+          }
+          attempts++;
+        }
       }
     }
 

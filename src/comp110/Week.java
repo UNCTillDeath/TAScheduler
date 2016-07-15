@@ -10,7 +10,7 @@ public class Week {
     _shifts = new Shift[7][24];
     for (int day = 0; day < _shifts.length; day++) {
       for (int hour = 0; hour < _shifts[day].length; hour++) {
-        _shifts[day][hour] = new Shift(hour, 0);
+        _shifts[day][hour] = new Shift(day, hour, 0);
       }
     }
   }

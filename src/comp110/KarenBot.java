@@ -2,13 +2,17 @@ package comp110;
 
 import static java.lang.System.out;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Random;
 
 import comp110.krisj.WorstAlgo;
 
 public class KarenBot {
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
 
     // To hack -- replace WorstAlgo with a class in your own package that
     // implements SchedulingAlgo
@@ -16,7 +20,7 @@ public class KarenBot {
 
     Week week = new Week();
     for (int day = 0; day < 7; day++) {
-      for (int hour = 9; hour < 11; hour++) {
+      for (int hour = 0; hour < 23; hour++) {
         Shift shift = week.getShift(day, hour);
         shift.setCapacity(2);
       }
@@ -24,14 +28,15 @@ public class KarenBot {
 
     // TODO: Load Staff from I/O
     Staff staff = new Staff();
-    staff.add(new Employee("Karen", 10, true, 3));
-    staff.add(new Employee("Han Bit", 10, true, 3));
-    staff.add(new Employee("Helen", 8, true, 2));
-    staff.add(new Employee("Kate", 6, true, 1));
-    staff.add(new Employee("Jeffrey", 10, false, 3));
-    staff.add(new Employee("Muttaqee", 10, false, 3));
-    staff.add(new Employee("Ben", 8, false, 2));
-    staff.add(new Employee("Hank", 6, false, 1));
+    parseCSVs(staff);
+//    staff.add(new Employee("Karen", 10, true, 3));
+//    staff.add(new Employee("Han Bit", 10, true, 3));
+//    staff.add(new Employee("Helen", 8, true, 2));
+//    staff.add(new Employee("Kate", 6, true, 1));
+//    staff.add(new Employee("Jeffrey", 10, false, 3));
+//    staff.add(new Employee("Muttaqee", 10, false, 3));
+//    staff.add(new Employee("Ben", 8, false, 2));
+//    staff.add(new Employee("Hank", 6, false, 1));
 
     Schedule schedule = new Schedule(staff, week);
     schedule = algo.run(schedule, new Random());
@@ -65,5 +70,37 @@ public class KarenBot {
     }
 
   }
-
+  private static void parseCSVs(Staff staff) throws IOException{
+    File csvDirectory = new File("data/schedule");
+    BufferedReader csvReader;
+    for (File csv : csvDirectory.listFiles()){
+      csvReader = new BufferedReader(new FileReader(csv));
+      //parsing employee info
+      String name = csvReader.readLine().split(",")[1]; //ugly
+      String gender = csvReader.readLine().split(",")[1];
+      int capacity = Integer.parseInt(csvReader.readLine().split(",")[1]);
+      int level = Integer.parseInt(csvReader.readLine().split(",")[1]);
+      
+      csvReader.readLine();
+      
+      //read in schedule
+      int[][] availability = new int[7][24];
+      for (int hour = 0; hour < 24; hour++){
+        String scheduleLine = csvReader.readLine();
+        for (int day = 0; day < 7; day++){
+          availability[day][hour] = Integer.parseInt(scheduleLine.split(",")[day + 1]); //offset by 1 to account for label on first column
+        }
+      }
+      Employee currentEmployee = new Employee(name, capacity, gender.equals("M") ? false : true, level, availability);
+      
+      //testing
+      for (int i = 0; i < availability.length; i++){
+        for (int j = 0; j < availability[0].length; j++){
+          System.out.print(availability[i][j]);
+        }
+        System.out.print("\n");
+      }
+    }
+    
+  }
 }

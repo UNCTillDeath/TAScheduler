@@ -81,27 +81,19 @@ public class KarenBot {
       for (int hour = 0; hour < 24; hour++) {
         String scheduleLine = csvReader.readLine();
         for (int day = 0; day < 7; day++) {
-          availability[day][hour] = Integer.parseInt(scheduleLine.split(",")[day + 1]); // offset
-                                                                                        // by
-                                                                                        // 1
-                                                                                        // to
-                                                                                        // account
-                                                                                        // for
-                                                                                        // label
-                                                                                        // on
-                                                                                        // first
-                                                                                        // column
+          // Offset by 1 accounts for label in CSV
+          availability[day][hour] = Integer.parseInt(scheduleLine.split(",")[day + 1]);
         }
       }
       staff.add(new Employee(name, capacity, gender.equals("M") ? false : true, level, availability));
 
       // testing
-      for (int i = 0; i < availability.length; i++) {
-        for (int j = 0; j < availability[0].length; j++) {
-          System.out.print(availability[i][j]);
-        }
-        System.out.print("\n");
-      }
+      // for (int i = 0; i < availability.length; i++) {
+      // for (int j = 0; j < availability[0].length; j++) {
+      // System.out.print(availability[i][j]);
+      // }
+      // System.out.print("\n");
+      // }
     }
 
   }

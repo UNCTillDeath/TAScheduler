@@ -1,5 +1,7 @@
 package comp110;
 
+import java.util.Random;
+
 public class Scorer {
 
   private final static String UTILIZATION = "Staff capacity utilization";
@@ -8,15 +10,27 @@ public class Scorer {
   private final static String GENDER_REPRESENTATION = "Gender representation in every shift";
   private final static String COMBINED_EXPERTISE = "Average expertise in every shift is > 1.5";
 
-  public static Scorecard score(Schedule schedule) {
-    Scorecard scorecard = new Scorecard(schedule);
+  public static Scorecard score(Schedule input, SchedulingAlgo algo) {
+    Scorecard bestRun = null;
+    Schedule bestSchedule = null;
+    for (int i = 0; i < 100; i++) {
+      // TODO copy input to clean schedule
+      Scorecard run = Scorer.evaluate(input, algo, new Random());
+      if (bestRun == null || run.getScore() > bestRun.getScore()) {
+        bestRun = run;
+        bestSchedule = input;
+      }
+    }
+    return bestRun;
+  }
 
-    scorecard.add(Scorer.preferredCapacityMet(schedule));
-    scorecard.add(Scorer.utilization(schedule));
-    scorecard.add(Scorer.contiguous(schedule));
-    scorecard.add(Scorer.combinedExpertise(schedule));
-    scorecard.add(Scorer.genderRepresentation(schedule));
-
+  public static Scorecard evaluate(Schedule input, SchedulingAlgo algo, Random random) {
+    Scorecard scorecard = new Scorecard(input);
+    scorecard.add(Scorer.preferredCapacityMet(input));
+    scorecard.add(Scorer.utilization(input));
+    scorecard.add(Scorer.contiguous(input));
+    scorecard.add(Scorer.combinedExpertise(input));
+    scorecard.add(Scorer.genderRepresentation(input));
     return scorecard;
   }
 
@@ -26,8 +40,6 @@ public class Scorer {
    * - Nondeterminism: % difference in allocation between two generations -
    * Determinism: given same seed twice -- differences?!?
    * 
-   * - Contiguous shifts: % of scheduled hours which are not single, isolated
-   * hours
    */
 
   /*

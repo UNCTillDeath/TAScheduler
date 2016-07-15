@@ -58,7 +58,7 @@ public class Week {
 
     sb.append("** ");
     sb.append(_title);
-    sb.append(" **");
+    sb.append(" **\n");
 
     for (int day = 0; day < _shifts.length; day++) {
       sb.append("Day: " + day + "\n");

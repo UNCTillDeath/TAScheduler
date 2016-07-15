@@ -1,7 +1,5 @@
 package comp110;
 
-import static java.lang.System.out;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 

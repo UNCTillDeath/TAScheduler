@@ -1,16 +1,29 @@
 package comp110;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
+public class Week {
 
-public class Week extends HashMap<String, Shifts> {
+  private Shift[][] _shifts;
 
-  private static final long serialVersionUID = 6010261574305462796L;
+  public Week() {
+    _shifts = new Shift[7][24];
+    for (int day = 0; day < _shifts.length; day++) {
+      for (int hour = 0; hour < _shifts[day].length; hour++) {
+        _shifts[day][hour] = new Shift(hour, 0);
+      }
+    }
+  }
+
+  public Shift[][] getShifts() {
+    return _shifts;
+  }
+
+  public Shift getShift(int day, int hour) {
+    return _shifts[day][hour];
+  }
 
   public double getScheduledHours() {
     double hours = 0.0;
-    for (Shifts day : this.values()) {
+    for (Shift[] day : _shifts) {
       for (Shift shift : day) {
         hours += shift.size();
       }
@@ -20,8 +33,12 @@ public class Week extends HashMap<String, Shifts> {
 
   public int getNumberOfShifts() {
     int shifts = 0;
-    for (Shifts day : this.values()) {
-      shifts += day.size();
+    for (Shift[] day : _shifts) {
+      for (Shift shift : day) {
+        if (shift.getCapacity() > 0) {
+          shifts++;
+        }
+      }
     }
     return shifts;
   }
@@ -29,18 +46,16 @@ public class Week extends HashMap<String, Shifts> {
   public String toString() {
     StringBuilder sb = new StringBuilder();
 
-    for (String day : this.getDays()) {
-      sb.append(day + "\n");
-      for (Shift shift : this.get(day)) {
-        sb.append("\t" + shift + "\n");
+    for (int day = 0; day < _shifts.length; day++) {
+      sb.append("Day: " + day + "\n");
+      for (Shift shift : _shifts[day]) {
+        if (shift.getCapacity() > 0) {
+          sb.append("\t" + shift + "\n");
+        }
       }
     }
 
     return sb.toString();
-  }
-
-  private List<String> getDays() {
-    return this.keySet().stream().sorted().collect(Collectors.toList());
   }
 
 }

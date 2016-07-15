@@ -9,10 +9,10 @@ public class Shift extends HashSet<Employee> {
   /* Even though we don't serialize, this keeps Java from complaining... */
   private static final long serialVersionUID = 5723878473617645106L;
 
-  private byte _hour;
+  private int _hour;
   private int _capacity;
 
-  public Shift(byte hour, int capacity) {
+  public Shift(int hour, int capacity) {
     _hour = hour;
     _capacity = capacity;
   }
@@ -22,11 +22,11 @@ public class Shift extends HashSet<Employee> {
     return String.format("%02d", _hour) + ": " + String.join(", ", names);
   }
 
-  public byte getHour() {
+  public int getHour() {
     return _hour;
   }
 
-  public void setHour(byte hour) {
+  public void setHour(int hour) {
     _hour = hour;
   }
 

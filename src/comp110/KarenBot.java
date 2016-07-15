@@ -2,46 +2,40 @@ package comp110;
 
 import static java.lang.System.out;
 
+import java.util.Random;
+
+import comp110.krisj.WorstAlgo;
+
 public class KarenBot {
 
   public static void main(String[] args) {
 
-    Week week = new Week();
-    String[] days = {
-        "0. SUN",
-        "1. MON",
-        "2. TUE",
-        "3. WED",
-        "4. THU",
-        "5. FRI",
-        "6. SAT" };
+    // To hack -- replace WorstAlgo with a class in your own package that
+    // implements SchedulingAlgo
+    SchedulingAlgo algo = new WorstAlgo();
 
-    for (String day : days) {
-      Shifts shifts = new Shifts();
-      for (byte i = 10; i <= 12; i++) {
-        shifts.add(new Shift(i, 2));
+    Week week = new Week();
+    for (int day = 0; day < 7; day++) {
+      for (int hour = 9; hour < 11; hour++) {
+        Shift shift = week.getShift(day, hour);
+        shift.setCapacity(2);
       }
-      week.put(day, shifts);
     }
 
+    // TODO: Load Staff from I/O
     Staff staff = new Staff();
-    Employee kris = new Employee("Kris", 5, false, 2);
-    Employee sarah = new Employee("Sarah", 5, true, 2);
-    staff.add(kris);
-    staff.add(sarah);
-    week.get("0. SUN").get(0).add(kris);
-    week.get("0. SUN").get(0).add(sarah);
+    staff.add(new Employee("Karen", 10, true, 3));
+    staff.add(new Employee("Han Bit", 10, true, 3));
+    staff.add(new Employee("Helen", 8, true, 2));
+    staff.add(new Employee("Kate", 6, true, 1));
+    staff.add(new Employee("Jeffrey", 10, false, 3));
+    staff.add(new Employee("Muttaqee", 10, false, 3));
+    staff.add(new Employee("Ben", 8, false, 2));
+    staff.add(new Employee("Hank", 6, false, 1));
 
     Schedule schedule = new Schedule(staff, week);
-    // TODO - pass schedule off to an algorithm to generate (10x times?)
+    schedule = algo.run(schedule, new Random());
     Scorecard report = Scorer.score(schedule);
-
-    out.format("%.3f - Schedule Rating%n", report.getScore());
-    out.println("=============");
-
-    for (Scoreline scoreline : report) {
-      out.format("%.3f - %s%n", scoreline.getValue(), scoreline.getLabel());
-    }
 
     out.println("=============");
     out.println(" Schedule ");
@@ -59,6 +53,15 @@ public class KarenBot {
           out.println("\t" + issue);
         }
       }
+    }
+
+    out.println("\n");
+    out.println("======================");
+    out.format("%.3f - Schedule Score%n", report.getScore());
+    out.println("======================");
+
+    for (Scoreline scoreline : report) {
+      out.format("%.3f - %s%n", scoreline.getValue(), scoreline.getLabel());
     }
 
   }

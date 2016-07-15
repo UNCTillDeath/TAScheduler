@@ -1,0 +1,45 @@
+package comp110.krisj;
+
+import java.util.Random;
+
+import comp110.Schedule;
+import comp110.SchedulingAlgo;
+import comp110.Shift;
+import comp110.Staff;
+import comp110.Employee;
+import comp110.Week;
+
+public class WorstAlgo implements SchedulingAlgo {
+
+  @Override
+  public Schedule run(Schedule schedule, Random random) {
+
+    Week week = schedule.getWeek();
+    Shift[] buckets = this.weekAsFlatArray(week);
+
+    Staff staff = schedule.getStaff();
+    for (Employee employee : staff) {
+      for (int i = 0; i < employee.getCapacity(); i++) {
+        int randomIndex = random.nextInt(buckets.length);
+        buckets[randomIndex].add(employee);
+      }
+    }
+
+    return schedule;
+
+  }
+
+  private Shift[] weekAsFlatArray(Week week) {
+    Shift[] buckets = new Shift[week.getNumberOfShifts()];
+    int i = 0;
+    for (Shift[] day : week.getShifts()) {
+      for (Shift shift : day) {
+        if (shift.getCapacity() > 0) {
+          buckets[i++] = shift;
+        }
+      }
+    }
+    return buckets;
+  }
+
+}

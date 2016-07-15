@@ -11,6 +11,11 @@ import java.util.Random;
 import comp110.krisj.WorstAlgo;
 
 public class KarenBot {
+  
+  public enum Day {
+    SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
+    THURSDAY, FRIDAY, SATURDAY 
+}
 
   public static void main(String[] args) throws IOException {
 

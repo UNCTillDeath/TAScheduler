@@ -119,7 +119,13 @@ public class Scorer {
             }
           }
 
-          if (contiguous > 1) {
+          if (contiguous < 2) {
+            result.add(day + " at " + shift.getHour() + ":00 " + employee.getName()
+                + " scheduled for a single hour block");
+          } else if (contiguous > 4) {
+            result.add(day + " at " + shift.getHour() + ":00 " + employee.getName()
+                + " scheduled for over 4 hours contiguously");
+          } else {
             contiguousShifts++;
           }
         }

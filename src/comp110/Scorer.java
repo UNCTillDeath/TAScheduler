@@ -4,16 +4,18 @@ public class Scorer {
 
   private final static String UTILIZATION = "Staff capacity utilization";
   private final static String PREFERRED_CAPACITY_MET = "Shifts where employees meet or exceed capacity";
+  private final static String CONTIGUOUS_BLOCKS = "Employees are scheduled for between 2-4 continuous hours";
   private final static String GENDER_REPRESENTATION = "Gender representation in every shift";
   private final static String COMBINED_EXPERTISE = "Average expertise in every shift is > 1.5";
 
   public static Scorecard score(Schedule schedule) {
     Scorecard scorecard = new Scorecard(schedule);
 
-    scorecard.add(Scorer.utilization(schedule));
     scorecard.add(Scorer.preferredCapacityMet(schedule));
-    scorecard.add(Scorer.genderRepresentation(schedule));
+    scorecard.add(Scorer.utilization(schedule));
+    scorecard.add(Scorer.contiguous(schedule));
     scorecard.add(Scorer.combinedExpertise(schedule));
+    scorecard.add(Scorer.genderRepresentation(schedule));
 
     return scorecard;
   }
@@ -27,28 +29,6 @@ public class Scorer {
    * - Contiguous shifts: % of scheduled hours which are not single, isolated
    * hours
    */
-
-  /*
-   * Utilization is the total # of hours scheduled over the total # of Employee
-   * hours available.
-   */
-  private static Scoreline utilization(Schedule schedule) {
-    Scoreline result = new Scoreline(UTILIZATION, 0.0);
-
-    if (schedule.getWeek().getScheduledHours() > 0) {
-      double scheduledHours = schedule.getWeek().getScheduledHours();
-      double capacityHours = schedule.getStaff().getCapacity();
-      double percentUsed = scheduledHours / capacityHours;
-      if (percentUsed <= 1.0) {
-        // avoid gaming by overbooking
-        result.setValue(percentUsed);
-      } else {
-        result.add("You cannot overbook the staff. You scheduled " + (percentUsed * 100.0)
-            + " of the hours available.");
-      }
-    }
-    return result;
-  }
 
   /*
    * % of shifts that have preferred capacity met
@@ -74,6 +54,79 @@ public class Scorer {
     }
 
     result.setValue(shiftsMeetingPreferredCapacity / (double) week.getNumberOfShifts());
+
+    return result;
+  }
+
+  /*
+   * Utilization is the total # of hours scheduled over the total # of Employee
+   * hours available.
+   */
+  private static Scoreline utilization(Schedule schedule) {
+    Scoreline result = new Scoreline(UTILIZATION, 0.0);
+
+    if (schedule.getWeek().getScheduledHours() > 0) {
+      double scheduledHours = schedule.getWeek().getScheduledHours();
+      double capacityHours = schedule.getStaff().getCapacity();
+      double percentUsed = scheduledHours / capacityHours;
+      if (percentUsed <= 1.0) {
+        // avoid gaming by overbooking
+        result.setValue(percentUsed);
+      } else {
+        result.add("You cannot overbook the staff. You scheduled " + (percentUsed * 100.0)
+            + " of the hours available.");
+      }
+    }
+    return result;
+  }
+
+  /*
+   * Contiguous score is the % of hours scheduled in sequences of of 2-4 hours.
+   * 
+   * The implementation of this scoreline is not efficient. Hide your eyes.
+   */
+  private static Scoreline contiguous(Schedule schedule) {
+    Scoreline result = new Scoreline(CONTIGUOUS_BLOCKS, 0.0);
+    int contiguousShifts = 0;
+
+    Week week = schedule.getWeek();
+    Shift[][] shifts = week.getShifts();
+    for (int day = 0; day < shifts.length; day++) {
+      for (int hour = 0; hour < shifts[day].length; hour++) {
+        if (shifts[day][hour].getCapacity() == 0) {
+          continue;
+        }
+
+        Shift shift = shifts[day][hour];
+        for (Employee employee : shift) {
+          int contiguous = 1; // Current shift
+
+          // Look back
+          for (int hourBefore = hour - 1; hourBefore >= 0; hourBefore--) {
+            if (shifts[day][hourBefore].contains(employee)) {
+              contiguous++;
+            } else {
+              break;
+            }
+          }
+
+          // Look ahead
+          for (int hourAfter = hour + 1; hourAfter < shifts[day].length; hourAfter++) {
+            if (shifts[day][hourAfter].contains(employee)) {
+              contiguous++;
+            } else {
+              break;
+            }
+          }
+
+          if (contiguous > 1) {
+            contiguousShifts++;
+          }
+        }
+      }
+    }
+
+    result.setValue(contiguousShifts / (double) week.getScheduledHours());
 
     return result;
   }

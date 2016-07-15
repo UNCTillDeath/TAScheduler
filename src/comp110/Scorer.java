@@ -4,7 +4,7 @@ public class Scorer {
 
   private final static String UTILIZATION = "Staff capacity utilization";
   private final static String PREFERRED_CAPACITY_MET = "Shifts where employees meet or exceed capacity";
-  private final static String CONTIGUOUS_BLOCKS = "Employees are scheduled for between 2-4 continuous hours";
+  private final static String CONTIGUOUS_BLOCKS = "Employees are scheduled for between 2-4 contiguous hours";
   private final static String GENDER_REPRESENTATION = "Gender representation in every shift";
   private final static String COMBINED_EXPERTISE = "Average expertise in every shift is > 1.5";
 

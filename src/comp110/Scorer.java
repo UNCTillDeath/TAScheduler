@@ -13,13 +13,11 @@ public class Scorer {
 
   public static Scorecard score(Schedule input, SchedulingAlgo algo) {
     Scorecard bestRun = null;
-    Schedule bestSchedule = null;
     for (int i = 0; i < 100; i++) {
       // TODO copy input to clean schedule
       Scorecard run = Scorer.evaluate(input, algo, new Random());
       if (bestRun == null || run.getScore() > bestRun.getScore()) {
         bestRun = run;
-        bestSchedule = input;
       }
     }
     return bestRun;

@@ -18,4 +18,8 @@ public class Schedule {
     return _week;
   }
 
+  public Schedule copy() {
+    return new Schedule(_staff.copy(), _week.copy());
+  }
+
 }

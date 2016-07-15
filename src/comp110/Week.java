@@ -72,4 +72,16 @@ public class Week {
     return sb.toString();
   }
 
+  public Week copy() {
+    Week copy = new Week(_title);
+    Shift[][] shifts = new Shift[_shifts.length][_shifts[0].length];
+    for (int day = 0; day < _shifts.length; day++) {
+      for (int hour = 0; hour < _shifts[day].length; hour++) {
+        shifts[hour][day] = _shifts[hour][day].copy();
+      }
+    }
+    copy._shifts = shifts;
+    return copy;
+  }
+
 }

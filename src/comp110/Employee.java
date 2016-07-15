@@ -1,6 +1,6 @@
 package comp110;
 
-import comp110.KarenBot.Day;
+import java.util.Arrays;
 
 public class Employee {
 
@@ -49,25 +49,42 @@ public class Employee {
   public void setLevel(int level) {
     _level = level;
   }
-  
-  public int[][] getAvailability(){
+
+  public int[][] getAvailability() {
     return _availability;
   }
-  
-  public void setAvailability(int[][] availability){
+
+  public void setAvailability(int[][] availability) {
     _availability = availability;
   }
 
-  public boolean isAvailable(int day, int hour){ //we could make day an enum but then we would need a map to calculate its position in the native array and that just seemed like a lot
+  public boolean isAvailable(int day, int hour) { // we could make day an enum
+                                                  // but then we would need a
+                                                  // map to calculate its
+                                                  // position in the native
+                                                  // array and that just seemed
+                                                  // like a lot
     return _availability[day][hour] == 1 ? true : false;
   }
-  
-  public boolean isAvailable(int day, int startHour, int endHour){
-    for (int i = startHour; i <= endHour; i++){
-      if (_availability[day][i] == 0){
+
+  public boolean isAvailable(int day, int startHour, int endHour) {
+    for (int i = startHour; i <= endHour; i++) {
+      if (_availability[day][i] == 0) {
         return false;
       }
     }
     return true;
+  }
+
+  public Employee copy() {
+    int[][] availability = Arrays.copyOf(_availability, _availability.length);
+    for (int i = 0; i < _availability.length; i++) {
+      availability[i] = Arrays.copyOf(_availability[i], _availability[i].length);
+    }
+    return new Employee(_name, _capacity, _isFemale, _level, availability);
+  }
+
+  public boolean equals(Employee other) {
+    return _name == other._name;
   }
 }

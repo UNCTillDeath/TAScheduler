@@ -3,7 +3,6 @@ package comp110;
 import static java.lang.System.out;
 
 import java.io.IOException;
-import java.util.Random;
 
 import com.sun.javafx.binding.StringFormatter;
 

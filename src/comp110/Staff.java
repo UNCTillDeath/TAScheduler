@@ -1,6 +1,7 @@
 package comp110;
 
 import java.util.HashSet;
+import java.util.Iterator;
 
 public class Staff extends HashSet<Employee> {
 
@@ -12,6 +13,15 @@ public class Staff extends HashSet<Employee> {
       capacity += (double) e.getCapacity();
     }
     return capacity;
+  }
+
+  public Staff copy() {
+    Staff copy = new Staff();
+    Iterator<Employee> itr = this.iterator();
+    while (itr.hasNext()) {
+      copy.add(itr.next().copy());
+    }
+    return copy;
   }
 
 }

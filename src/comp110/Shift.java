@@ -1,6 +1,7 @@
 package comp110;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,15 @@ public class Shift extends HashSet<Employee> {
 
   public void setCapacity(int capacity) {
     _capacity = capacity;
+  }
+
+  public Shift copy() {
+    Shift copy = new Shift(_hour, _capacity);
+    Iterator<Employee> itr = this.iterator();
+    while (itr.hasNext()) {
+      copy.add(itr.next().copy());
+    }
+    return copy;
   }
 
 }

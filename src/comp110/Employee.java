@@ -1,5 +1,7 @@
 package comp110;
 
+import comp110.KarenBot.Day;
+
 public class Employee {
 
   private String _name;
@@ -56,4 +58,16 @@ public class Employee {
     _availability = availability;
   }
 
+  public boolean isAvailable(int day, int hour){ //we could make day an enum but then we would need a map to calculate its position in the native array and that just seemed like a lot
+    return _availability[day][hour] == 1 ? true : false;
+  }
+  
+  public boolean isAvailable(int day, int startHour, int endHour){
+    for (int i = startHour; i <= endHour; i++){
+      if (_availability[day][i] == 0){
+        return false;
+      }
+    }
+    return true;
+  }
 }

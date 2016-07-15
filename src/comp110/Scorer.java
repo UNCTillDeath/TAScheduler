@@ -146,6 +146,10 @@ public class Scorer {
 
     result.setValue(contiguousShifts / (double) week.getScheduledHours());
 
+    if (Double.isNaN(result.getValue())) {
+      result.setValue(0.0);
+    }
+
     return result;
   }
 
@@ -217,23 +221,24 @@ public class Scorer {
 
     return result;
   }
-  
+
   /*
-   * Check to make sure no staff was scheduled for a time they are not available for
+   * Check to make sure no staff was scheduled for a time they are not available
+   * for
    */
-  
-  private static Scoreline availability(Schedule schedule){
+
+  private static Scoreline availability(Schedule schedule) {
     boolean notAvailable = false;
-    
+
     Scoreline result = new Scoreline(AVAILABILITY, 0.0);
-    
+
     Week week = schedule.getWeek();
     Shift[][] shifts = week.getShifts();
-    
-    for (int day = 0; day < shifts.length; day++){
-      for (Shift shift : shifts[day]){
-        for (Employee employee : shift){
-          if (!employee.isAvailable(day, shift.getHour())){
+
+    for (int day = 0; day < shifts.length; day++) {
+      for (Shift shift : shifts[day]) {
+        for (Employee employee : shift) {
+          if (!employee.isAvailable(day, shift.getHour())) {
             notAvailable = true;
           }
         }

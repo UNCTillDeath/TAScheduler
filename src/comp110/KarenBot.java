@@ -81,7 +81,7 @@ public class KarenBot {
       int capacity = Integer.parseInt(csvReader.readLine().split(",")[1]);
       int level = Integer.parseInt(csvReader.readLine().split(",")[1]);
       
-      csvReader.readLine();
+      csvReader.readLine(); //throw away header line with days
       
       //read in schedule
       int[][] availability = new int[7][24];
@@ -91,7 +91,7 @@ public class KarenBot {
           availability[day][hour] = Integer.parseInt(scheduleLine.split(",")[day + 1]); //offset by 1 to account for label on first column
         }
       }
-      Employee currentEmployee = new Employee(name, capacity, gender.equals("M") ? false : true, level, availability);
+      staff.add(new Employee(name, capacity, gender.equals("M") ? false : true, level, availability));
       
       //testing
       for (int i = 0; i < availability.length; i++){

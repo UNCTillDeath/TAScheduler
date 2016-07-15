@@ -1,6 +1,11 @@
 package comp110;
 
+import static java.lang.System.out;
+
 import java.util.ArrayList;
+import java.util.Iterator;
+
+import com.sun.javafx.binding.StringFormatter;
 
 public class Scorecard extends ArrayList<Scoreline> {
 
@@ -19,6 +24,31 @@ public class Scorecard extends ArrayList<Scoreline> {
       score = score + line.getValue();
     }
     return score;
+  }
+
+  public String toString() {
+    String result = "";
+    Iterator<Scoreline> itr = this.iterator();
+    while (itr.hasNext()) {
+      Scoreline scoreline = itr.next();
+      result += StringFormatter.format("%.3f - %s%n", scoreline.getValue(), scoreline.getLabel()).get();
+    }
+    return result;
+  }
+
+  public String getDiagnostics() {
+    String result = "";
+    Iterator<Scoreline> itr = this.iterator();
+    while (itr.hasNext()) {
+      Scoreline scoreline = itr.next();
+      if (scoreline.size() > 0) {
+        result += scoreline.getLabel() + "\n";
+        for (String issue : scoreline) {
+          result += "\t" + issue + "\n";
+        }
+      }
+    }
+    return result;
   }
 
 }

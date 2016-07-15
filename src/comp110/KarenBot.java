@@ -17,10 +17,11 @@ public class KarenBot {
     String scenario = "test-small";
     int trials = 100;
     long deterministicSeed = 0;
-    
-    //Auto Generate Data Test
+
+    // Auto Generate Data Test
     String testName = "auto-test";
-    CSVGenerator generator = new CSVGenerator(testName, 2, 0, 6, 0, 0, 0, 0); //days are zero indexed
+    // days are zero indexed
+    CSVGenerator generator = new CSVGenerator(testName, 40, 0, 6, 9, 21, 20, 5);
 
     // Load Data
     Week week = DataIO.parseWeek("data/" + scenario + "/week.csv", scenario);

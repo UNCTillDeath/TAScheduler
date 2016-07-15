@@ -2,7 +2,7 @@ package comp110;
 
 public class Week {
 
-  private String _title;
+  private String    _title;
   private Shift[][] _shifts;
 
   public Week(String title) {
@@ -84,4 +84,19 @@ public class Week {
     return copy;
   }
 
+  public String toCSV() {
+    StringBuilder sb = new StringBuilder();
+    for (int hour = 0; hour < _shifts[0].length; hour++) {
+      sb.append(hour + ",");
+      for (int day = 0; day < _shifts.length; day++) {
+        if (_shifts[day][hour].getCapacity() > 0) {
+          sb.append("1,");
+        } else {
+          sb.append("0,");
+        }
+      }
+      sb.append("\n");
+    }
+    return sb.toString();
+  }
 }

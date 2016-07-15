@@ -18,6 +18,24 @@ public class Employee {
     _level = level;
   }
 
+  public boolean equals(Employee other) {
+    boolean equals = true;
+    equals = equals && _name.equals(other._name);
+    equals = equals && _capacity == other._capacity;
+    equals = equals && _isFemale == other._isFemale;
+    equals = equals && _level == other._level;
+    if (equals) {
+      for (int day = 0; day < _availability.length; day++) {
+        for (int hour = 0; hour < _availability[day].length; hour++) {
+          if (_availability[day][hour] != other._availability[day][hour]) {
+            return false;
+          }
+        }
+      }
+    }
+    return equals;
+  }
+
   public String getName() {
     return _name;
   }
@@ -77,14 +95,13 @@ public class Employee {
   }
 
   public Employee copy() {
-    int[][] availability = Arrays.copyOf(_availability, _availability.length);
-    for (int i = 0; i < _availability.length; i++) {
-      availability[i] = Arrays.copyOf(_availability[i], _availability[i].length);
+    int[][] availability = new int[_availability.length][_availability[0].length];
+    for (int day = 0; day < _availability.length; day++) {
+      for (int hour = 0; hour < _availability[0].length; hour++) {
+        availability[day][hour] = _availability[day][hour];
+      }
     }
     return new Employee(_name, _capacity, _isFemale, _level, availability);
   }
 
-  public boolean equals(Employee other) {
-    return _name == other._name;
-  }
 }

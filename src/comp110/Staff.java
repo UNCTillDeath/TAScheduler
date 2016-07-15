@@ -24,4 +24,10 @@ public class Staff extends HashSet<Employee> {
     return copy;
   }
 
+  public boolean equals(Staff other) {
+    boolean equals = this.containsAll(other);
+    equals = equals && this.size() == other.size();
+    return equals;
+  }
+
 }

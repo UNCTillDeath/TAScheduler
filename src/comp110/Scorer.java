@@ -10,6 +10,7 @@ public class Scorer {
   private final static String GENDER_REPRESENTATION = "Gender representation in every shift";
   private final static String COMBINED_EXPERIENCE = "Average experience in every shift is > 1.5";
   private final static String AVAILABILITY = "No staff is scheduled for a shift they are not available for";
+  private final static String SEED_BASED_DETERMINISM = "Any randomization must only use the Random instance provided";
 
   private Schedule _schedule;
   private SchedulingAlgo _algo;
@@ -19,11 +20,10 @@ public class Scorer {
     _algo = algo;
   }
 
-  public Scorecard run(int trials, long deterministicSeed) {
+  public Scorecard run(int trials) {
     Scorecard bestRun = null;
     for (int i = 0; i < trials; i++) {
-      Schedule schedule = _schedule.copy();
-      Scorecard run = Scorer.evaluate(schedule, _algo, new Random(deterministicSeed));
+      Scorecard run = Scorer.evaluate(_schedule, _algo, new Random());
       if (bestRun == null || run.getScore() > bestRun.getScore()) {
         bestRun = run;
       }
@@ -32,24 +32,32 @@ public class Scorer {
   }
 
   public static Scorecard evaluate(Schedule input, SchedulingAlgo algo, Random random) {
-    Schedule output = algo.run(input, random);
+    Schedule output = algo.run(input.copy(), random);
     Scorecard scorecard = new Scorecard(output);
-    scorecard.add(Scorer.preferredCapacityMet(input));
-    scorecard.add(Scorer.utilization(input));
-    scorecard.add(Scorer.contiguous(input));
-    scorecard.add(Scorer.combinedExpertise(input));
-    scorecard.add(Scorer.genderRepresentation(input));
-    scorecard.add(Scorer.availability(input));
+    scorecard.add(Scorer.preferredCapacityMet(output));
+    scorecard.add(Scorer.utilization(output));
+    scorecard.add(Scorer.contiguous(output));
+    scorecard.add(Scorer.combinedExpertise(output));
+    scorecard.add(Scorer.genderRepresentation(output));
+    scorecard.add(Scorer.availability(output));
+    scorecard.add(Scorer.seedBasedDeterminism(input.copy(), algo));
     return scorecard;
   }
 
-  /*
-   * Other ideas for Scorelines:
-   * 
-   * - Nondeterminism: % difference in allocation between two generations -
-   * Determinism: given same seed twice -- differences?!?
-   * 
-   */
+  private static Scoreline seedBasedDeterminism(Schedule input, SchedulingAlgo algo) {
+    Random seed = new Random(0);
+    Schedule reference = algo.run(input.copy(), seed);
+    boolean passes = true;
+    for (int i = 0; i < 10; i++) {
+      seed = new Random(0);
+      Schedule test = algo.run(input.copy(), seed);
+      if (test.equals(reference) == false) {
+        passes = false;
+        break;
+      }
+    }
+    return new Scoreline(SEED_BASED_DETERMINISM, passes ? 1.0 : 0.0);
+  }
 
   /*
    * % of shifts that have preferred capacity met

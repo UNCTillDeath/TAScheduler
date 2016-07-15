@@ -18,6 +18,10 @@ public class Schedule {
     return _week;
   }
 
+  public boolean equals(Schedule other) {
+    return _staff.equals(other._staff) && _week.equals(other._week);
+  }
+
   public Schedule copy() {
     return new Schedule(_staff.copy(), _week.copy());
   }

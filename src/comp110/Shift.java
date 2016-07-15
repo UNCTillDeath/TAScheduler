@@ -25,6 +25,15 @@ public class Shift extends HashSet<Employee> {
     return String.format("%02d", _hour) + ": " + String.join(", ", names);
   }
 
+  public boolean equals(Shift other) {
+    boolean equals = _day == other._day;
+    equals = equals && _hour == other._hour;
+    equals = equals && _capacity == other._capacity;
+    equals = equals && this.containsAll(other);
+    equals = equals && this.size() == other.size();
+    return equals;
+  }
+
   public int getDay() {
     return _day;
   }

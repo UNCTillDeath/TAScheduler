@@ -77,7 +77,7 @@ public class Week {
     Shift[][] shifts = new Shift[_shifts.length][_shifts[0].length];
     for (int day = 0; day < _shifts.length; day++) {
       for (int hour = 0; hour < _shifts[day].length; hour++) {
-        shifts[hour][day] = _shifts[hour][day].copy();
+        shifts[day][hour] = _shifts[day][hour].copy();
       }
     }
     copy._shifts = shifts;

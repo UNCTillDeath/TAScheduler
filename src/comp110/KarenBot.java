@@ -10,27 +10,31 @@ import comp110.krisj.WorstAlgo;
 
 public class KarenBot {
 
-  public enum Day {
-    SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY
-  }
-
   public static void main(String[] args) throws IOException {
     // Replace WorstAlgo with your own SchedulingAlgo class to begin.
     // Be sure to make a package with your own onyen name to avoid collisions.
     SchedulingAlgo algo = new WorstAlgo();
-
     String scenario = "test-small";
+    int trials = 100;
+    long deterministicSeed = 0;
+
+    // Load Data
     Week week = DataIO.parseWeek("data/" + scenario + "/week.csv", scenario);
     Staff staff = DataIO.parseStaff("data/" + scenario + "/staff");
 
-    Schedule schedule = new Schedule(staff, week);
-    Scorecard report = Scorer.score(schedule, algo);
+    // Run Scoring Algorithm
+    Scorer scorer = new Scorer(staff, week, algo);
+    Scorecard scorecard = scorer.run(trials, deterministicSeed);
 
     // Output Results
-    log("Schedule", schedule.getWeek());
-    log("Diagnostics", report.getDiagnostics());
-    String score = StringFormatter.format("%.3f - Schedule Score%n", report.getScore()).get();
-    log(score, report);
+    output(scorecard);
+  }
+
+  private static void output(Scorecard scorecard) {
+    log("Schedule", scorecard.getSchedule().getWeek());
+    log("Diagnostics", scorecard.getDiagnostics());
+    String score = StringFormatter.format("%.3f - Schedule Score", scorecard.getScore()).get();
+    log(score, scorecard);
   }
 
   private static void log(String header, Object body) {

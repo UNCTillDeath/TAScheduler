@@ -11,11 +11,19 @@ public class Scorer {
   private final static String COMBINED_EXPERTISE = "Average expertise in every shift is > 1.5";
   private final static String AVAILABILITY = "No staff is scheduled for a shift they are not available for";
 
-  public static Scorecard score(Schedule input, SchedulingAlgo algo) {
+  private Schedule _schedule;
+  private SchedulingAlgo _algo;
+
+  public Scorer(Staff staff, Week week, SchedulingAlgo algo) {
+    _schedule = new Schedule(staff, week);
+    _algo = algo;
+  }
+
+  public Scorecard run(int trials, long deterministicSeed) {
     Scorecard bestRun = null;
-    for (int i = 0; i < 100; i++) {
-      // TODO copy input to clean schedule
-      Scorecard run = Scorer.evaluate(input, algo, new Random());
+    for (int i = 0; i < trials; i++) {
+      Schedule schedule = _schedule.copy();
+      Scorecard run = Scorer.evaluate(schedule, _algo, new Random(deterministicSeed));
       if (bestRun == null || run.getScore() > bestRun.getScore()) {
         bestRun = run;
       }

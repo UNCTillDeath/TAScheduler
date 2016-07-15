@@ -22,7 +22,7 @@ public class KarenBot {
     Week week = DataIO.parseWeek("data/" + scenario + "/week.csv", scenario);
     Staff staff = DataIO.parseStaff("data/" + scenario + "/staff");
 
-    // Run Scoring Algorithm
+    // Run Algorithm for N trials and score it
     Scorer scorer = new Scorer(staff, week, algo);
     Scorecard scorecard = scorer.run(trials, deterministicSeed);
 

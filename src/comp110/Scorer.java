@@ -32,7 +32,8 @@ public class Scorer {
   }
 
   public static Scorecard evaluate(Schedule input, SchedulingAlgo algo, Random random) {
-    Scorecard scorecard = new Scorecard(input);
+    Schedule output = algo.run(input, random);
+    Scorecard scorecard = new Scorecard(output);
     scorecard.add(Scorer.preferredCapacityMet(input));
     scorecard.add(Scorer.utilization(input));
     scorecard.add(Scorer.contiguous(input));

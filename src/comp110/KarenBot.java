@@ -23,7 +23,7 @@ public class KarenBot {
     SchedulingAlgo algo = new WorstAlgo();
 
     String scenario = "test-small";
-    Week week = DataIO.parseWeek("data/" + scenario + "/week.csv");
+    Week week = DataIO.parseWeek("data/" + scenario + "/week.csv", scenario);
     Staff staff = DataIO.parseStaff("data/" + scenario + "/staff");
 
     Schedule schedule = new Schedule(staff, week);

@@ -7,16 +7,21 @@ import java.io.IOException;
 
 public class DataIO {
 
-  static Week parseWeek(String dir) throws IOException {
-    // TODO read in data
-    Week week = new Week();
-    new Week();
-    for (int day = 0; day < 7; day++) {
-      for (int hour = 9; hour < 11; hour++) {
+  static Week parseWeek(String csvPath, String scenario) throws IOException {
+    Week week = new Week(scenario);
+    BufferedReader csvReader = new BufferedReader(new FileReader(csvPath));
+    
+    csvReader.readLine(); //discard first header line 
+    
+    for (int hour = 0; hour < 24; hour++) {
+      String scheduleLine = csvReader.readLine();
+      for (int day = 0; day < 7; day++) {
         Shift shift = week.getShift(day, hour);
-        shift.setCapacity(2);
+        // Offset by 1 accounts for label in CSV
+        shift.setCapacity(Integer.parseInt(scheduleLine.split(",")[day + 1]));
       }
     }
+    csvReader.close();    
     return week;
   }
 
@@ -44,14 +49,6 @@ public class DataIO {
         }
       }
       staff.add(new Employee(name, capacity, gender.equals("M") ? false : true, level, availability));
-  
-      // testing
-      // for (int i = 0; i < availability.length; i++) {
-      // for (int j = 0; j < availability[0].length; j++) {
-      // System.out.print(availability[i][j]);
-      // }
-      // System.out.print("\n");
-      // }
     }
     return staff;
   }

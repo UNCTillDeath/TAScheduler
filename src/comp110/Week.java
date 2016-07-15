@@ -5,8 +5,8 @@ public class Week {
   private String _title;
   private Shift[][] _shifts;
 
-  public Week() {
-    _title = "";
+  public Week(String title) {
+    _title = title;
     _shifts = new Shift[7][24];
     for (int day = 0; day < _shifts.length; day++) {
       for (int hour = 0; hour < _shifts[day].length; hour++) {

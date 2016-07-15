@@ -8,7 +8,7 @@ public class Scorer {
   private final static String PREFERRED_CAPACITY_MET = "Shifts where employees meet or exceed capacity";
   private final static String CONTIGUOUS_BLOCKS = "Employees are scheduled for between 2-4 contiguous hours";
   private final static String GENDER_REPRESENTATION = "Gender representation in every shift";
-  private final static String COMBINED_EXPERTISE = "Average expertise in every shift is > 1.5";
+  private final static String COMBINED_EXPERIENCE = "Average experience in every shift is > 1.5";
   private final static String AVAILABILITY = "No staff is scheduled for a shift they are not available for";
 
   private Schedule _schedule;
@@ -204,7 +204,7 @@ public class Scorer {
   private static Scoreline combinedExpertise(Schedule schedule) {
     int shiftsMeetingThreshold = 0;
 
-    Scoreline result = new Scoreline(COMBINED_EXPERTISE, 0.0);
+    Scoreline result = new Scoreline(COMBINED_EXPERIENCE, 0.0);
 
     Week week = schedule.getWeek();
     Shift[][] shifts = week.getShifts();

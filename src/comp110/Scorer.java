@@ -9,6 +9,7 @@ public class Scorer {
   private final static String CONTIGUOUS_BLOCKS = "Employees are scheduled for between 2-4 contiguous hours";
   private final static String GENDER_REPRESENTATION = "Gender representation in every shift";
   private final static String COMBINED_EXPERTISE = "Average expertise in every shift is > 1.5";
+  private final static String AVAILABILITY = "No staff is scheduled for a shift they are not available for";
 
   public static Scorecard score(Schedule input, SchedulingAlgo algo) {
     Scorecard bestRun = null;
@@ -31,6 +32,7 @@ public class Scorer {
     scorecard.add(Scorer.contiguous(input));
     scorecard.add(Scorer.combinedExpertise(input));
     scorecard.add(Scorer.genderRepresentation(input));
+    scorecard.add(Scorer.availability(input));
     return scorecard;
   }
 
@@ -215,6 +217,31 @@ public class Scorer {
 
     result.setValue(shiftsMeetingThreshold / (double) week.getNumberOfShifts());
 
+    return result;
+  }
+  
+  /*
+   * Check to make sure no staff was scheduled for a time they are not available for
+   */
+  
+  private static Scoreline availability(Schedule schedule){
+    boolean notAvailable = false;
+    
+    Scoreline result = new Scoreline(AVAILABILITY, 0.0);
+    
+    Week week = schedule.getWeek();
+    Shift[][] shifts = week.getShifts();
+    
+    for (int day = 0; day < shifts.length; day++){
+      for (Shift shift : shifts[day]){
+        for (Employee employee : shift){
+          if (!employee.isAvailable(day, shift.getHour())){
+            notAvailable = true;
+          }
+        }
+      }
+      result.setValue(notAvailable ? -1000 : 1);
+    }
     return result;
   }
 

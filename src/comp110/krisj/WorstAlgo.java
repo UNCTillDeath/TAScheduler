@@ -13,19 +13,17 @@ public class WorstAlgo implements SchedulingAlgo {
 
   @Override
   public Schedule run(Schedule schedule, Random random) {
-    random = new Random();
     Week week = schedule.getWeek();
     Shift[] buckets = this.weekAsFlatArray(week);
 
     Staff staff = schedule.getStaff();
     for (Employee employee : staff) {
-      System.out.println(employee.getCapacity());
       for (int i = 0; i < employee.getCapacity(); i++) {
         int attempts = 0; // Don't loop forever if it won't work
         while (attempts < 100) {
           int randomIndex = random.nextInt(buckets.length);
           Shift shift = buckets[randomIndex];
-          if (employee.isAvailable(shift.getDay(), shift.getHour())) {
+          if (employee.isAvailable(shift.getDay(), shift.getHour()) && shift.contains(employee) == false) {
             buckets[randomIndex].add(employee);
             break;
           }

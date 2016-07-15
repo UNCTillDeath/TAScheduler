@@ -20,11 +20,10 @@ public class Scorer {
     _algo = algo;
   }
 
-  public Scorecard run(int trials, long deterministicSeed) {
+  public Scorecard run(int trials) {
     Scorecard bestRun = null;
     for (int i = 0; i < trials; i++) {
-      Schedule schedule = _schedule.copy();
-      Scorecard run = Scorer.evaluate(schedule, _algo, new Random(deterministicSeed));
+      Scorecard run = Scorer.evaluate(_schedule, _algo, new Random());
       if (bestRun == null || run.getScore() > bestRun.getScore()) {
         bestRun = run;
       }
@@ -33,23 +32,25 @@ public class Scorer {
   }
 
   public static Scorecard evaluate(Schedule input, SchedulingAlgo algo, Random random) {
-    Schedule output = algo.run(input, random);
+    Schedule output = algo.run(input.copy(), random);
     Scorecard scorecard = new Scorecard(output);
-    scorecard.add(Scorer.preferredCapacityMet(input));
-    scorecard.add(Scorer.utilization(input));
-    scorecard.add(Scorer.contiguous(input));
-    scorecard.add(Scorer.combinedExpertise(input));
-    scorecard.add(Scorer.genderRepresentation(input));
-    scorecard.add(Scorer.availability(input));
-    scorecard.add(Scorer.seedBasedDeterminism(input, algo, random));
+    scorecard.add(Scorer.preferredCapacityMet(output));
+    scorecard.add(Scorer.utilization(output));
+    scorecard.add(Scorer.contiguous(output));
+    scorecard.add(Scorer.combinedExpertise(output));
+    scorecard.add(Scorer.genderRepresentation(output));
+    scorecard.add(Scorer.availability(output));
+    scorecard.add(Scorer.seedBasedDeterminism(input.copy(), algo));
     return scorecard;
   }
 
-  private static Scoreline seedBasedDeterminism(Schedule input, SchedulingAlgo algo, Random random) {
-    Schedule reference = algo.run(input.copy(), random);
+  private static Scoreline seedBasedDeterminism(Schedule input, SchedulingAlgo algo) {
+    Random seed = new Random(0);
+    Schedule reference = algo.run(input.copy(), seed);
     boolean passes = true;
     for (int i = 0; i < 10; i++) {
-      Schedule test = algo.run(input.copy(), random);
+      seed = new Random(0);
+      Schedule test = algo.run(input.copy(), seed);
       if (test.equals(reference) == false) {
         passes = false;
         break;

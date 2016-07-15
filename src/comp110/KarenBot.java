@@ -16,11 +16,13 @@ public class KarenBot {
     SchedulingAlgo algo = new WorstAlgo();
     String scenario = "test-small";
     int trials = 100;
-    long deterministicSeed = 0;
-    
-    //Auto Generate Data Test
+
+    // Auto Generate Data Test
     String testName = "auto-test";
-    CSVGenerator generator = new CSVGenerator(testName, 2, 0, 6, 0, 0, 0, 0); //days are zero indexed
+    CSVGenerator generator = new CSVGenerator(testName, 2, 0, 6, 0, 0, 0, 0); // days
+                                                                              // are
+                                                                              // zero
+                                                                              // indexed
 
     // Load Data
     Week week = DataIO.parseWeek("data/" + scenario + "/week.csv", scenario);
@@ -28,7 +30,7 @@ public class KarenBot {
 
     // Run Algorithm for N trials and score it
     Scorer scorer = new Scorer(staff, week, algo);
-    Scorecard scorecard = scorer.run(trials, deterministicSeed);
+    Scorecard scorecard = scorer.run(trials);
 
     // Output Results
     output(scorecard);

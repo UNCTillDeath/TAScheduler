@@ -95,9 +95,11 @@ public class Employee {
   }
 
   public Employee copy() {
-    int[][] availability = Arrays.copyOf(_availability, _availability.length);
-    for (int i = 0; i < _availability.length; i++) {
-      availability[i] = Arrays.copyOf(_availability[i], _availability[i].length);
+    int[][] availability = new int[_availability.length][_availability[0].length];
+    for (int day = 0; day < _availability.length; day++) {
+      for (int hour = 0; hour < _availability[0].length; hour++) {
+        availability[day][hour] = _availability[day][hour];
+      }
     }
     return new Employee(_name, _capacity, _isFemale, _level, availability);
   }

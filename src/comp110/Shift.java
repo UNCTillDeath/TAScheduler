@@ -71,8 +71,8 @@ public class Shift extends HashSet<Employee> {
     return _capacity;
   }
 
-  public void setCapacity(int capacity) {
-    _capacity = capacity;
+  public int getCapacityRemaining() {
+    return _capacity - size();
   }
 
   public Shift copy() {

@@ -10,18 +10,16 @@ public class DataIO {
   static Week parseWeek(String csvPath, String scenario) throws IOException {
     Week week = new Week(scenario);
     BufferedReader csvReader = new BufferedReader(new FileReader(csvPath));
-    
-    csvReader.readLine(); //discard first header line 
-    
+
+    csvReader.readLine(); // discard first header line
+
     for (int hour = 0; hour < 24; hour++) {
       String scheduleLine = csvReader.readLine();
       for (int day = 0; day < 7; day++) {
-        Shift shift = week.getShift(day, hour);
-        // Offset by 1 accounts for label in CSV
-        shift.setCapacity(Integer.parseInt(scheduleLine.split(",")[day + 1]));
+        week.getShifts()[day][hour] = new Shift(day, hour, Integer.parseInt(scheduleLine.split(",")[day + 1]));
       }
     }
-    csvReader.close();    
+    csvReader.close();
     return week;
   }
 
@@ -36,9 +34,9 @@ public class DataIO {
       String gender = csvReader.readLine().split(",")[1];
       int capacity = Integer.parseInt(csvReader.readLine().split(",")[1]);
       int level = Integer.parseInt(csvReader.readLine().split(",")[1]);
-  
+
       csvReader.readLine(); // throw away header line with days
-  
+
       // read in schedule
       int[][] availability = new int[7][24];
       for (int hour = 0; hour < 24; hour++) {

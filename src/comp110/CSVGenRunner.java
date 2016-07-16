@@ -6,7 +6,7 @@ public class CSVGenRunner {
 
   public static void main(String[] args) throws IOException {
 
-    String scenarioName = "hello-world";
+    String scenarioName = "FILL-ME-IN";
     int teamSize = 10;
     int startDay = 0;
     int endDay = 6;

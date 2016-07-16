@@ -52,7 +52,7 @@ public class Employee {
     return _capacityUsed;
   }
 
-  public void setCapacityUsed(int capacityUsed) {
+  void setCapacityUsed(int capacityUsed) {
     _capacityUsed = capacityUsed;
   }
 

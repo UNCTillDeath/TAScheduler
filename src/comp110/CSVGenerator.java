@@ -1,31 +1,27 @@
 package comp110;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class CSVGenerator {
 
   public static void main(String[] args) throws IOException {
 
-    String scenarioName = "auto-test";
-    int teamSize = 40;
+    String scenarioName = "hello-world";
+    int teamSize = 10;
     int startDay = 0;
     int endDay = 6;
     int startHour = 9;
-    int endHour = 21;
+    int endHour = 10;
     int averageAvailability = 20;
-    int averageCapacity = 5;
+    int averageCapacity = 14;
 
     CSVGenerator generator =
         new CSVGenerator(scenarioName, teamSize, startDay, endDay, startHour, endHour, averageAvailability, averageCapacity);
@@ -292,16 +288,16 @@ public class CSVGenerator {
     Week week = new Week("new");
     // min max and std dev could be specified programmatically if we wanted
     // size is the number of shifts available to be scheduled for a given person
-    int size = generateRandomInt(5, 40, _averageAvailability, 5);
+    int size = generateRandomInt(5, ((_endDay - _startDay) * (_endTime - _startTime)), _averageAvailability, 5);
     for (int i = 0; i < size; i++) {
       int day = generateRandomInt(_startDay, _endDay);
       int hour = generateRandomInt(_startTime, _endTime);
-      
-      //check to see if we have already scheduled a shift at that time
-      if (week.getShifts()[day][hour].getCapacity() == 0){
-          week.getShifts()[day][hour] = new Shift(day, hour, 1);
+
+      // check to see if we have already scheduled a shift at that time
+      if (week.getShifts()[day][hour].getCapacity() == 0) {
+        week.getShifts()[day][hour] = new Shift(day, hour, 1);
       }
-      //else try again
+      // else try again
       else {
         i--;
       }
@@ -312,7 +308,7 @@ public class CSVGenerator {
   private String generateEmployeeProfile(Employee employee) {
     StringBuilder sb = new StringBuilder();
     sb.append("Name:," + employee.getName() + ",,,,,,\n");
-    sb.append("Gender (enter M or F):," + (employee.getIsFemale() ? "M" : "F") + ",,,,,,\n");
+    sb.append("Gender (enter M or F):," + (employee.getIsFemale() ? "F" : "M") + ",,,,,,\n");
     // may want to allow someone to specify their own min max and std dev
     // through constructor, this made sense for now
     sb.append("Capacity:," + employee.getCapacity() + ",,,,,,\n");

@@ -14,7 +14,7 @@ public class KarenBot {
     // Replace WorstAlgo with your own SchedulingAlgo class to begin.
     // Be sure to make a package with your own onyen name to avoid collisions.
     SchedulingAlgo algo = new WorstAlgo();
-    String scenario = "auto-test";
+    String scenario = "hello-world";
     int trials = 100;
 
     // Load Data

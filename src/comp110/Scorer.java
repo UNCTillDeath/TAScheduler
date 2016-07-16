@@ -75,8 +75,8 @@ public class Scorer {
           if (shift.size() >= shift.getCapacity()) {
             shiftsMeetingPreferredCapacity++;
           } else {
-            result.add(day + " at " + shift.getHour() + ":00 has " + shift.size() + " of " + shift.getCapacity()
-                + " slots filled");
+            result.add(Week.dayString(day) + " at " + shift.getHour() + ":00 has " + shift.size() + " of "
+                + shift.getCapacity() + " slots filled");
           }
         }
       }
@@ -149,10 +149,10 @@ public class Scorer {
           }
 
           if (contiguous < 2) {
-            result.add(day + " at " + shift.getHour() + ":00 " + employee.getName()
+            result.add(Week.dayString(day) + " at " + shift.getHour() + ":00 " + employee.getName()
                 + " scheduled for a single hour block");
           } else if (contiguous > 4) {
-            result.add(day + " at " + shift.getHour() + ":00 " + employee.getName()
+            result.add(Week.dayString(day) + " at " + shift.getHour() + ":00 " + employee.getName()
                 + " scheduled for over 4 hours contiguously");
           } else {
             contiguousShifts++;
@@ -195,7 +195,8 @@ public class Scorer {
           if (women > 0 && men > 0) {
             shiftsWithGenderRepresentation++;
           } else {
-            result.add(day + " at " + shift.getHour() + ":00 has " + women + " women and " + men + " men scheduled");
+            result.add(Week.dayString(day) + " at " + shift.getHour() + ":00 has " + women + " women and " + men
+                + " men scheduled");
           }
         }
       }
@@ -228,7 +229,7 @@ public class Scorer {
           if (average > 1.5) {
             shiftsMeetingThreshold++;
           } else {
-            result.add(day + " at " + shift.getHour() + ":00 has an average expertise of " + average);
+            result.add(Week.dayString(day) + " at " + shift.getHour() + ":00 has an average expertise of " + average);
           }
         }
       }

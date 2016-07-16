@@ -1,9 +1,18 @@
 package comp110;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class CSVGenerator {
 
@@ -20,7 +29,7 @@ public class CSVGenerator {
 
     CSVGenerator generator =
         new CSVGenerator(scenarioName, teamSize, startDay, endDay, startHour, endHour, averageAvailability, averageCapacity);
-    generator.generateCSV();
+    generator.generateFiles();
 
   }
 
@@ -109,7 +118,7 @@ public class CSVGenerator {
     _averageCapacity = averageCapacity;
   }
 
-  private void generateCSV() throws IOException {
+  private void generateFiles() throws IOException {
 
     File path = new File("data/" + _testName);
     File outputDir = new File(path.getPath() + "/staff");
@@ -117,25 +126,119 @@ public class CSVGenerator {
     if (!path.exists()) {
       path.mkdir();
       outputDir.mkdir();
+    } else {
+      // Clear existing CSV files
+      for (File csv : outputDir.listFiles()) {
+        if (csv.getName().contains(".csv")) {
+          csv.delete();
+        }
+      }
     }
 
+    Map<Boolean, Queue<String>> names = getNames();
+
     for (int i = 0; i < _teamSize; i++) {
-      FileWriter outputCSV = new FileWriter(new File(outputDir.getPath() + "/" + i + ".csv"));
-      outputCSV.append("Name:," + i + ",,,,,,\n");
-      outputCSV.append("Gender (enter M or F):," + (generateRandomInt(0, 1) == 1 ? "M" : "F") + ",,,,,,\n");
-      // may want to allow someone to specify their own min max and std dev
-      // through constructor, this made sense for now
-      outputCSV.append("Capacity:," + generateRandomInt(0, 7, _averageCapacity, 1.5) + ",,,,,,\n");
-      outputCSV.append("Level (1 - in 401; 2 - in 410/411; 3 - in major)," + generateRandomInt(1, 3) + ",,,,,,\n");
-      outputCSV.append(",0. Sun,1. Mon,2. Tue,3. Weds,4. Thu,5. Fri,6. Sat\n");
-
-      // generate schedule
+      Employee employee = generateEmployee(names);
+      FileWriter outputCSV =
+          new FileWriter(new File(outputDir.getPath() + "/" + employee.getName().toLowerCase() + ".csv"));
+      outputCSV.append(generateEmployeeProfile(employee));
       outputCSV.append(generateEmployeeSchedule());
-
       outputCSV.flush();
       outputCSV.close();
     }
 
+  }
+
+  Map<Boolean, Queue<String>> getNames() {
+    Map<Boolean, Queue<String>> names = new HashMap<>();
+    Queue<String> women = new LinkedBlockingQueue<String>(Arrays.asList(new String[] {
+        "Karen",
+        "Han Bit",
+        "Kaylee",
+        "Dana",
+        "Meggie",
+        "Caleigh",
+        "Nancy",
+        "Brea",
+        "Katie",
+        "Helen",
+        "Sydney",
+        "Tabatha",
+        "Victoria",
+        "Jennifer",
+        "Saumya",
+        "Kyra",
+        "Sarah",
+        "Abba",
+        "Melissa",
+        "Saster",
+        "Wanyi",
+        "Kate",
+        "Gabi",
+        "Srihita",
+        "Lydia",
+        "Vicky",
+        "Hillary",
+        "Michelle",
+        "JLo",
+        "Kim",
+        "Katy",
+        "TSwift",
+        "Melinda",
+        "Sheryl",
+        "Meg",
+        "Oprah",
+        "Ruth",
+        "Bonnie",
+        "Ertharin",
+        "Laurene",
+        "Nicola",
+        "Beth",
+        "Amy",
+        "Pollyanna",
+        "Bidya",
+        "Rosalind",
+        "Mary",
+        "Marissa" }));
+
+    Queue<String> men = new LinkedBlockingQueue<String>(Arrays.asList(new String[] {
+        "Jeffrey",
+        "Muttaqee",
+        "Dorian",
+        "Connor",
+        "Ahmed",
+        "Dong",
+        "Cody",
+        "Grant",
+        "Ben",
+        "Duncan",
+        "Stephen",
+        "Mohamed",
+        "Shane",
+        "Hayden",
+        "Jay",
+        "Jesse",
+        "Hank",
+        "Mark",
+        "Brooks",
+        "Ahmad",
+        "Kanye",
+        "Zuck",
+        "Gates",
+        "Jobs",
+        "Gary",
+        "Larry",
+        "Sergey",
+        "Patrick",
+        "John",
+        "Jack",
+        "Future",
+        "Lil Jon",
+        "Zayn",
+        "Snoop" }));
+    names.put(true, women);
+    names.put(false, men);
+    return names;
   }
 
   /*
@@ -145,7 +248,6 @@ public class CSVGenerator {
   private static int generateRandomInt(int min, int max) {
     Random rand = new Random();
     return rand.nextInt((max - min) + 1) + min;
-
   }
 
   /*
@@ -178,6 +280,14 @@ public class CSVGenerator {
     }
   }
 
+  private Employee generateEmployee(Map<Boolean, Queue<String>> names) {
+    boolean isFemale = generateRandomInt(1, 10) > 4;
+    String name = names.get(isFemale).poll();
+    int capacity = generateRandomInt(0, 7, _averageCapacity, 1.5);
+    int level = generateRandomInt(1, 3);
+    return new Employee(name, capacity, isFemale, level, new int[0][0]);
+  }
+
   private String generateEmployeeSchedule() {
     Week week = new Week("new");
     // min max and std dev could be specified programmatically if we wanted
@@ -190,6 +300,18 @@ public class CSVGenerator {
 
     }
     return week.toCSV();
+  }
+
+  private String generateEmployeeProfile(Employee employee) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("Name:," + employee.getName() + ",,,,,,\n");
+    sb.append("Gender (enter M or F):," + (employee.getIsFemale() ? "M" : "F") + ",,,,,,\n");
+    // may want to allow someone to specify their own min max and std dev
+    // through constructor, this made sense for now
+    sb.append("Capacity:," + employee.getCapacity() + ",,,,,,\n");
+    sb.append("Level (1 - in 401; 2 - in 410/411; 3 - in major)," + employee.getLevel() + ",,,,,,\n");
+    sb.append(",0. Sun,1. Mon,2. Tue,3. Weds,4. Thu,5. Fri,6. Sat\n");
+    return sb.toString();
   }
 
 }

@@ -2,7 +2,7 @@ package comp110;
 
 public class Week {
 
-  private String    _title;
+  private String _title;
   private Shift[][] _shifts;
 
   public Week(String title) {
@@ -67,6 +67,25 @@ public class Week {
     return shifts;
   }
 
+  public static String dayString(int day) {
+    switch (day) {
+      case 0:
+        return "Sunday";
+      case 1:
+        return "Monday";
+      case 2:
+        return "Tuesday";
+      case 3:
+        return "Wednesday";
+      case 4:
+        return "Thursday";
+      case 5:
+        return "Friday";
+      default:
+        return "Saturday";
+    }
+  }
+
   public String toString() {
     StringBuilder sb = new StringBuilder();
 
@@ -75,7 +94,7 @@ public class Week {
     sb.append(" **\n");
 
     for (int day = 0; day < _shifts.length; day++) {
-      sb.append("Day: " + day + "\n");
+      sb.append(Week.dayString(day) + "\n");
       for (Shift shift : _shifts[day]) {
         if (shift.getCapacity() > 0) {
           sb.append("\t" + shift + "\n");

@@ -30,8 +30,8 @@ public class KarenBot {
   }
 
   private static void output(Scorecard scorecard) {
-    log("Schedule", scorecard.getSchedule().getWeek());
     log("Diagnostics", scorecard.getDiagnostics());
+    log("Schedule", scorecard.getSchedule().getWeek());
     String score = StringFormatter.format("%.3f - Schedule Score", scorecard.getScore()).get();
     log(score, scorecard);
   }

@@ -6,20 +6,29 @@ import java.io.IOException;
 
 import com.sun.javafx.binding.StringFormatter;
 
-import comp110.krisj.WorstAlgo;
-
 public class KarenBot {
 
-  public static void main(String[] args) throws IOException {
-    // Replace WorstAlgo with your own SchedulingAlgo class to begin.
-    // Be sure to make a package with your own onyen name to avoid collisions.
-    SchedulingAlgo algo = new WorstAlgo();
-    String scenario = "hello-world";
-    int trials = 100;
+  private SchedulingAlgo _algo;
+
+  public KarenBot(SchedulingAlgo algo) {
+    _algo = algo;
+  }
+
+  public void run(String scenario, int trials) {
+    SchedulingAlgo algo = _algo;
 
     // Load Data
-    Week week = DataIO.parseWeek("data/" + scenario + "/week.csv", scenario);
-    Staff staff = DataIO.parseStaff("data/" + scenario + "/staff");
+    Week week;
+    Staff staff;
+
+    try {
+      week = DataIO.parseWeek("data/" + scenario + "/week.csv", scenario);
+      staff = DataIO.parseStaff("data/" + scenario + "/staff");
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.exit(1);
+      return;
+    }
 
     // Run Algorithm for N trials and score it
     Scorer scorer = new Scorer(staff, week, algo);

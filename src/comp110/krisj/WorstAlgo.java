@@ -7,9 +7,17 @@ import comp110.SchedulingAlgo;
 import comp110.Shift;
 import comp110.Staff;
 import comp110.Employee;
+import comp110.KarenBot;
 import comp110.Week;
 
 public class WorstAlgo implements SchedulingAlgo {
+
+  public static void main(String[] args) {
+    KarenBot bot = new KarenBot(new WorstAlgo());
+    String scenario = "hello-world";
+    int trials = 10;
+    bot.run(scenario, trials);
+  }
 
   @Override
   public Schedule run(Schedule schedule, Random random) {

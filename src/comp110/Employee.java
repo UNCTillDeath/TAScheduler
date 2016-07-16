@@ -1,7 +1,5 @@
 package comp110;
 
-import java.util.Arrays;
-
 public class Employee {
 
   final private String _name;

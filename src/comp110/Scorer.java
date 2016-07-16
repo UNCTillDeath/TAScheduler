@@ -28,7 +28,6 @@ public class Scorer {
       if (bestRun == null || run.getScore() > bestRun.getScore()) {
         bestRun = run;
       }
-      System.out.println(run.getScore());
     }
     return bestRun;
   }

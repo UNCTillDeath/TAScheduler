@@ -15,7 +15,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
 
   public static void main(String[] args) {
     KarenBot bot = new KarenBot(new EvenWorseAlgo());
-    String scenario = "hello-universe-contiguous";
+    String scenario = "hello-world-contiguous";
     int trials = 1000;
     bot.run(scenario, trials);
   }
@@ -94,6 +94,8 @@ public class EvenWorseAlgo implements SchedulingAlgo {
         }
       }
       
+      /* POST-PROCESS */
+      
     }
 
     return input;
@@ -111,11 +113,12 @@ public class EvenWorseAlgo implements SchedulingAlgo {
     return totalLevel / employees.size();
   }
   
-  //assume employee has already been scheduled for start hour
+  //assume employee has already been scheduled for start hour, thats why everything is +1 offset
   private void scheduleContiguously(Employee employee, int startDay, int startHour, Shift[][] shifts, Random rand){
     int numberOfHoursToSchedule = Math.min((23 - startHour) , generateRandomInt(1, 3, rand));
+    
     for (int i = 0; i < numberOfHoursToSchedule; i++){
-      // some really dumb stuff
+      // getting employees that are scheduled for the current shift
       ArrayList<Employee> employeesScheduledDuringShift = new ArrayList<Employee>();
       Shift currentShift = shifts[startDay][startHour + i + 1];
       for (Employee e : currentShift) {

@@ -14,6 +14,14 @@ public class Staff extends HashSet<Employee> {
     }
     return capacity;
   }
+  
+  public double getRemainingCapacity(){
+    double remainingCapacity = 0;
+    for (Employee e : this){
+      remainingCapacity += (double) e.getCapacityRemaining();
+    }
+    return remainingCapacity;
+  }
 
   public Staff copy() {
     Staff copy = new Staff();

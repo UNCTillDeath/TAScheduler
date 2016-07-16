@@ -15,8 +15,8 @@ public class EvenWorseAlgo implements SchedulingAlgo {
 
   public static void main(String[] args) {
     KarenBot bot = new KarenBot(new EvenWorseAlgo());
-    String scenario = "hello-world-experience";
-    int trials = 10;
+    String scenario = "hello-universe-experience";
+    int trials = 1000;
     bot.run(scenario, trials);
   }
 
@@ -45,6 +45,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
 
         int iterations = 0;
         Shift shift = shifts[day][hour];
+        ArrayList<Employee> scheduledEmployees = new ArrayList<Employee>();
         // iterate over each spot in each shift while it still has capacity
         while (shift.getCapacityRemaining() > 0) {
           // first iteration we don't care who we add as long as they are
@@ -54,6 +55,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
 
             if (firstEmployee.isAvailable(day, hour) && firstEmployee.getCapacityRemaining() > 0) {
               shift.add(firstEmployee);
+              scheduledEmployees.add(firstEmployee);
               foundFirstEmployee = true;
               firstEmployeeIsFemale = firstEmployee.getIsFemale();
               firstEmployeeLevel = firstEmployee.getLevel();
@@ -64,8 +66,9 @@ public class EvenWorseAlgo implements SchedulingAlgo {
             Employee secondEmployee = employees[random.nextInt(employees.length)];
             //after 990 we don't care, just put anyone there
             if ((secondEmployee.isAvailable(day, hour) && secondEmployee.getCapacityRemaining() > 0
-                && !shift.contains(secondEmployee) && secondEmployee.getIsFemale() != firstEmployeeIsFemale && secondEmployee.getLevel() != firstEmployeeLevel) || iterations > 990) {
+                && !shift.contains(secondEmployee) && secondEmployee.getIsFemale() != firstEmployeeIsFemale && (secondEmployee.getLevel() >= getAverageSkill(scheduledEmployees) ? true : false)) || iterations > 990) {
               shift.add(secondEmployee);
+              scheduledEmployees.add(secondEmployee);
               foundSecondEmployee = true;
             }
           }
@@ -74,9 +77,10 @@ public class EvenWorseAlgo implements SchedulingAlgo {
             Employee nextEmployee = employees[random.nextInt(employees.length)];
 
             if ((nextEmployee.isAvailable(day, hour) && nextEmployee.getCapacityRemaining() > 0
-                && !shift.contains(nextEmployee)) || iterations > 990) {
+                && !shift.contains(nextEmployee) && (nextEmployee.getLevel() >= getAverageSkill(scheduledEmployees) ? true : false)) || iterations > 990) {
 
               shift.add(nextEmployee);
+              scheduledEmployees.add(nextEmployee);
             }
           }
           //prevent infinite loops, if we cant fill the schedule then eventually give up and move on
@@ -90,6 +94,14 @@ public class EvenWorseAlgo implements SchedulingAlgo {
     }
 
     return input;
+  }
+  
+  private double getAverageSkill(ArrayList<Employee> employees){
+    int totalLevel = 0;
+    for (Employee e : employees){
+      totalLevel += e.getLevel();
+    }
+    return totalLevel / employees.size();
   }
 
 }

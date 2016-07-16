@@ -29,7 +29,24 @@ public class Shift extends HashSet<Employee> {
     boolean equals = _day == other._day;
     equals = equals && _hour == other._hour;
     equals = equals && _capacity == other._capacity;
-    equals = equals && this.containsAll(other);
+
+    if (equals) {
+      // This is literal vomit. Someone please figure out and teach me why Set's
+      // containsAll method fails here. This should be O(n) not O(n^2). Ugh.
+      for (Employee e : this) {
+        boolean contains = false;
+        for (Employee o : other) {
+          if (e.equals(o)) {
+            contains = true;
+            break;
+          }
+        }
+        if (contains == false) {
+          return false;
+        }
+      }
+    }
+
     equals = equals && this.size() == other.size();
     return equals;
   }

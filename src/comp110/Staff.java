@@ -25,9 +25,21 @@ public class Staff extends HashSet<Employee> {
   }
 
   public boolean equals(Staff other) {
-    boolean equals = this.containsAll(other);
-    equals = equals && this.size() == other.size();
-    return equals;
+    // This is literal vomit. Someone please figure out and teach me why Set's
+    // containsAll method fails here. This should be O(n) not O(n^2). Ugh.
+    for (Employee e : this) {
+      boolean contains = false;
+      for (Employee o : other) {
+        if (e.equals(o)) {
+          contains = true;
+          break;
+        }
+      }
+      if (contains == false) {
+        return false;
+      }
+    }
+    return this.size() == other.size();
   }
 
 }

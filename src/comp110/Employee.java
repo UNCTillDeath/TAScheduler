@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Employee {
 
-  private String _name;
+  final private String _name;
   private int _capacity;
   private boolean _isFemale;
   private int _level; // 1: in 401, 2: in 410/411, 3: in major
@@ -16,6 +16,10 @@ public class Employee {
     _capacity = capacity;
     _isFemale = isFemale;
     _level = level;
+  }
+
+  public int hashCode() {
+    return _name.hashCode();
   }
 
   public boolean equals(Employee other) {
@@ -38,10 +42,6 @@ public class Employee {
 
   public String getName() {
     return _name;
-  }
-
-  public void setName(String name) {
-    _name = name;
   }
 
   public int getCapacity() {
@@ -101,7 +101,8 @@ public class Employee {
         availability[day][hour] = _availability[day][hour];
       }
     }
-    return new Employee(_name, _capacity, _isFemale, _level, availability);
+    Employee copy = new Employee(_name, _capacity, _isFemale, _level, availability);
+    return copy;
   }
 
 }

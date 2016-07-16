@@ -56,6 +56,10 @@ public class Employee {
     _capacityUsed = capacityUsed;
   }
 
+  public int getCapacityRemaining() {
+    return _capacity - _capacityUsed;
+  }
+
   public boolean getIsFemale() {
     return _isFemale;
   }

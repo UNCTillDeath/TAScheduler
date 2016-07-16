@@ -7,16 +7,34 @@ import java.util.Random;
 
 public class CSVGenerator {
 
-  private String _testName;
-  private int    _teamSize;
-  private int    _startDay;
-  private int    _endDay;
-  private int    _startTime;
-  private int    _endTime;
-  private int    _averageAvailability;
-  private int    _averageCapacity;
+  public static void main(String[] args) throws IOException {
 
-  public CSVGenerator(String testName, int teamSize, int startDay, int endDay, int startTime, int endTime, int averageAvailability, int averageCapacity) throws IOException {
+    String scenarioName = "auto-test";
+    int teamSize = 40;
+    int startDay = 0;
+    int endDay = 6;
+    int startHour = 9;
+    int endHour = 21;
+    int averageAvailability = 20;
+    int averageCapacity = 5;
+
+    CSVGenerator generator =
+        new CSVGenerator(scenarioName, teamSize, startDay, endDay, startHour, endHour, averageAvailability, averageCapacity);
+    generator.generateCSV();
+
+  }
+
+  private String _testName;
+  private int _teamSize;
+  private int _startDay;
+  private int _endDay;
+  private int _startTime;
+  private int _endTime;
+  private int _averageAvailability;
+  private int _averageCapacity;
+
+  public CSVGenerator(String testName, int teamSize, int startDay, int endDay, int startTime, int endTime,
+      int averageAvailability, int averageCapacity) throws IOException {
     _testName = testName;
     _teamSize = teamSize;
     _startDay = startDay;
@@ -25,8 +43,6 @@ public class CSVGenerator {
     _endTime = endTime;
     _averageAvailability = averageAvailability;
     _averageCapacity = averageCapacity;
-
-    generateCSV();
   }
 
   public String getTestName() {
@@ -94,10 +110,6 @@ public class CSVGenerator {
   }
 
   private void generateCSV() throws IOException {
-
-    for (int i = 0; i < 1000; i++) {
-      System.out.println(generateRandomInt(0, 30, 10, 5.0));
-    }
 
     File path = new File("data/" + _testName);
     File outputDir = new File(path.getPath() + "/staff");

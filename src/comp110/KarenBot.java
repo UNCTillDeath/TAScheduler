@@ -14,13 +14,8 @@ public class KarenBot {
     // Replace WorstAlgo with your own SchedulingAlgo class to begin.
     // Be sure to make a package with your own onyen name to avoid collisions.
     SchedulingAlgo algo = new WorstAlgo();
-    String scenario = "test-small";
+    String scenario = "auto-test";
     int trials = 100;
-
-    // Auto Generate Data Test
-    String testName = "auto-test";
-    // days are zero indexed
-    CSVGenerator generator = new CSVGenerator(testName, 40, 0, 6, 9, 21, 20, 5);
 
     // Load Data
     Week week = DataIO.parseWeek("data/" + scenario + "/week.csv", scenario);

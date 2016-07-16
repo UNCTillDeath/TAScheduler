@@ -296,8 +296,15 @@ public class CSVGenerator {
     for (int i = 0; i < size; i++) {
       int day = generateRandomInt(_startDay, _endDay);
       int hour = generateRandomInt(_startTime, _endTime);
-      week.getShifts()[day][hour] = new Shift(day, hour, 1);
-
+      
+      //check to see if we have already scheduled a shift at that time
+      if (week.getShifts()[day][hour].getCapacity() == 0){
+          week.getShifts()[day][hour] = new Shift(day, hour, 1);
+      }
+      //else try again
+      else {
+        i--;
+      }
     }
     return week.toCSV();
   }

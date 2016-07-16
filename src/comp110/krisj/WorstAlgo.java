@@ -14,7 +14,7 @@ public class WorstAlgo implements SchedulingAlgo {
 
   public static void main(String[] args) {
     KarenBot bot = new KarenBot(new WorstAlgo());
-    String scenario = "hello-world-gender";
+    String scenario = "real-world-approx";
     int trials = 1000;
     bot.run(scenario, trials);
   }

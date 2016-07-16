@@ -67,7 +67,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
             Employee secondEmployee = employees[random.nextInt(employees.length)];
             //after 990 we don't care, just put anyone there
             if ((secondEmployee.isAvailable(day, hour) && secondEmployee.getCapacityRemaining() > 0
-                && !shift.contains(secondEmployee) && secondEmployee.getIsFemale() != firstEmployeeIsFemale && (secondEmployee.getLevel() >= getAverageSkill(scheduledEmployees) ? true : false)) || iterations > 990) {
+                && !shift.contains(secondEmployee) && secondEmployee.getIsFemale() != firstEmployeeIsFemale && (secondEmployee.getLevel() >= getAverageSkill(scheduledEmployees))) || (iterations > 990 && secondEmployee.isAvailable(day, hour))) {
               shift.add(secondEmployee);
               scheduledEmployees.add(secondEmployee);
               foundSecondEmployee = true;
@@ -79,7 +79,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
             Employee nextEmployee = employees[random.nextInt(employees.length)];
 
             if ((nextEmployee.isAvailable(day, hour) && nextEmployee.getCapacityRemaining() > 0
-                && !shift.contains(nextEmployee) && (nextEmployee.getLevel() >= getAverageSkill(scheduledEmployees) ? true : false)) || iterations > 990) {
+                && !shift.contains(nextEmployee) && (nextEmployee.getLevel() >= getAverageSkill(scheduledEmployees))) || (iterations > 990 && nextEmployee.isAvailable(day, hour))) {
 
               shift.add(nextEmployee);
               scheduledEmployees.add(nextEmployee);
@@ -140,13 +140,33 @@ public class EvenWorseAlgo implements SchedulingAlgo {
         }
       }
     }
-    //TODO add one more postprocessing that schedules anywhere if we can't schedule contiguously
-
+    //schedules anywhere if we can't schedule contiguously
+    for (int i = 0; i < 10; i++){
+      if (staff.getRemainingCapacity() > 0){
+        //loop over all employees with remaining capacity
+        for (Employee employee : employees){
+          if (employee.getCapacityRemaining() > 0){
+            //loop over each shift with remaining capacity
+            for (int day = 0; day < shifts.length; day++){
+              for (int hour = 0; hour < shifts[0].length; hour++){
+                Shift shift = shifts[day][hour];
+                if (shift.getCapacity() > 0){
+                  if(employee.isAvailable(day, hour) && employee.getCapacityRemaining() > 0
+                      && !shift.contains(employee) && hasSomeoneScheduledOfOppositeGender(employee, shift)){
+                    shift.add(employee);
+                  }
+                }  
+              }
+            }
+          }
+        }
+      }
+    }
 
     return input;
   }
   
-  //identical to other contiguous method except we are a little more relaxed on requirements needed to schedule (no skill check)
+  //identical to other contiguous method except we are a little more relaxed on requirements needed to schedule (no skill or gender check)
   private void scheduleContiguouslyPostProcess(Employee employee, int startDay, int startHour,
       Shift[][] shifts, Random rand) {
     int numberOfHoursToSchedule = Math.min((23 - startHour) , generateRandomInt(1, 3, rand));
@@ -191,7 +211,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
       }
 
       if(employee.isAvailable(startDay, startHour + i + 1) && employee.getCapacityRemaining() > 0
-          && !currentShift.contains(employee) && (employee.getLevel() >= getAverageSkill(employeesScheduledDuringShift)) ? true : false){
+          && !currentShift.contains(employee) && (employee.getLevel() >= getAverageSkill(employeesScheduledDuringShift)) && hasSomeoneScheduledOfOppositeGender(employee, currentShift)){
         currentShift.add(employee);
       }
     }
@@ -203,6 +223,19 @@ public class EvenWorseAlgo implements SchedulingAlgo {
    */
   private static int generateRandomInt(int min, int max, Random rand) {
     return rand.nextInt((max - min) + 1) + min;
+  }
+  
+  private boolean hasSomeoneScheduledOfOppositeGender(Employee employee, Shift shift){
+    //if nobody is scheduled then this is irrelevant
+    if (shift.size() == 0){
+      return true;
+    }
+    for (Employee scheduledEmployee : shift){
+      if (scheduledEmployee.getIsFemale() != employee.getIsFemale()){
+        return true;
+      }
+    }
+    return false;
   }
 
 }

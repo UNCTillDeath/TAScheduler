@@ -25,7 +25,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
     Week week = input.getWeek();
     Staff staff = input.getStaff();
 
-    // some really dumb stuff
+    // some really dumb stuff, TLDR: basically I need the employees in a native array
     ArrayList<Employee> temp = new ArrayList<Employee>();
     for (Employee employee : staff) {
       temp.add(employee);
@@ -92,15 +92,79 @@ public class EvenWorseAlgo implements SchedulingAlgo {
           }
           iterations++;
         }
-      }
-      
-      /* POST-PROCESS */
-      
+      }          
     }
+    
+    
+    /* POST-PROCESS - ensure that all staff is fully utilized*/
+    
+    //do this several times because we may not fill all capacity in just one iteration
+    for (int i = 0; i < 10; i++){
+      if (staff.getRemainingCapacity() > 0){
+        //loop over all employees with remaining capacity
+        for (Employee employee : employees){
+          if (employee.getCapacityRemaining() > 0){
+            //loop over each shift with remaining capacity
+            for (int day = 0; day < shifts.length; day++){
+              for (int hour = 0; hour < shifts[0].length; hour++){
+                Shift shift = shifts[day][hour];
+                if (shift.getCapacity() > 0){
+                  //we can be clever and use our contiguous scheduling logic by checking if and employee has been scheduled for a given time
+                  if (shift.contains(employee)){
+                    scheduleContiguouslyPostProcess(employee, day, hour, shifts, random);
+                  }
+                }  
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    //if we cant schedule contiguously with an already scheduled shift, try scheduling contiguously anywhere
+    for (int i = 0; i < 10; i++){
+      if (staff.getRemainingCapacity() > 0){
+        //loop over all employees with remaining capacity
+        for (Employee employee : employees){
+          if (employee.getCapacityRemaining() > 0){
+            //loop over each shift with remaining capacity
+            for (int day = 0; day < shifts.length; day++){
+              for (int hour = 0; hour < shifts[0].length; hour++){
+                Shift shift = shifts[day][hour];
+                if (shift.getCapacity() > 0){
+                    scheduleContiguouslyPostProcess(employee, day, hour, shifts, random);
+                }  
+              }
+            }
+          }
+        }
+      }
+    }
+
 
     return input;
   }
   
+  //identical to other contiguous method except we are a little more relaxed on requirements needed to schedule (no skill check)
+  private void scheduleContiguouslyPostProcess(Employee employee, int startDay, int startHour,
+      Shift[][] shifts, Random rand) {
+    int numberOfHoursToSchedule = Math.min((23 - startHour) , generateRandomInt(1, 3, rand));
+    
+    for (int i = 0; i < numberOfHoursToSchedule; i++){
+      // getting employees that are scheduled for the current shift
+      ArrayList<Employee> employeesScheduledDuringShift = new ArrayList<Employee>();
+      Shift currentShift = shifts[startDay][startHour + i + 1];
+      for (Employee e : currentShift) {
+        employeesScheduledDuringShift.add(e);
+      }
+
+      if(employee.isAvailable(startDay, startHour + i + 1) && employee.getCapacityRemaining() > 0
+          && !currentShift.contains(employee)){
+        currentShift.add(employee);
+      }
+    }
+  }
+
   private double getAverageSkill(ArrayList<Employee> employees){
     //no employees have been scheduled for this shift yet
     if (employees.size() == 0){

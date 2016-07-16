@@ -15,7 +15,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
 
   public static void main(String[] args) {
     KarenBot bot = new KarenBot(new EvenWorseAlgo());
-    String scenario = "hello-world";
+    String scenario = "hello-world-gender";
     int trials = 10;
     bot.run(scenario, trials);
   }
@@ -40,10 +40,11 @@ public class EvenWorseAlgo implements SchedulingAlgo {
       for (int hour = 0; hour < shifts[0].length; hour++) {
         boolean foundFirstEmployee = false;
         boolean firstEmployeeIsFemale = false;
+        boolean foundSecondEmployee = false;
 
         // iterate over each spot in each shift while it still has capacity
+        int iterations = 0;
         while (shifts[day][hour].getCapacityRemaining() > 0) {
-          // System.out.println(shifts[day][hour].getCapacity());
           // first iteration we don't care who we add as long as they are
           // available
           if (!foundFirstEmployee) {
@@ -55,19 +56,30 @@ public class EvenWorseAlgo implements SchedulingAlgo {
               firstEmployeeIsFemale = firstEmployee.getIsFemale();
             }
           }
-          // filling the rest of the shifts capacity
-          if (foundFirstEmployee) {
+          //for second employee we want to make sure they are different gender
+          if (foundFirstEmployee){
+            Employee secondEmployee = employees[random.nextInt(employees.length)];
+            if (secondEmployee.isAvailable(day, hour) && secondEmployee.getCapacityRemaining() > 0
+                && !shifts[day][hour].contains(secondEmployee) && secondEmployee.getIsFemale() != firstEmployeeIsFemale) {
+              shifts[day][hour].add(secondEmployee);
+              foundSecondEmployee = true;
+            }
+          }
+          // filling the rest of the shifts capacity, after second we don't care about gender
+          if (foundFirstEmployee && foundSecondEmployee) {
             Employee nextEmployee = employees[random.nextInt(employees.length)];
-            // if (nextEmployee.isAvailable(day, hour) &&
-            // nextEmployee.getIsFemale() != firstEmployeeIsFemale &&
-            // nextEmployee.getCapacity() > 0 &&
-            // !shifts[day][hour].contains(nextEmployee)){
+
             if (nextEmployee.isAvailable(day, hour) && nextEmployee.getCapacityRemaining() > 0
                 && !shifts[day][hour].contains(nextEmployee)) {
 
               shifts[day][hour].add(nextEmployee);
             }
           }
+          //prevent infinite loops, if we cant fill the schedule then eventually move on
+          if (iterations >= 1000){
+            continue;
+          }
+          iterations++;
         }
       }
 

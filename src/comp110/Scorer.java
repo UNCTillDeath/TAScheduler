@@ -10,7 +10,8 @@ public class Scorer {
   private final static String GENDER_REPRESENTATION = "Gender representation in every shift";
   private final static String COMBINED_EXPERIENCE = "Average experience in every shift is > 1.5";
   private final static String AVAILABILITY = "No staff is scheduled for a shift they are not available for";
-  private final static String SEED_BASED_DETERMINISM = "Any randomization must only use the Random instance provided";
+  private final static String SEED_BASED_DETERMINISM =
+      "Randomization is encouraged, but only using the Random instance provided";
 
   private Schedule _schedule;
   private SchedulingAlgo _algo;
@@ -40,15 +41,15 @@ public class Scorer {
     scorecard.add(Scorer.combinedExpertise(output));
     scorecard.add(Scorer.genderRepresentation(output));
     scorecard.add(Scorer.availability(output));
-    scorecard.add(Scorer.seedBasedDeterminism(input.copy(), algo));
+    scorecard.add(Scorer.seedBasedNondeterminism(input.copy(), algo));
     return scorecard;
   }
 
-  private static Scoreline seedBasedDeterminism(Schedule input, SchedulingAlgo algo) {
+  private static Scoreline seedBasedNondeterminism(Schedule input, SchedulingAlgo algo) {
     Random seed = new Random(0);
     Schedule reference = algo.run(input.copy(), seed);
     boolean passes = true;
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 2; i++) {
       seed = new Random(0);
       Schedule test = algo.run(input.copy(), seed);
       if (test.equals(reference) == false) {

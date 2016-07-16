@@ -20,6 +20,22 @@ public class Shift extends HashSet<Employee> {
     _capacity = capacity;
   }
 
+  public boolean add(Employee e) {
+    boolean added = super.add(e);
+    if (added) {
+      e.setCapacityUsed(e.getCapacityUsed() + 1);
+    }
+    return added;
+  }
+
+  public boolean remove(Employee e) {
+    boolean removed = super.remove(e);
+    if (removed) {
+      e.setCapacityUsed(e.getCapacityUsed() - 1);
+    }
+    return removed;
+  }
+
   public String toString() {
     List<String> names = this.stream().map(e -> e.getName()).collect(Collectors.toList());
     return String.format("%02d", _hour) + ": " + String.join(", ", names);

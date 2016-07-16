@@ -4,6 +4,7 @@ public class Employee {
 
   final private String _name;
   private int _capacity;
+  private int _capacityUsed;
   private boolean _isFemale;
   private int _level; // 1: in 401, 2: in 410/411, 3: in major
   private int[][] _availability;
@@ -14,6 +15,7 @@ public class Employee {
     _capacity = capacity;
     _isFemale = isFemale;
     _level = level;
+    _capacityUsed = 0;
   }
 
   public int hashCode() {
@@ -46,8 +48,12 @@ public class Employee {
     return _capacity;
   }
 
-  public void setCapacity(int capacity) {
-    _capacity = capacity;
+  public int getCapacityUsed() {
+    return _capacityUsed;
+  }
+
+  public void setCapacityUsed(int capacityUsed) {
+    _capacityUsed = capacityUsed;
   }
 
   public boolean getIsFemale() {

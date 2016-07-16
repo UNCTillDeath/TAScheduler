@@ -15,7 +15,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
 
   public static void main(String[] args) {
     KarenBot bot = new KarenBot(new EvenWorseAlgo());
-    String scenario = "hello-world-contiguous";
+    String scenario = "real-world-approx";
     int trials = 1000;
     bot.run(scenario, trials);
   }
@@ -140,6 +140,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
         }
       }
     }
+    //TODO add one more postprocessing that schedules anywhere if we can't schedule contiguously
 
 
     return input;

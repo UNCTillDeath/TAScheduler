@@ -259,6 +259,7 @@ public class Scorer {
         for (Employee employee : shift) {
           if (!employee.isAvailable(day, shift.getHour())) {
             notAvailable = true;
+            result.add(employee.getName() + " was scheduled for " + Week.dayString(day) + " at " + shift.getHour() + " and is not available");
           }
         }
       }

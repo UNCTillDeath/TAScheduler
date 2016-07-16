@@ -15,7 +15,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
 
   public static void main(String[] args) {
     KarenBot bot = new KarenBot(new EvenWorseAlgo());
-    String scenario = "hello-universe-experience";
+    String scenario = "hello-universe-contiguous";
     int trials = 1000;
     bot.run(scenario, trials);
   }
@@ -59,6 +59,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
               foundFirstEmployee = true;
               firstEmployeeIsFemale = firstEmployee.getIsFemale();
               firstEmployeeLevel = firstEmployee.getLevel();
+              scheduleContiguously(firstEmployee, day, hour, shifts, random);
             }
           }
           //for second employee we want to make sure they are different gender and diff skill
@@ -70,6 +71,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
               shift.add(secondEmployee);
               scheduledEmployees.add(secondEmployee);
               foundSecondEmployee = true;
+              scheduleContiguously(secondEmployee, day, hour, shifts, random);
             }
           }
           // filling the rest of the shifts capacity, after second we don't care about gender
@@ -81,6 +83,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
 
               shift.add(nextEmployee);
               scheduledEmployees.add(nextEmployee);
+              scheduleContiguously(nextEmployee, day, hour, shifts, random);
             }
           }
           //prevent infinite loops, if we cant fill the schedule then eventually give up and move on
@@ -97,11 +100,41 @@ public class EvenWorseAlgo implements SchedulingAlgo {
   }
   
   private double getAverageSkill(ArrayList<Employee> employees){
+    //no employees have been scheduled for this shift yet
+    if (employees.size() == 0){
+      return 0;
+    }
     int totalLevel = 0;
     for (Employee e : employees){
       totalLevel += e.getLevel();
     }
     return totalLevel / employees.size();
+  }
+  
+  //assume employee has already been scheduled for start hour
+  private void scheduleContiguously(Employee employee, int startDay, int startHour, Shift[][] shifts, Random rand){
+    int numberOfHoursToSchedule = Math.min((23 - startHour) , generateRandomInt(1, 3, rand));
+    for (int i = 0; i < numberOfHoursToSchedule; i++){
+      // some really dumb stuff
+      ArrayList<Employee> employeesScheduledDuringShift = new ArrayList<Employee>();
+      Shift currentShift = shifts[startDay][startHour + i + 1];
+      for (Employee e : currentShift) {
+        employeesScheduledDuringShift.add(e);
+      }
+
+      if(employee.isAvailable(startDay, startHour + i + 1) && employee.getCapacityRemaining() > 0
+          && !currentShift.contains(employee) && (employee.getLevel() >= getAverageSkill(employeesScheduledDuringShift)) ? true : false){
+        currentShift.add(employee);
+      }
+    }
+  }
+  
+  /*
+   * Helper method that generates a random number between min and max
+   * (inclusive)
+   */
+  private static int generateRandomInt(int min, int max, Random rand) {
+    return rand.nextInt((max - min) + 1) + min;
   }
 
 }

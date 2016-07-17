@@ -15,7 +15,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
 
   public static void main(String[] args) {
     KarenBot bot = new KarenBot(new EvenWorseAlgo());
-    String scenario = "real-world-approx";
+    String scenario = "real-world-approx-two-hour-chunks";
     int trials = 1000;
     bot.run(scenario, trials);
   }
@@ -152,7 +152,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
                 Shift shift = shifts[day][hour];
                 if (shift.getCapacity() > 0){
                   if(employee.isAvailable(day, hour) && employee.getCapacityRemaining() > 0
-                      && !shift.contains(employee) && hasSomeoneScheduledOfOppositeGender(employee, shift)){
+                      && !shift.contains(employee)){
                     shift.add(employee);
                   }
                 }  

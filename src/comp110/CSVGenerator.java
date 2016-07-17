@@ -279,6 +279,11 @@ public class CSVGenerator {
       // check to see if we have already scheduled a shift at that time
       if (week.getShifts()[day][hour].getCapacity() == 0) {
         week.getShifts()[day][hour] = new Shift(day, hour, 1);
+        //try to schedule in 2 hour chunks
+        if (hour != _endTime){
+          week.getShifts()[day][hour + 1] = new Shift(day, (hour + 1), 1);
+          i++; //manually increment since we scheduled another
+        }
       }
       // else try again
       else {

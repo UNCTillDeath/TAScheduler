@@ -6,7 +6,7 @@ public class CSVGenRunner {
 
   public static void main(String[] args) throws IOException {
 
-    String scenarioName = "real-world-approx";
+    String scenarioName = "real-world-approx-two-hour-chunks";
     int teamSize = 45;
     int startDay = 0;
     int endDay = 6;

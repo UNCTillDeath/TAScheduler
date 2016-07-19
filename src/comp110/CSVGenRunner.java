@@ -8,8 +8,10 @@ public class CSVGenRunner {
 
     String scenarioName = "real-world-approx-two-hour-chunks";
     int teamSize = 45;
+    //days are zero indexed
     int startDay = 0;
     int endDay = 6;
+    //hours are military time (zero indexed as well)
     int startHour = 9;
     int endHour = 21;
     int averageAvailability = 20;

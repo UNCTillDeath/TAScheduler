@@ -25,14 +25,14 @@ import comp110.Week;
  * 
  * 3) fill each shift with the correct number of employees by looping through all employees, seeing if they're available, and adding them
  */
-public class RandomAlgo implements SchedulingAlgo {
+public class SimpleRandomAlgo implements SchedulingAlgo {
 
   public static void main(String[] args) {
-    KarenBot bot = new KarenBot(new RandomAlgo());
+    KarenBot bot = new KarenBot(new SimpleRandomAlgo());
     // Change the following string to a different directory name in the 'data'
     // folder to try other scenarios.
-    String scenario = "hello-world";
-    int trials = 1;
+    String scenario = "real-world-approx-two-hour-chunks";
+    int trials = 1000;
     bot.run(scenario, trials);
   }
 

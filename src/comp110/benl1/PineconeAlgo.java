@@ -11,6 +11,10 @@ import comp110.Shift;
 import comp110.Staff;
 import comp110.Week;
 
+/**
+ * Essentially the method here is pick random people to fill up all the slots, then when there is one person left for a shift
+ * try to find someone that rounds it out
+ */
 public class PineconeAlgo implements SchedulingAlgo {
 
   private Schedule _schedule;
@@ -130,7 +134,7 @@ public class PineconeAlgo implements SchedulingAlgo {
       if (_shifts[day][hour].getCapacityRemaining() == 1) {
         
         //for first fifty tries, attempt to find someone to fill both gender and skill
-        if ((!possibleHasGenderBalance(e, day, hour) || !hasRequiredSkill(e, day, hour)) && 
+        if ((!possibleHasGenderBalance(e, day, hour) || !possibleHasRequiredSkill(e, day, hour)) && 
             _genderAndSkillAttempt < LOOK_FOR_GENDER_AND_SKILL){
           _genderAndSkillAttempt++;
           return false;
@@ -146,7 +150,7 @@ public class PineconeAlgo implements SchedulingAlgo {
         
         
         //If below required skill and not over max attempts to find it
-        if (!hasRequiredSkill(e, day, hour) && _skillAttempt < LOOK_FOR_SKILL && !possibleHasGenderBalance(e, day, hour)) {
+        if (!possibleHasRequiredSkill(e, day, hour) && _skillAttempt < LOOK_FOR_SKILL && !possibleHasGenderBalance(e, day, hour)) {
           _skillAttempt++;
           return false;
         }
@@ -221,7 +225,7 @@ public class PineconeAlgo implements SchedulingAlgo {
   }
 
   //Theoretically adds the employee to the shift to test if the level is > 1.5
-  private boolean hasRequiredSkill(Employee e, int day, int hour) {
+  private boolean possibleHasRequiredSkill(Employee e, int day, int hour) {
 
     double totalSkill = 0.0;
     double numOfEmployees = 0.0;
@@ -238,6 +242,20 @@ public class PineconeAlgo implements SchedulingAlgo {
     return (totalSkill / numOfEmployees) >= 1.5;
   }
   
+  private boolean hasRequiredSkill(int day, int hour) {
+
+    double totalSkill = 0.0;
+    double numOfEmployees = 0.0;
+
+    for (Employee toAdd : _shifts[day][hour]) {
+      totalSkill += toAdd.getLevel();
+      numOfEmployees++;
+    }
+
+    return (totalSkill / numOfEmployees) >= 1.5;
+  }
+  
+  
   //Method to test issues with schedule before returning it
   private void testSchedule(){
     for (int i = 0; i < _shifts.length; i++){
@@ -247,6 +265,21 @@ public class PineconeAlgo implements SchedulingAlgo {
         }
       }
     }
+  }
+
+  
+  //Run through every possible switch and see if any will help
+  private void attemptFix(int day, int hour){
+    //go through all shifts
+    for (int i = 0; i < _shifts.length; i++){
+      for (int j = 0; j < _shifts[0].length; j++){
+        
+        
+        
+      }
+    }
+    
+    
   }
 
   public static void main(String[] args) {

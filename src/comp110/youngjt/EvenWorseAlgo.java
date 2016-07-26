@@ -15,7 +15,7 @@ public class EvenWorseAlgo implements SchedulingAlgo {
 
   public static void main(String[] args) {
     KarenBot bot = new KarenBot(new EvenWorseAlgo());
-    String scenario = "hello-universe-contiguous";
+    String scenario = "real-world-approx-two-hour-chunks";
     int trials = 1000;
     bot.run(scenario, trials);
   }

@@ -57,7 +57,7 @@ public class TutorialAlgo implements SchedulingAlgo {
       for (int day = 0; day < shifts.length; day++) {
         for (int hour = 0; hour < shifts[0].length; hour++) {
           for (Employee employee : staff) {
-            if (employee.isAvailable(day, hour) && shifts[day][hour].getCapacity() > 0) {
+            if (employee.isAvailable(day, hour) && shifts[day][hour].getCapacityRemaining() > 0) {
               shifts[day][hour].add(employee);
             }
           }
@@ -70,7 +70,7 @@ public class TutorialAlgo implements SchedulingAlgo {
 
   public void scheduleChunk(Chunk chunk, Shift[][] shifts) {
     for (int i = 0; i < chunk.getSize(); i++) {
-      if (shifts[chunk.getDay()][chunk.getStartHour() + i].getCapacity() > 0 && chunk.getEmployee().isAvailable(chunk.getDay(), chunk.getStartHour() + i)) {
+      if (shifts[chunk.getDay()][chunk.getStartHour() + i].getCapacityRemaining() > 0 && chunk.getEmployee().isAvailable(chunk.getDay(), chunk.getStartHour() + i)) {
         shifts[chunk.getDay()][chunk.getStartHour() + i].add(chunk.getEmployee());
       }
     }

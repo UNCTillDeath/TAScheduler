@@ -15,7 +15,7 @@ public class Scorecard extends ArrayList<Scoreline> {
     _schedule = schedule;
   }
 
-  double getScore() {
+  public double getScore() {
     double score = 0;
     for (Scoreline line : this) {
       score = score + line.getValue();

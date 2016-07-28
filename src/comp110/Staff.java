@@ -14,10 +14,10 @@ public class Staff extends HashSet<Employee> {
     }
     return capacity;
   }
-  
-  public double getRemainingCapacity(){
+
+  public double getRemainingCapacity() {
     double remainingCapacity = 0;
-    for (Employee e : this){
+    for (Employee e : this) {
       remainingCapacity += (double) e.getCapacityRemaining();
     }
     return remainingCapacity;
@@ -48,6 +48,15 @@ public class Staff extends HashSet<Employee> {
       }
     }
     return this.size() == other.size();
+  }
+
+  public Employee getEmployeeByName(String name) {
+    for (Employee e : this) {
+      if (e.getName().equals(name)) {
+        return e;
+      }
+    }
+    return null;
   }
 
 }

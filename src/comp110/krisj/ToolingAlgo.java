@@ -13,6 +13,7 @@ import comp110.Schedule;
 import comp110.SchedulingAlgo;
 import comp110.Shift;
 import comp110.Staff;
+import comp110.Week;
 
 /**
  * Another fairly naive algorithm. The idea I'm trying here is sorting shifts by
@@ -24,7 +25,7 @@ public class ToolingAlgo implements SchedulingAlgo {
 
   public static void main(String[] args) {
     KarenBot bot = new KarenBot(new ToolingAlgo());
-    String scenario = "real-world-approx-two-hour-chunks";
+    String scenario = "spring-16-data";
     int trials = 1000;
     bot.run(scenario, trials);
   }
@@ -33,21 +34,28 @@ public class ToolingAlgo implements SchedulingAlgo {
   public Schedule run(Schedule schedule, Random random) {
     ArrayList<Employee> staff = this.staffAsArraylist(schedule.getStaff());
     Collections.shuffle(staff, random);
+
     ShiftsByStaffConstraints shiftsConstrained = new ShiftsByStaffConstraints();
     shiftsConstrained.loadSchedule(schedule);
+
+    Chunker chunker = new Chunker();
+    chunker.loadSchedule(schedule);
+
     for (Shift sortedShift : shiftsConstrained.getSortedShifts()) {
       Shift shift = schedule.getWeek().getShift(sortedShift.getDay(), sortedShift.getHour());
-      for (Employee employee : staff) {
-        if (shift.getCapacityRemaining() > 0) {
-          if (employee.getCapacityRemaining() > 0) {
-            if (employee.isAvailable(sortedShift.getDay(), sortedShift.getHour())) {
-              shift.add(employee);
-            }
-          }
-        } else {
-          break;
-        }
+      List<Chunk> chunks = chunker.chunksFor(shift.getDay(), shift.getHour());
+      while (shift.getCapacityRemaining() > 0 && chunks.size() > 0) {
+        int randomChunkIndex = random.nextInt(chunks.size());
+        Chunk chunk = chunks.get(randomChunkIndex);
+        chunker.scheduleChunk(schedule, chunk);
+        chunks.remove(randomChunkIndex);
       }
+    }
+
+    PostProcessor[] postProcessors = {
+        new FillGapsPostProcessor() };
+    for (PostProcessor postProcessor : postProcessors) {
+      postProcessor.process(schedule);
     }
 
     return schedule;

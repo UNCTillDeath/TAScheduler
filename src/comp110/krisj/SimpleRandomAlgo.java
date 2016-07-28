@@ -32,7 +32,7 @@ public class SimpleRandomAlgo implements SchedulingAlgo {
     // Change the following string to a different directory name in the 'data'
     // folder to try other scenarios.
     String scenario = "real-world-approx-two-hour-chunks";
-    int trials = 1000;
+    int trials = 100000;
     bot.run(scenario, trials);
   }
 

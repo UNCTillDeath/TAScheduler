@@ -1,4 +1,4 @@
-package comp110.FXCrew;
+package comp110.sfirrin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,10 +53,11 @@ public class FXAlgo implements SchedulingAlgo {
     _employees = new ArrayList<Employee>();
     for (Employee e : _staff) {
     	ChunkEmployee ce = new ChunkEmployee(e, _week);
-    	System.out.println(ce.getName());
-    	for (Chunk c : ce.getChunks()) {
-    		System.out.println(c);
-    	}
+//    	System.out.println(ce.getName());
+//    	for (Chunk c : ce.getChunks()) {
+//    		System.out.println(c);
+//    	}
+    	// Every employee is actually a ChunkEmployee
       _employees.add(ce);
     }
 
@@ -222,9 +223,12 @@ public class FXAlgo implements SchedulingAlgo {
 //		String debug = String.format("%15s %4f", e.getEmployee().getName(), e.getScore());
 //		System.out.println(debug);
 //    }
+    
+    
     ChunkEmployee chunkEmployee = (ChunkEmployee) highestScores.get(index);
     Chunk chunkOfShift = chunkEmployee.getChunk(shift);
     
+    // TODO: Currently only schedules by entire chunks
     boolean success = chunkOfShift.scheduleEmployeeToChunk();
     if (highestScores.get(index).getCapacityRemaining() == 0){
       _employees.remove(highestScores.get(index));

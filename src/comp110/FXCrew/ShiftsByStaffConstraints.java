@@ -26,8 +26,8 @@ public class ShiftsByStaffConstraints {
   private Staff _staff;
   private Schedule _schedule;
 
-  public ShiftsByStaffConstraints() {
-    _week = new Week("ShiftsByStaff");
+  public ShiftsByStaffConstraints(Schedule input) {
+    _week = input.getWeek();
     _shifts = _week.getShifts();
     _sortedShifts = new ArrayList<Shift>();
   }
@@ -38,20 +38,20 @@ public class ShiftsByStaffConstraints {
     _staff = _schedule.getStaff();
 
     Staff staff = schedule.getStaff();
-    for (Employee employee : staff) {
-      int[][] availability = employee.getAvailability();
-      for (int day = 0; day < availability.length; day++) {
-        int[] hours = availability[day];
-        for (int hour = 0; hour < hours.length; hour++) {
-          // A shift's capacity is not a field we can mutate. It is fixed at
-          // construction. We are going to construct a new shift, with capacity
-          // incremented by 1, each time.
-          if (employee.isAvailable(day, hour) && schedule.getWeek().getShift(day, hour).getCapacityRemaining() > 0) {
-            _shifts[day][hour] = new Shift(day, hour, _shifts[day][hour].getCapacity() + 1);
-          }
-        }
-      }
-    }
+//    for (Employee employee : staff) {
+//      int[][] availability = employee.getAvailability();
+//      for (int day = 0; day < availability.length; day++) {
+//        int[] hours = availability[day];
+//        for (int hour = 0; hour < hours.length; hour++) {
+//          // A shift's capacity is not a field we can mutate. It is fixed at
+//          // construction. We are going to construct a new shift, with capacity
+//          // incremented by 1, each time.
+//          if (employee.isAvailable(day, hour) && schedule.getWeek().getShift(day, hour).getCapacityRemaining() > 0) {
+//            _shifts[day][hour] = new Shift(day, hour, _shifts[day][hour].getCapacity() + 1);
+//          }
+//        }
+//      }
+//    }
 
     // At this point each shift's capacity is the total # of employees who are
     // available for that shift. Now we're going to flatten the 2D array into a

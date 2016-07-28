@@ -1,5 +1,332 @@
 package comp110.FXCrew;
 
-public class FXAlgo {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import comp110.Employee;
+import comp110.KarenBot;
+import comp110.Schedule;
+import comp110.SchedulingAlgo;
+import comp110.Shift;
+import comp110.Staff;
+import comp110.Week;
+
+
+public class FXAlgo implements SchedulingAlgo {
+  
+  private Schedule _schedule;
+
+  private Week _week;
+
+  private Staff _staff;
+
+  private List<Shift> _shifts;
+
+  private ArrayList<Employee> _employees;
+
+  private Random _random;
+  
+  private static final int SHIFT_FILL_ATTEMPTS = 100;
+
+  @Override
+  public Schedule run(Schedule input, Random random) {
+
+    setup(input, random);
+
+    scheduleStaff();
+
+    return input;
+  }
+
+  private void setup(Schedule input, Random random) {
+    
+    _schedule = input;
+    
+    ShiftsByStaffConstraints sorter = new ShiftsByStaffConstraints(input);
+    sorter.loadSchedule(input);
+
+    _week = input.getWeek();
+
+    _staff = input.getStaff();
+
+    _employees = new ArrayList<Employee>();
+    for (Employee e : _staff) {
+      _employees.add(e);
+    }
+
+    _shifts = sorter.getSortedShifts();
+
+    _random = random;
+
+  }
+
+  private void scheduleStaff() {
+
+    for (int i = 0; i < _shifts.size(); i++) {
+      
+      int shiftAttempts = 0;
+
+        while (_shifts.get(i).getCapacityRemaining() > 0) {
+         
+          if (shiftAttempts > SHIFT_FILL_ATTEMPTS){
+            break;
+          }
+          
+          Shift shift = _shifts.get(i);
+          //System.out.println(isRealShift(shift));
+
+          ArrayList<Employee> availableEmployees = getAvailableEmployees(shift);
+
+          ArrayList<ScoredEmployee> scoredEmployees = scoreEmployees(availableEmployees, shift);
+
+          addHighestScoredEmployee(scoredEmployees, shift);
+          
+          shiftAttempts++;
+        }
+        
+      }
+    }
+  
+  private boolean isRealShift(Shift shift){
+    Shift[][] shifts = _schedule.getWeek().getShifts();
+    for (int i = 0; i < shifts.length; i++){
+      for (int j = 0; j < shifts[0].length; j++){
+        if (shift == shifts[i][j]) return true;
+      }
+    }
+    return false;
+  }
+
+  
+  
+  //return a list of the avialable employees for a given shift
+  private ArrayList<Employee> getAvailableEmployees(Shift shift){
+    ArrayList<Employee> availableEmployees = new ArrayList<Employee>();
+    
+    for (Employee e : _employees){
+      
+      if (e.isAvailable(shift.getDay(), shift.getHour())){
+        availableEmployees.add(e);
+      }
+      
+    }
+    
+    return availableEmployees;
+  }
+  
+  //return a list of scored employees 
+  private ArrayList<ScoredEmployee> scoreEmployees(ArrayList<Employee> availableEmployees,Shift shift){
+    ArrayList<ScoredEmployee> scoredEmployees = new ArrayList<ScoredEmployee>();
+    int hundred = 0;
+    for (Employee e : availableEmployees){
+      double score = 0.0;
+      
+      //scoring goes here
+      
+      //gender
+//      if (missingGender(shift) == 0 || hasGenderBalance(shift)){
+//        if (majorityRemaining() == 1){
+//          if (!e.getIsFemale()){
+//            score += .25;
+//          }
+//        }
+//        else{
+//          if(e.getIsFemale()){
+//            score += .25;
+//          }
+//        }
+//      }
+//      else{
+//        if (e.getIsFemale() && missingGender(shift) == 2){
+//          score++;
+//        }
+//        if (!e.getIsFemale() && missingGender(shift) == 1){
+//          score++;
+//        }
+//      }
+//      
+//      if (getPotentialSkill(e, shift) < 1.5) {
+//        
+//      }
+//      else{
+//        //using equation y = (-1/3)x + 1.5 where x is employees' skill. equation normalizes the score to be given between 0 and 1
+//        score += (-1.0/3.0) * (double) e.getLevel() + 1.5; 
+//      }
+      
+//      if (isContiguous(e, shift)){
+//        //System.out.println("hi");
+//        
+//        score+= 100;
+//      }
+       if(e.isAvailable(shift.getDay(), shift.getHour() - 1) || e.isAvailable(shift.getDay(), shift.getHour() + 1)) {
+        System.out.println("running");
+        score+=100;
+      }
+      
+      if (isScheduled(e, shift)){
+        score = -.5;
+      }
+      
+      if (score == 100) hundred++;
+      scoredEmployees.add(new ScoredEmployee(e, score));
+    }
+    //System.out.println(hundred);
+    return scoredEmployees;
+  }
+  
+  private boolean isScheduled(Employee e, Shift shift){
+    for (Employee e1 : shift){
+      if (e == e1){
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  //try to add highest scored employee out of list, return success of attempt
+  private boolean addHighestScoredEmployee(ArrayList<ScoredEmployee> scoredEmployees, Shift shift){
+    //keep list of equally high scores
+    
+    if (scoredEmployees.size() == 0) {
+      return false;
+    }
+    
+    double highestScore = -1.0;
+    
+    ArrayList<Employee> highestScores = new ArrayList();
+    for (ScoredEmployee e : scoredEmployees){
+      if (e.getScore() > highestScore){
+        highestScore = e.getScore();
+        
+      }
+    }
+    
+    for (ScoredEmployee e : scoredEmployees){
+      if (e.getScore() == highestScore){
+        highestScores.add(e.getEmployee());
+      }
+    }
+    
+    int index = _random.nextInt(highestScores.size());
+    //System.out.println(hasHighest.getEmployee().getName());
+    
+    
+    boolean success = shift.add(highestScores.get(index));
+    if (highestScores.get(index).getCapacityRemaining() == 0){
+      _employees.remove(highestScores.get(index));
+    }
+    
+    
+    //if (success) System.out.println("added");
+    return success;
+  }
+  
+  
+  private double getPotentialSkill(Employee e, Shift shift){
+    double totalSkill = 0.0;
+    double numOfEmployees = 0.0;
+
+    for (Employee toAdd : shift) {
+      totalSkill += toAdd.getLevel();
+      numOfEmployees++;
+    }
+
+    //add employee
+    totalSkill += e.getLevel();
+    numOfEmployees++;
+
+    return totalSkill / numOfEmployees;
+  }
+  
+  private boolean hasGenderBalance(Shift shift){
+    //Can't have gender equality with 1 person
+    if (shift.getCapacity() == 1) return true;
+
+    boolean hasMale = false;
+    boolean hasFemale = false;
+
+    for (Employee e : shift) {
+      if (e.getIsFemale()) hasFemale = true;
+      if (!e.getIsFemale()) hasMale = true;
+    }
+
+    return hasMale && hasFemale;
+  }
+  
+  //0=missing both 1=missing male 2=missing female
+  private int missingGender(Shift shift){
+    
+    if (shift.getCapacityRemaining() == shift.getCapacity()){
+      return 0;
+    }
+    
+    boolean hasMale = false;
+    boolean hasFemale = false;
+
+    for (Employee e : shift) {
+      if (e.getIsFemale()) hasFemale = true;
+      if (!e.getIsFemale()) hasMale = true;
+    }
+
+    if (!hasMale){
+      return 1;
+    }
+    else {
+      return 2;
+    }
+    
+  }
+  
+  private boolean isContiguous(Employee e, Shift shift){
+    
+    if (shift.getHour() == 0 && shift.getHour() == 23) {
+      return false;
+    }
+    if (shift.getHour() - 1 == -1) System.out.println("wtf");
+    Shift before = _week.getShift(shift.getDay(), shift.getHour() - 1);
+    
+    for (Employee e1 : before){
+      if (e1 == e) {
+        return true;
+      }
+    }
+    
+    Shift after = _week.getShift(shift.getDay(), shift.getHour() + 1);
+    
+    for (Employee e1 : after){
+      if (e1 == e){
+        return true;
+      }
+    }
+    
+     return false;
+  }
+  
+  //males = 1 females = 0
+  private int majorityRemaining(){
+    int maleHours = 0;
+    int femaleHours = 0;
+    
+    for (Employee e : _staff){
+      if (e.getIsFemale()){
+        femaleHours += e.getCapacityRemaining();
+      }
+      else {
+        maleHours += e.getCapacityRemaining();
+      }
+    }
+    
+    return maleHours > femaleHours ? 1 : 0; 
+  }
+  
+  public static void main(String[] args) {
+
+    KarenBot karenBot = new KarenBot(new FXAlgo());
+
+    karenBot.run("real-world-approx-two-hour-chunks", 1);
+  }
 
 }
+
+

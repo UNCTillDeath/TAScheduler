@@ -15,6 +15,10 @@ public class KarenBot {
   }
 
   public void run(String scenario, int trials) {
+    this.run(scenario, trials, false);
+  }
+
+  public void run(String scenario, int trials, boolean verbose) {
     SchedulingAlgo algo = _algo;
 
     // Load Data
@@ -32,17 +36,19 @@ public class KarenBot {
 
     // Run Algorithm for N trials and score it
     Scorer scorer = new Scorer(staff, week, algo);
-    Scorecard scorecard = scorer.run(trials);
+    RunReport report = scorer.runWithReport(trials, verbose);
 
     // Output Results
-    output(scorecard);
+    output(report);
   }
 
-  private static void output(Scorecard scorecard) {
+  private static void output(RunReport report) {
+    Scorecard scorecard = report.getHigh();
     log("Diagnostics", scorecard.getDiagnostics());
     log("Schedule", scorecard.getSchedule().getWeek());
-    String score = StringFormatter.format("%.3f - Schedule Score", scorecard.getScore()).get();
+    String score = StringFormatter.format("%.3f - Highest Score", scorecard.getScore()).get();
     log(score, scorecard);
+    log("Stats (n:" + report.getTrials() + ")", report.getStats());
   }
 
   private static void log(String header, Object body) {

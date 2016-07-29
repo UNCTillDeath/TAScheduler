@@ -32,6 +32,14 @@ public class Scorer {
     return bestRun;
   }
 
+  public RunReport runWithReport(int trials, boolean verbose) {
+    RunReport report = new RunReport(trials, verbose);
+    for (int i = 0; i < trials; i++) {
+      report.add(Scorer.evaluate(_schedule, _algo, new Random()));
+    }
+    return report;
+  }
+
   public static Scorecard evaluate(Schedule input, SchedulingAlgo algo, Random random) {
     Schedule output = algo.run(input.copy(), random);
     Scorecard scorecard = new Scorecard(output);
@@ -259,7 +267,8 @@ public class Scorer {
         for (Employee employee : shift) {
           if (!employee.isAvailable(day, shift.getHour())) {
             notAvailable = true;
-            result.add(employee.getName() + " was scheduled for " + Week.dayString(day) + " at " + shift.getHour() + " and is not available");
+            result.add(employee.getName() + " was scheduled for " + Week.dayString(day) + " at " + shift.getHour()
+                + " and is not available");
           }
         }
       }

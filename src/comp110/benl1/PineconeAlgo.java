@@ -10,6 +10,8 @@ import comp110.SchedulingAlgo;
 import comp110.Shift;
 import comp110.Staff;
 import comp110.Week;
+import comp110.krisj.FillGapsPostProcessor;
+import comp110.krisj.PostProcessor;
 
 /**
  * Essentially the method here is pick random people to fill up all the slots, then when there is one person left for a shift
@@ -34,19 +36,19 @@ public class PineconeAlgo implements SchedulingAlgo {
   private int _skillAttempt;
 
   private int _shiftAttempt;
-  
+
   private int _genderAndSkillAttempt;
-  
+
   private static final int SHIFT_FILL = 2000;
-  
+
   private static final int LOOK_FOR_GENDER = 100;
-  
+
   private static final int LOOK_FOR_SKILL = 250;
-  
+
   private static final int LOOK_FOR_GENDER_AND_SKILL = 75;
-  
+
   private static final int CONTIGUOUS_SLOTS = 4;
-  
+
   private static final int LATEST_SHIFT = 23;
 
   @Override
@@ -55,8 +57,14 @@ public class PineconeAlgo implements SchedulingAlgo {
     setup(input, random);
 
     assignSchedule();
-    
-    testSchedule();
+
+    //    PostProcessor[] postProcessors = {
+    //        new FillGapsPostProcessor() };
+    //    for (PostProcessor postProcessor : postProcessors) {
+    //      postProcessor.process(input);
+    //    }
+
+    scheduleRemainingEmployees();
 
     return input;
   }
@@ -99,7 +107,7 @@ public class PineconeAlgo implements SchedulingAlgo {
           }
 
           _shiftAttempt++;
-          
+
           //check to see if all employees are at full capacity
           if (_employees.size() == 0) continue;
 
@@ -121,7 +129,7 @@ public class PineconeAlgo implements SchedulingAlgo {
 
   //returns true if successful, false for failurie
   private boolean scheduleEmployee(Employee e, int day, int hour) {
-    
+
     //if the shift is already full don't try to schedule anyone
     if (_shifts[day][hour].getCapacityRemaining() == 0) {
       return false;
@@ -132,23 +140,19 @@ public class PineconeAlgo implements SchedulingAlgo {
 
       //worry about gender/skill if there is only one more person to be put in the shift
       if (_shifts[day][hour].getCapacityRemaining() == 1) {
-        
+
         //for first fifty tries, attempt to find someone to fill both gender and skill
-        if ((!possibleHasGenderBalance(e, day, hour) || !possibleHasRequiredSkill(e, day, hour)) && 
-            _genderAndSkillAttempt < LOOK_FOR_GENDER_AND_SKILL){
+        if ((!possibleHasGenderBalance(e, day, hour) || !possibleHasRequiredSkill(e, day, hour)) && _genderAndSkillAttempt < LOOK_FOR_GENDER_AND_SKILL) {
           _genderAndSkillAttempt++;
           return false;
         }
-        
-        
+
         //If no gender equality and not over max attempts to find it
         if (!possibleHasGenderBalance(e, day, hour) && _genderAttempt < LOOK_FOR_GENDER) {
           _genderAttempt++;
           return false;
         }
-        
-        
-        
+
         //If below required skill and not over max attempts to find it
         if (!possibleHasRequiredSkill(e, day, hour) && _skillAttempt < LOOK_FOR_SKILL && !possibleHasGenderBalance(e, day, hour)) {
           _skillAttempt++;
@@ -157,36 +161,35 @@ public class PineconeAlgo implements SchedulingAlgo {
 
       }
       boolean success = _shifts[day][hour].add(e);
-      
+
       //If that was the last hour for the employee, remove them from list of possible employees
       if (e.getCapacityRemaining() == 0) {
         _employees.remove(e);
       }
-      
+
       return success;
 
     }
-    
+
     return false;
   }
-  
+
   //This method will be called if an employee is successfully scheduled for a time slot and will attempt to give them contiguous shifts
-  private void attemptContiguousShift(Employee e, int day, int hour){
-    
-    for (int i = 1; i < CONTIGUOUS_SLOTS; i++){
-    
+  private void attemptContiguousShift(Employee e, int day, int hour) {
+
+    for (int i = 1; i < CONTIGUOUS_SLOTS; i++) {
+
       //return if this shift is passed the latest shift
       if ((hour + i) > LATEST_SHIFT) return;
-      
+
       //try to schedule the employee for the contiguous shift
-      if (!scheduleEmployee(e, day, hour + i)){
-        
+      if (!scheduleEmployee(e, day, hour + i)) {
+
         //if unsuccessful in scheduling for next shift, don't bother continuing
         return;
       }
     }
-    
-    
+
   }
 
   //checks if a shift has gender balance with a certain employee added
@@ -202,14 +205,14 @@ public class PineconeAlgo implements SchedulingAlgo {
       if (e.getIsFemale()) hasFemale = true;
       if (!e.getIsFemale()) hasMale = true;
     }
-    
+
     if (toAdd.getIsFemale()) hasFemale = true;
     else hasMale = true;
 
     return hasMale && hasFemale;
   }
-  
-  private boolean hasGenderBalance(int day, int hour){
+
+  private boolean hasGenderBalance(int day, int hour) {
     //Can't have gender equality with 1 person
     if (_shifts[day][hour].getCapacity() == 1) return true;
 
@@ -241,7 +244,7 @@ public class PineconeAlgo implements SchedulingAlgo {
 
     return (totalSkill / numOfEmployees) >= 1.5;
   }
-  
+
   private boolean hasRequiredSkill(int day, int hour) {
 
     double totalSkill = 0.0;
@@ -254,12 +257,11 @@ public class PineconeAlgo implements SchedulingAlgo {
 
     return (totalSkill / numOfEmployees) >= 1.5;
   }
-  
-  
+
   //Method to test issues with schedule before returning it
-  private void testSchedule(){
-    for (int i = 0; i < _shifts.length; i++){
-      for (int j = 0; j < _shifts[0].length; j++){
+  private void testSchedule() {
+    for (int i = 0; i < _shifts.length; i++) {
+      for (int j = 0; j < _shifts[0].length; j++) {
         if (_shifts[i][j].size() > _shifts[i][j].getCapacity()) {
           System.out.println("not again please");
         }
@@ -267,26 +269,68 @@ public class PineconeAlgo implements SchedulingAlgo {
     }
   }
 
-  
   //Run through every possible switch and see if any will help
-  private void attemptFix(int day, int hour){
+  private void attemptFix(int day, int hour) {
     //go through all shifts
-    for (int i = 0; i < _shifts.length; i++){
-      for (int j = 0; j < _shifts[0].length; j++){
-        
-        
-        
+    for (int i = 0; i < _shifts.length; i++) {
+      for (int j = 0; j < _shifts[0].length; j++) {
+
       }
     }
-    
-    
+
+  }
+
+  private void scheduleRemainingEmployees() {
+    ArrayList<Employee> hasRemaining = new ArrayList<Employee>();
+
+    //put all employees with remaining hours in a list
+    for (int i = 0; i < _employees.size(); i++) {
+      if (_employees.get(i).getCapacityRemaining() > 0) {
+        hasRemaining.add(_employees.get(i));
+      }
+    }
+    //System.out.println(hasRemaining.size());
+    for (Employee e : hasRemaining) {
+
+      ArrayList<Shift> availableShifts = getShiftsAvailable(e);
+
+      boolean scheduled = false;
+
+      for (Shift shift : availableShifts) {
+        if (possibleHasRequiredSkill(e, shift.getDay(), shift.getHour())) {
+
+          shift.add(e);
+
+          if (e.getCapacityRemaining() == 0) {
+            scheduled = true;
+            break;
+          }
+        }
+      }
+      //System.out.println(scheduled);
+    }
+
+  }
+
+  private ArrayList<Shift> getShiftsAvailable(Employee e) {
+    ArrayList<Shift> availableShifts = new ArrayList<Shift>();
+
+    for (int i = 0; i < _shifts.length; i++) {
+      for (int j = 0; j < _shifts[0].length; j++) {
+        if (e.isAvailable(i, j)) {
+          availableShifts.add(_shifts[i][j]);
+        }
+      }
+    }
+
+    return availableShifts;
   }
 
   public static void main(String[] args) {
 
     KarenBot karenBot = new KarenBot(new PineconeAlgo());
 
-    karenBot.run("real-world-approx-two-hour-chunks", 1000);
+    karenBot.run("spring-16-data", 1000);
   }
 
 }

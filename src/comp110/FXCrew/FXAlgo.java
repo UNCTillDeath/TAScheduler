@@ -34,7 +34,7 @@ public class FXAlgo implements SchedulingAlgo {
     setup(input, random);
 
     scheduleStaff();
-
+    scheduleRemainingEmployees();
     return input;
   }
 
@@ -52,9 +52,9 @@ public class FXAlgo implements SchedulingAlgo {
     _employees = new ArrayList<Employee>();
     for (Employee e : _staff) {
       ChunkEmployee ce = new ChunkEmployee(e, _week);
-      System.out.println(ce.getName());
+      // System.out.println(ce.getName());
       for (Chunk c : ce.getChunks()) {
-        System.out.println(c);
+        // System.out.println(c);
       }
       _employees.add(ce);
     }
@@ -128,52 +128,47 @@ public class FXAlgo implements SchedulingAlgo {
       // scoring goes here
 
       // gender
-      // if (missingGender(shift) == 0 || hasGenderBalance(shift)){
-      // if (majorityRemaining() == 1){
-      // if (!e.getIsFemale()){
-      // score += .25;
-      // }
-      // }
-      // else{
-      // if(e.getIsFemale()){
-      // score += .25;
-      // }
-      // }
-      // }
-      // else{
-      // if (e.getIsFemale() && missingGender(shift) == 2){
-      // score++;
-      // }
-      // if (!e.getIsFemale() && missingGender(shift) == 1){
-      // score++;
-      // }
-      // }
-      //
-      // if (getPotentialSkill(e, shift) < 1.5) {
-      //
-      // }
-      // else{
-      // //using equation y = (-1/3)x + 1.5 where x is employees' skill.
-      // equation normalizes the score to be given between 0 and 1
-      // score += (-1.0/3.0) * (double) e.getLevel() + 1.5;
-      // }
+      if (missingGender(shift) == 0 || hasGenderBalance(shift)) {
+        if (majorityRemaining() == 1) {
+          if (!e.getIsFemale()) {
+            score += .25;
+          }
+        } else {
+          if (e.getIsFemale()) {
+            score += .25;
+          }
+        }
+      } else {
+        if (e.getIsFemale() && missingGender(shift) == 2) {
+          score++;
+        }
+        if (!e.getIsFemale() && missingGender(shift) == 1) {
+          score++;
+        }
+      }
 
-      // if (isContiguous(e, shift)){
-      // //System.out.println("hi");
-      //
-      // score+= 100;
-      // }
+      if (getPotentialSkill(e, shift) < 1.5) {
+
+      } else {
+        // using equation y = (-1/3)x + 1.5 where x is employees' skill.
+        // equation normalizes the score to be given between 0 and 1
+        score += (-1.0 / 3.0) * (double) e.getLevel() + 1.5;
+      }
+
+      if (isContiguous(e, shift)) {
+        // System.out.println("hi");
+
+        score += 1.0;
+      }
       if (e.isAvailable(shift.getDay(), shift.getHour() - 1) || e.isAvailable(shift.getDay(), shift.getHour() + 1)) {
         // System.out.println("running");
-        score += 100;
+        score += 1.0;
       }
 
       if (isScheduled(e, shift)) {
         score = -.5;
       }
 
-      if (score == 100)
-        hundred++;
       scoredEmployees.add(new ScoredEmployee(e, score));
     }
     // System.out.println(hundred);
@@ -341,6 +336,69 @@ public class FXAlgo implements SchedulingAlgo {
     KarenBot karenBot = new KarenBot(new FXAlgo());
 
     karenBot.run("spring-16-data", 1000);
+
+  }
+
+  private void scheduleRemainingEmployees() {
+    ArrayList<Employee> hasRemaining = new ArrayList<Employee>();
+
+    // put all employees with remaining hours in a list
+    for (int i = 0; i < _employees.size(); i++) {
+      if (_employees.get(i).getCapacityRemaining() > 0) {
+        hasRemaining.add(_employees.get(i));
+      }
+    }
+    // System.out.println(hasRemaining.size());
+    for (Employee e : hasRemaining) {
+
+      ArrayList<Shift> availableShifts = getShiftsAvailable(e);
+
+      boolean scheduled = false;
+
+      for (Shift shift : availableShifts) {
+        // if (possibleHasRequiredSkill(e, shift)) {
+
+        shift.add(e);
+
+        if (e.getCapacityRemaining() == 0) {
+          scheduled = true;
+          break;
+          // }
+        }
+      }
+      // System.out.println(scheduled);
+    }
+
+  }
+
+  private boolean possibleHasRequiredSkill(Employee e, Shift shift) {
+
+    double totalSkill = 0.0;
+    double numOfEmployees = 0.0;
+
+    for (Employee toAdd : shift) {
+      totalSkill += toAdd.getLevel();
+      numOfEmployees++;
+    }
+
+    // "add" employee
+    totalSkill += e.getLevel();
+    numOfEmployees++;
+
+    return (totalSkill / numOfEmployees) >= 1.5;
+  }
+
+  private ArrayList<Shift> getShiftsAvailable(Employee e) {
+    ArrayList<Shift> availableShifts = new ArrayList<Shift>();
+
+    for (Shift shift : _shifts) {
+      if (e.isAvailable(shift.getDay(), shift.getHour())) {
+        availableShifts.add(shift);
+      }
+    }
+
+    return availableShifts;
+
   }
 
 }

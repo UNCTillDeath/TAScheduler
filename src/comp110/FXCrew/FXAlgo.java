@@ -35,6 +35,7 @@ public class FXAlgo implements SchedulingAlgo {
 
     scheduleStaff();
     scheduleRemainingEmployees();
+    testSchedule();
     return input;
   }
 
@@ -159,8 +160,7 @@ public class FXAlgo implements SchedulingAlgo {
         // System.out.println("hi");
 
         score += 1.0;
-      }
-      if (e.isAvailable(shift.getDay(), shift.getHour() - 1) || e.isAvailable(shift.getDay(), shift.getHour() + 1)) {
+      } else if (e.isAvailable(shift.getDay(), shift.getHour() - 1) || e.isAvailable(shift.getDay(), shift.getHour() + 1)) {
         // System.out.println("running");
         score += 1.0;
       }
@@ -340,15 +340,26 @@ public class FXAlgo implements SchedulingAlgo {
   }
 
   private void scheduleRemainingEmployees() {
-    ArrayList<Employee> hasRemaining = new ArrayList<Employee>();
+    ArrayList<Employee> hasRemaining = getEmployeesWithRemainingCapacity();
+    // System.out.println(hasRemaining.size());
 
-    // put all employees with remaining hours in a list
-    for (int i = 0; i < _employees.size(); i++) {
-      if (_employees.get(i).getCapacityRemaining() > 0) {
-        hasRemaining.add(_employees.get(i));
+    // first time through we only schedule with shifts that have capacity
+    // remaining
+    for (Employee e : hasRemaining) {
+
+      ArrayList<Shift> availableShifts = getShiftsAvailable(e);
+
+      for (Shift shift : availableShifts) {
+        // if (possibleHasRequiredSkill(e, shift)) {
+        if (shift.getCapacityRemaining() > 0 && e.getCapacityRemaining() > 0) {
+          shift.add(e);
+        }
       }
     }
-    // System.out.println(hasRemaining.size());
+
+    // second time through we only care about filling Employees remaining
+    // capacity
+    hasRemaining = getEmployeesWithRemainingCapacity();
     for (Employee e : hasRemaining) {
 
       ArrayList<Shift> availableShifts = getShiftsAvailable(e);
@@ -357,18 +368,24 @@ public class FXAlgo implements SchedulingAlgo {
 
       for (Shift shift : availableShifts) {
         // if (possibleHasRequiredSkill(e, shift)) {
-
-        shift.add(e);
-
-        if (e.getCapacityRemaining() == 0) {
-          scheduled = true;
-          break;
-          // }
+        if (e.getCapacityRemaining() > 0) {
+          shift.add(e);
         }
       }
-      // System.out.println(scheduled);
     }
 
+  }
+
+  private ArrayList<Employee> getEmployeesWithRemainingCapacity() {
+    ArrayList<Employee> hasRemaining = new ArrayList<Employee>();
+
+    // put all employees with remaining hours in a list
+    for (int i = 0; i < _employees.size(); i++) {
+      if (_employees.get(i).getCapacityRemaining() > 0) {
+        hasRemaining.add(_employees.get(i));
+      }
+    }
+    return hasRemaining;
   }
 
   private boolean possibleHasRequiredSkill(Employee e, Shift shift) {
@@ -399,6 +416,15 @@ public class FXAlgo implements SchedulingAlgo {
 
     return availableShifts;
 
+  }
+
+  private void testSchedule() {
+    // System.out.println("TEST SCHEDULE");
+    for (Employee e : _employees) {
+      if (e.isAvailable(1, 20) && e.getCapacityRemaining() > 0) {
+        System.out.println(e.getName());
+      }
+    }
   }
 
 }

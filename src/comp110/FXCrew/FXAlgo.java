@@ -386,7 +386,7 @@ private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shif
 
     KarenBot karenBot = new KarenBot(new FXAlgo());
 
-    karenBot.run("spring-16-data", 1000);
+    karenBot.run("week1", 1000);
 
   }
 

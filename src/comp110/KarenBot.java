@@ -57,4 +57,33 @@ public class KarenBot {
     out.println("======================");
     out.println(body);
   }
+
+  public void runForKaren(String scenario, int day, int hour) {
+    SchedulingAlgo algo = _algo;
+
+    // Load Data
+    Week week;
+    Staff staff;
+
+    try {
+      week = DataIO.parseWeek("data/" + scenario + "/week.csv", scenario);
+      staff = DataIO.parseStaff("data/" + scenario + "/staff");
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.exit(1);
+      return;
+    }
+
+    // Run Algorithm for N trials and score it
+    getWhoIsAvailable(staff, 4, 15);
+  }
+
+  public void getWhoIsAvailable(Staff staff, int day, int hour) {
+    System.out.println("Day: " + day + " Hour: " + hour);
+    for (Employee e : staff) {
+      if (e.isAvailable(day, hour)) {
+        System.out.println(e.getName());
+      }
+    }
+  }
 }

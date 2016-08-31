@@ -75,7 +75,7 @@ public class KarenBot {
     }
 
     // Run Algorithm for N trials and score it
-    getWhoIsAvailable(staff, 4, 15);
+    getWhoIsAvailable(staff, day, hour);
   }
 
   public void getWhoIsAvailable(Staff staff, int day, int hour) {

@@ -34,12 +34,32 @@ public class KarenBot {
       return;
     }
 
+    // Verify everyone has at least 20 available shifts for scheduling
+    verifyHours(staff, week);
+
     // Run Algorithm for N trials and score it
     Scorer scorer = new Scorer(staff, week, algo);
     RunReport report = scorer.runWithReport(trials, verbose);
 
     // Output Results
     output(report);
+  }
+
+  private void verifyHours(Staff staff, Week week) {
+    for (Employee e : staff) {
+      int employeeHoursAvailability = 0;
+      for (int day = 0; day < e.getAvailability().length; day++) {
+        for (int hour = 0; hour < e.getAvailability()[0].length; hour++) {
+          if (e.isAvailable(day, hour) && week.getShift(day, hour).getCapacity() > 0) {
+            employeeHoursAvailability++;
+          }
+        }
+      }
+      if (employeeHoursAvailability < 20) {
+        System.out.println(e.getName() + " only has " + employeeHoursAvailability + " available for scheduling");
+      }
+    }
+
   }
 
   private static void output(RunReport report) {

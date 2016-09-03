@@ -11,7 +11,7 @@ public class WhoIsAvailable implements SchedulingAlgo {
     KarenBot bot = new KarenBot(new WhoIsAvailable());
     String scenario = "week1";
     int trials = 1;
-    bot.runForKaren(scenario, 5, 15);
+    bot.runForKaren(scenario, 3, 16);
   }
 
   @Override

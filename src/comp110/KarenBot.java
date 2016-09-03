@@ -56,7 +56,7 @@ public class KarenBot {
         }
       }
       if (employeeHoursAvailability < 20) {
-        System.out.println(e.getName() + " only has " + employeeHoursAvailability + " available for scheduling");
+        System.out.println(e.getName() + " only has " + employeeHoursAvailability + " available for scheduling (" + e.getCapacity() + ")");
       }
     }
 

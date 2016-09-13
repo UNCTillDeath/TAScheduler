@@ -76,10 +76,28 @@ public class KarenBot {
   }
 
   private static void writeOutput(Scorecard scorecard) {
-    shiftsAsArray(scorecard.getSchedule().getWeek());
+    ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(scorecard.getSchedule().getWeek());
     try {
       FileWriter output = new FileWriter(new File("data/output.csv"));
-      output.write(scorecard.getSchedule().getWeek().toString());
+      output.write(",Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday\n");
+      for (int hour = getEarliestHour(scorecard.getSchedule().getWeek()); hour < getLatestHour(scorecard.getSchedule().getWeek()); hour++) {
+        output.write(hour + " -- " + (hour + 1));
+        int max = getMaxSize(hour, scorecard.getSchedule().getWeek());
+        if (max == 0) {
+          output.write("\n");
+        }
+        for (int i = 0; i < max; i++) {
+          output.write(",");
+          for (int day = 0; day < 7; day++) {
+            if (i < shifts.get(day).get(hour).size()) {
+              output.write(shifts.get(day).get(hour).get(i).toString() + ",");
+            } else {
+              output.write(",");
+            }
+          }
+          output.write("\n");
+        }
+      }
       output.close();
     } catch (IOException e) {
     }
@@ -121,17 +139,56 @@ public class KarenBot {
     }
   }
 
-  private static ArrayList<Employee>[][] shiftsAsArray(Week week) {
+  private static ArrayList<ArrayList<ArrayList<Employee>>> shiftsAsArray(Week week) {
+    ArrayList<ArrayList<ArrayList<Employee>>> shifts = new ArrayList<ArrayList<ArrayList<Employee>>>();
     for (int day = 0; day < 7; day++) {
+      shifts.add(new ArrayList<ArrayList<Employee>>());
       for (int hour = 0; hour < 24; hour++) {
-        ArrayList<Employee> currentShift = new ArrayList<Employee>();
+        shifts.get(day).add(new ArrayList<Employee>());
         for (Employee e : week.getShift(day, hour)) {
-          currentShift.add(e);
+          shifts.get(day).get(hour).add(e);
         }
       }
     }
 
-    return null;
+    return shifts;
   }
 
+  private static int getMaxSize(int hour, Week week) {
+    int max = 0;
+    for (int day = 0; day < 7; day++) {
+      if (week.getShift(day, hour).size() > max) {
+        max = week.getShift(day, hour).size();
+      }
+    }
+    return max;
+  }
+
+  private static int getEarliestHour(Week week) {
+    int min = 10000;
+    for (int day = 0; day < 7; day++) {
+      for (int hour = 0; hour < 24; hour++) {
+        if (week.getShift(day, hour).size() > 0) {
+          if (hour < min) {
+            min = hour;
+          }
+        }
+      }
+    }
+    return min;
+  }
+
+  private static int getLatestHour(Week week) {
+    int max = 0;
+    for (int day = 0; day < 7; day++) {
+      for (int hour = 0; hour < 24; hour++) {
+        if (week.getShift(day, hour).size() > 0) {
+          if (hour > max) {
+            max = hour;
+          }
+        }
+      }
+    }
+    return max + 1;
+  }
 }

@@ -69,4 +69,8 @@ public class ChunkEmployee extends Employee {
     return chunks;
   }
 
+  public String toString() {
+    return this.getName();
+  }
+
 }

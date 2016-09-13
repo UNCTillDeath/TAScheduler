@@ -2,7 +2,10 @@ package comp110;
 
 import static java.lang.System.out;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.sun.javafx.binding.StringFormatter;
 
@@ -64,11 +67,22 @@ public class KarenBot {
 
   private static void output(RunReport report) {
     Scorecard scorecard = report.getHigh();
+    writeOutput(scorecard);
     log("Diagnostics", scorecard.getDiagnostics());
     log("Schedule", scorecard.getSchedule().getWeek());
     String score = StringFormatter.format("%.3f - Highest Score", scorecard.getScore()).get();
     log(score, scorecard);
     log("Stats (n:" + report.getTrials() + ")", report.getStats());
+  }
+
+  private static void writeOutput(Scorecard scorecard) {
+    shiftsAsArray(scorecard.getSchedule().getWeek());
+    try {
+      FileWriter output = new FileWriter(new File("data/output.csv"));
+      output.write(scorecard.getSchedule().getWeek().toString());
+      output.close();
+    } catch (IOException e) {
+    }
   }
 
   private static void log(String header, Object body) {
@@ -106,4 +120,18 @@ public class KarenBot {
       }
     }
   }
+
+  private static ArrayList<Employee>[][] shiftsAsArray(Week week) {
+    for (int day = 0; day < 7; day++) {
+      for (int hour = 0; hour < 24; hour++) {
+        ArrayList<Employee> currentShift = new ArrayList<Employee>();
+        for (Employee e : week.getShift(day, hour)) {
+          currentShift.add(e);
+        }
+      }
+    }
+
+    return null;
+  }
+
 }

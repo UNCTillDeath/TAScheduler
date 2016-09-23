@@ -27,6 +27,7 @@ public class DataIO {
     Staff staff = new Staff();
     File csvDirectory = new File(dir);
     BufferedReader csvReader = null;
+    int counter = 0;
     for (File csv : csvDirectory.listFiles()) {
       String name = "";
       String gender = "";
@@ -39,8 +40,9 @@ public class DataIO {
         gender = csvReader.readLine().split(",")[1];
         capacity = Integer.parseInt(csvReader.readLine().split(",")[1]);
         level = Integer.parseInt(csvReader.readLine().split(",")[1]);
-      } catch (NullPointerException e) {
-        System.err.println("Error parsing: " + name);
+        counter++;
+      } catch (Exception e) {
+        System.err.println("Error parsing: " + name + counter);
         e.printStackTrace();
       }
 

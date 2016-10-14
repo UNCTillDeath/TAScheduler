@@ -131,12 +131,15 @@ public class KarenBot {
     
     //write out a CSV of staff and their capacity
     if(outputCapacityVerification){
+      int capacitySum = 0;
       try {
         FileWriter output = new FileWriter(new File("data/capacityVerification.csv"));
         output.write("Name,Capacity\n");
         for (Employee e : staff){
+          capacitySum += e.getCapacity();
           output.write(e.getName() + "," + e.getCapacity() + "\n");
         }
+        output.write("Total Capacity," + capacitySum);
         output.flush();
         output.close();
       } catch (IOException e) {

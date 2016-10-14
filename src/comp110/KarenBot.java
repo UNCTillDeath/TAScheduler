@@ -110,7 +110,7 @@ public class KarenBot {
     out.println(body);
   }
 
-  public void runForKaren(String scenario, int day, int hour) {
+  public void runForKaren(String scenario, int day, int hour, boolean outputCapacityVerification) {
     SchedulingAlgo algo = _algo;
 
     // Load Data
@@ -128,6 +128,23 @@ public class KarenBot {
 
     // Run Algorithm for N trials and score it
     getWhoIsAvailable(staff, day, hour);
+    
+    //write out a CSV of staff and their capacity
+    if(outputCapacityVerification){
+      try {
+        FileWriter output = new FileWriter(new File("data/capacityVerification.csv"));
+        output.write("Name,Capacity\n");
+        for (Employee e : staff){
+          output.write(e.getName() + "," + e.getCapacity() + "\n");
+        }
+        output.flush();
+        output.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+        System.exit(1);
+      }
+    }
+    
   }
 
   public void getWhoIsAvailable(Staff staff, int day, int hour) {

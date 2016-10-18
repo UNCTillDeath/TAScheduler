@@ -58,7 +58,7 @@ public class KarenBot {
           }
         }
       }
-      if (employeeHoursAvailability < 20) {
+      if ((employeeHoursAvailability < 20 && e.getCapacity() > 5) || employeeHoursAvailability < 15) {
         System.out.println(e.getName() + " only has " + employeeHoursAvailability + " available for scheduling (" + e.getCapacity() + ")");
       }
     }

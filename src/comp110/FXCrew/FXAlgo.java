@@ -8,26 +8,25 @@ import comp110.Employee;
 import comp110.KarenBot;
 import comp110.Schedule;
 import comp110.SchedulingAlgo;
-import comp110.Scoreline;
 import comp110.Shift;
 import comp110.Staff;
 import comp110.Week;
 
 public class FXAlgo implements SchedulingAlgo {
 
-  private Schedule _schedule;
+  private Schedule            _schedule;
 
-  private Week _week;
+  private Week                _week;
 
-  private Staff _staff;
+  private Staff               _staff;
 
-  private List<Shift> _shifts;
+  private List<Shift>         _shifts;
 
   private ArrayList<Employee> _employees;
 
-  private Random _random;
+  private Random              _random;
 
-  private static final int SHIFT_FILL_ATTEMPTS = 100;
+  private static final int    SHIFT_FILL_ATTEMPTS = 100;
 
   @Override
   public Schedule run(Schedule input, Random random) {
@@ -36,12 +35,12 @@ public class FXAlgo implements SchedulingAlgo {
 
     scheduleStaff();
 
-    //scheduleRemainingEmployees();
+    // scheduleRemainingEmployees();
 
     testSchedule();
 
     attemptOneHourFix();
-    
+
     scheduleRemainingEmployees();
 
     return input;
@@ -105,7 +104,8 @@ public class FXAlgo implements SchedulingAlgo {
     Shift[][] shifts = _schedule.getWeek().getShifts();
     for (int i = 0; i < shifts.length; i++) {
       for (int j = 0; j < shifts[0].length; j++) {
-        if (shift == shifts[i][j]) return true;
+        if (shift == shifts[i][j])
+          return true;
       }
     }
     return false;
@@ -141,14 +141,12 @@ public class FXAlgo implements SchedulingAlgo {
           if (!e.getIsFemale()) {
             score += .25;
           }
-        }
-        else {
+        } else {
           if (e.getIsFemale()) {
             score += .25;
           }
         }
-      }
-      else {
+      } else {
         if (e.getIsFemale() && missingGender(shift) == 2) {
           score++;
         }
@@ -159,8 +157,7 @@ public class FXAlgo implements SchedulingAlgo {
 
       if (getPotentialSkill(e, shift) < 1.5) {
 
-      }
-      else {
+      } else {
         // using equation y = (-1/3)x + 1.5 where x is employees' skill.
         // equation normalizes the score to be given between 0 and 1
         score += (-1.0 / 3.0) * (double) e.getLevel() + 1.5;
@@ -170,8 +167,7 @@ public class FXAlgo implements SchedulingAlgo {
         // System.out.println("hi");
 
         score += 1.0;
-      }
-      else if (e.isAvailable(shift.getDay(), shift.getHour() - 1) || e.isAvailable(shift.getDay(), shift.getHour() + 1)) {
+      } else if (e.isAvailable(shift.getDay(), shift.getHour() - 1) || e.isAvailable(shift.getDay(), shift.getHour() + 1)) {
         // System.out.println("running");
         score += 1.0;
       }
@@ -259,14 +255,17 @@ public class FXAlgo implements SchedulingAlgo {
 
   private boolean hasGenderBalance(Shift shift) {
     // Can't have gender equality with 1 person
-    if (shift.getCapacity() == 1) return true;
+    if (shift.getCapacity() == 1)
+      return true;
 
     boolean hasMale = false;
     boolean hasFemale = false;
 
     for (Employee e : shift) {
-      if (e.getIsFemale()) hasFemale = true;
-      if (!e.getIsFemale()) hasMale = true;
+      if (e.getIsFemale())
+        hasFemale = true;
+      if (!e.getIsFemale())
+        hasMale = true;
     }
 
     return hasMale && hasFemale;
@@ -283,42 +282,49 @@ public class FXAlgo implements SchedulingAlgo {
     boolean hasFemale = false;
 
     for (Employee e : shift) {
-      if (e.getIsFemale()) hasFemale = true;
-      if (!e.getIsFemale()) hasMale = true;
+      if (e.getIsFemale())
+        hasFemale = true;
+      if (!e.getIsFemale())
+        hasMale = true;
     }
 
     if (!hasMale) {
       return 1;
-    }
-    else {
+    } else {
       return 2;
     }
 
   }
-  
+
   private boolean possibleHasGenderBalance(Employee toAdd, Shift shift) {
-    
-    //Can't have gender equality with 1 person
-    if (shift.getCapacity() == 1) return true;
+
+    // Can't have gender equality with 1 person
+    if (shift.getCapacity() == 1)
+      return true;
 
     boolean hasMale = false;
     boolean hasFemale = false;
 
     for (Employee e : shift) {
-      if (e.getIsFemale()) hasFemale = true;
-      if (!e.getIsFemale()) hasMale = true;
+      if (e.getIsFemale())
+        hasFemale = true;
+      if (!e.getIsFemale())
+        hasMale = true;
     }
 
-    if (toAdd.getIsFemale()) hasFemale = true;
-    else hasMale = true;
+    if (toAdd.getIsFemale())
+      hasFemale = true;
+    else
+      hasMale = true;
 
     return hasMale && hasFemale;
   }
-  
-private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shift shift) {
-    
-    //Can't have gender equality with 1 person
-    if (shift.getCapacity() == 1) return true;
+
+  private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shift shift) {
+
+    // Can't have gender equality with 1 person
+    if (shift.getCapacity() == 1)
+      return true;
 
     boolean hasMale = false;
     boolean hasFemale = false;
@@ -327,21 +333,25 @@ private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shif
       if (toRemove == e) {
         continue;
       }
-      if (e.getIsFemale()) hasFemale = true;
-      if (!e.getIsFemale()) hasMale = true;
+      if (e.getIsFemale())
+        hasFemale = true;
+      if (!e.getIsFemale())
+        hasMale = true;
     }
 
-    if (toAdd.getIsFemale()) hasFemale = true;
-    else hasMale = true;
+    if (toAdd.getIsFemale())
+      hasFemale = true;
+    else
+      hasMale = true;
 
     return hasMale && hasFemale;
   }
 
   private boolean isContiguous(Employee e, Shift shift) {
 
-    //    if (shift.getHour() == 0 && shift.getHour() == 23) {
-    //      return false;
-    //    }
+    // if (shift.getHour() == 0 && shift.getHour() == 23) {
+    // return false;
+    // }
 
     if (shift.getHour() != 0) {
       Shift before = _week.getShift(shift.getDay(), shift.getHour() - 1);
@@ -373,8 +383,7 @@ private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shif
     for (Employee e : _staff) {
       if (e.getIsFemale()) {
         femaleHours += e.getCapacityRemaining();
-      }
-      else {
+      } else {
         maleHours += e.getCapacityRemaining();
       }
     }
@@ -386,7 +395,7 @@ private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shif
 
     KarenBot karenBot = new KarenBot(new FXAlgo());
 
-    karenBot.run("week1", 10000);
+    karenBot.run("week1", 1000);
 
   }
 
@@ -424,10 +433,8 @@ private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shif
           shift.add(e);
         }
       }
-     // if (!scheduled) System.out.println("crap");
+      // if (!scheduled) System.out.println("crap");
     }
-    
-    
 
   }
 
@@ -459,14 +466,15 @@ private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shif
 
     return (totalSkill / numOfEmployees) >= 1.5;
   }
-  
+
   private boolean possibleHasRequiredSkill(Employee toAdd, Employee toRemove, Shift shift) {
 
     double totalSkill = 0.0;
     double numOfEmployees = 0.0;
 
     for (Employee e : shift) {
-      if (e == toRemove) continue;
+      if (e == toRemove)
+        continue;
       totalSkill += e.getLevel();
       numOfEmployees++;
     }
@@ -490,13 +498,13 @@ private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shif
     return availableShifts;
 
   }
-  
-  private boolean hasRequiredSkill(Shift shift){
+
+  private boolean hasRequiredSkill(Shift shift) {
     double totalSkill = 0.0;
     double numOfEmployees = 0.0;
 
     for (Employee e : shift) {
-     
+
       totalSkill += e.getLevel();
       numOfEmployees++;
     }
@@ -505,7 +513,7 @@ private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shif
   }
 
   private void attemptOneHourFix() {
-    //need to fill this with all employees scheduled for 1 hour shifts
+    // need to fill this with all employees scheduled for 1 hour shifts
     ArrayList<IssueEmployee> issues = new ArrayList<IssueEmployee>();
 
     for (int i = 0; i < _shifts.size(); i++) {
@@ -514,7 +522,8 @@ private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shif
         boolean isContiguous = false;
 
         Shift shift = _shifts.get(i);
-        if (!isScheduled(e, shift)) System.out.println("what the actual f");
+        if (!isScheduled(e, shift))
+          System.out.println("what the actual f");
 
         if (_shifts.get(i).getHour() > 11) {
           if (isScheduled(e, dayHourToShift(shift.getDay(), shift.getHour() - 1))) {
@@ -523,7 +532,7 @@ private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shif
         }
 
         if (_shifts.get(i).getHour() < 20) {
-          if (isScheduled(e, dayHourToShift(shift.getDay(), shift.getHour() + 1)))  {
+          if (isScheduled(e, dayHourToShift(shift.getDay(), shift.getHour() + 1))) {
             isContiguous = true;
           }
         }
@@ -535,9 +544,9 @@ private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shif
       }
 
     }
-    
+
     boolean swapped = false;
-    
+
     for (IssueEmployee e : issues) {
       for (int i = 0; i < issues.size(); i++) {
         IssueEmployee other = issues.get(i);
@@ -548,7 +557,7 @@ private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shif
             if (isContiguous(e.getEmployee(), e.getShift()) || isContiguous(other.getEmployee(), dayHourToShift(e.getShift().getDay(), e.getShift().getHour()))) {
               swapped = true;
               swap(e, other);
-              
+
             }
 
           }
@@ -561,33 +570,29 @@ private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shif
   }
 
   private void swap(IssueEmployee e1, IssueEmployee e2) {
-    if (!isScheduled(e1.getEmployee(), e1.getShift()) || 
-        !isScheduled(e2.getEmployee(), e2.getShift())){
+    if (!isScheduled(e1.getEmployee(), e1.getShift()) || !isScheduled(e2.getEmployee(), e2.getShift())) {
       return;
     }
-    
-    if (isScheduled(e1.getEmployee(), e2.getShift()) || 
-        isScheduled(e2.getEmployee(), e1.getShift())){
+
+    if (isScheduled(e1.getEmployee(), e2.getShift()) || isScheduled(e2.getEmployee(), e1.getShift())) {
       return;
     }
-    
-    if ((!possibleHasRequiredSkill(e2.getEmployee(), e1.getEmployee(), e1.getShift()) &&
-        hasRequiredSkill(e1.getShift())) || (!possibleHasRequiredSkill(e1.getEmployee(), e2.getEmployee(), e2.getShift()) &&
-        hasRequiredSkill(e2.getShift()))){
+
+    if ((!possibleHasRequiredSkill(e2.getEmployee(), e1.getEmployee(), e1.getShift()) && hasRequiredSkill(e1.getShift()))
+        || (!possibleHasRequiredSkill(e1.getEmployee(), e2.getEmployee(), e2.getShift()) && hasRequiredSkill(e2.getShift()))) {
       return;
     }
-    
-    if ((!possibleHasGenderBalance(e2.getEmployee(), e1.getEmployee(), e1.getShift()) && hasGenderBalance(e1.getShift())) ||
-        (!possibleHasGenderBalance(e1.getEmployee(), e2.getEmployee(), e2.getShift()) && hasGenderBalance(e2.getShift()))){
+
+    if ((!possibleHasGenderBalance(e2.getEmployee(), e1.getEmployee(), e1.getShift()) && hasGenderBalance(e1.getShift()))
+        || (!possibleHasGenderBalance(e1.getEmployee(), e2.getEmployee(), e2.getShift()) && hasGenderBalance(e2.getShift()))) {
       return;
     }
-   
-    
-   e1.getShift().remove(e1.getEmployee());
-   e2.getShift().remove(e2.getEmployee());
-   
-   e1.getShift().add(e2.getEmployee());
-   e2.getShift().add(e1.getEmployee());
+
+    e1.getShift().remove(e1.getEmployee());
+    e2.getShift().remove(e2.getEmployee());
+
+    e1.getShift().add(e2.getEmployee());
+    e2.getShift().add(e1.getEmployee());
   }
 
   private Shift dayHourToShift(int day, int hour) {
@@ -597,7 +602,8 @@ private boolean possibleHasGenderBalance(Employee toAdd, Employee toRemove, Shif
   private void testSchedule() {
     // System.out.println("TEST SCHEDULE");
     for (int i = 0; i < _shifts.size(); i++) {
-      if (_shifts.get(i).getDay() == 5 && _shifts.get(i).getHour() == 21) System.out.println("found " + _shifts.get(i).getDay() + "    " + _shifts.get(i).getHour());
+      if (_shifts.get(i).getDay() == 5 && _shifts.get(i).getHour() == 21)
+        System.out.println("found " + _shifts.get(i).getDay() + "    " + _shifts.get(i).getHour());
     }
   }
 

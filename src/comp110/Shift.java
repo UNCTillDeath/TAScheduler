@@ -10,9 +10,9 @@ public class Shift extends HashSet<Employee> {
   /* Even though we don't serialize, this keeps Java from complaining... */
   private static final long serialVersionUID = 5723878473617645106L;
 
-  private int _day;
-  private int _hour;
-  private int _capacity;
+  private int               _day;
+  private int               _hour;
+  private int               _capacity;
 
   public Shift(int day, int hour, int capacity) {
     _day = day;
@@ -38,7 +38,7 @@ public class Shift extends HashSet<Employee> {
 
   public String toString() {
     List<String> names = this.stream().map(e -> e.getName()).collect(Collectors.toList());
-    return String.format("%02d", _hour) + ": " + String.join(", ", names);
+    return String.format("%02d", _hour) + ": (" + String.format("%02d", names.size()) + ") " + String.join(", ", names);
   }
 
   public boolean equals(Shift other) {

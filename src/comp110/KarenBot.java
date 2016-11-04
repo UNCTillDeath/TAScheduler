@@ -49,7 +49,9 @@ public class KarenBot {
   }
 
   private void verifyHours(Staff staff, Week week) {
+    int totalCapacity = 0;
     for (Employee e : staff) {
+      totalCapacity += e.getCapacity();
       int employeeHoursAvailability = 0;
       for (int day = 0; day < e.getAvailability().length; day++) {
         for (int hour = 0; hour < e.getAvailability()[0].length; hour++) {
@@ -62,6 +64,7 @@ public class KarenBot {
         System.out.println(e.getName() + " only has " + employeeHoursAvailability + " available for scheduling (" + e.getCapacity() + ")");
       }
     }
+    System.out.println("Total capacity: " + totalCapacity);
 
   }
 
@@ -128,14 +131,14 @@ public class KarenBot {
 
     // Run Algorithm for N trials and score it
     getWhoIsAvailable(staff, day, hour);
-    
-    //write out a CSV of staff and their capacity
-    if(outputCapacityVerification){
+
+    // write out a CSV of staff and their capacity
+    if (outputCapacityVerification) {
       int capacitySum = 0;
       try {
         FileWriter output = new FileWriter(new File("data/capacityVerification.csv"));
         output.write("Name,Capacity\n");
-        for (Employee e : staff){
+        for (Employee e : staff) {
           capacitySum += e.getCapacity();
           output.write(e.getName() + "," + e.getCapacity() + "\n");
         }
@@ -147,7 +150,7 @@ public class KarenBot {
         System.exit(1);
       }
     }
-    
+
   }
 
   public void getWhoIsAvailable(Staff staff, int day, int hour) {

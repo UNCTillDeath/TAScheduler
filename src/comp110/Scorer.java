@@ -37,7 +37,8 @@ public class Scorer {
     RunReport report = new RunReport(trials, verbose);
     for (int i = 0; i < trials; i++) {
       Scorecard s = Scorer.evaluate(_schedule, _algo, new Random());
-      if (i != 0 && s.getScore() > report.getHighScore()){
+      //we will write out any schedules scoring >3 std dev above average
+      if (i != 0 && s.getScore() > report.getAverageScore() + (report.getStdev() * 2)){
         KarenBot.writeOutput(s, Long.toString(new Date().getTime()) + "_" + s.getScore());
       }
       report.add(s);

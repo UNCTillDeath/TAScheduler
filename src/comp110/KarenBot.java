@@ -14,6 +14,7 @@ public class KarenBot {
 
   private SchedulingAlgo _algo;
   private static String _outputPath;
+  public static FileWriter _consoleOutput;
 
   public KarenBot(SchedulingAlgo algo) {
     _algo = algo;
@@ -35,6 +36,7 @@ public class KarenBot {
       File outputFolder = new File("output_" + time + "_" + trials);
       outputFolder.mkdir();
       _outputPath = outputFolder.getPath();
+      _consoleOutput = new FileWriter(_outputPath + "/consoleOutput.txt");
       week = DataIO.parseWeek("data/" + scenario + "/week.csv", scenario);
       staff = DataIO.parseStaff("data/" + scenario + "/staff");
     } catch (IOException e) {
@@ -52,9 +54,15 @@ public class KarenBot {
 
     // Output Results
     output(report);
+    try {
+      _consoleOutput.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   private void verifyHours(Staff staff, Week week) {
+    String output = "";
     int totalCapacity = 0;
     for (Employee e : staff) {
       totalCapacity += e.getCapacity();
@@ -67,11 +75,11 @@ public class KarenBot {
         }
       }
       if ((employeeHoursAvailability < 20 && e.getCapacity() > 5) || employeeHoursAvailability < 15) {
-        System.out.println(e.getName() + " only has " + employeeHoursAvailability + " available for scheduling (" + e.getCapacity() + ")");
+       output += e.getName() + " only has " + employeeHoursAvailability + " available for scheduling (" + e.getCapacity() + ")\n";
       }
     }
-    System.out.println("Total capacity: " + totalCapacity);
-
+    output += "Total capacity: " + totalCapacity;
+    log("Verify Hours", output);
   }
 
   private static void output(RunReport report) {
@@ -113,6 +121,15 @@ public class KarenBot {
   }
 
   private static void log(String header, Object body) {
+    try {
+      _consoleOutput.write("======================\n");
+      _consoleOutput.write(header + "\n");
+      _consoleOutput.write("======================\n");
+      _consoleOutput.write(body.toString() + "\n");
+      _consoleOutput.flush();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }    
     out.println("======================");
     out.println(header);
     out.println("======================");

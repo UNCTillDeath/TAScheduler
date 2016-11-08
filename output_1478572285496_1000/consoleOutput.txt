@@ -1,0 +1,158 @@
+======================
+Verify Hours
+======================
+Grant Miller only has 19 available for scheduling (10)
+Stephen Firrincieli only has 18 available for scheduling (9)
+Spencer Lichtenberg only has 19 available for scheduling (9)
+Total capacity: 318
+======================
+Diagnostics
+======================
+Shifts where employees meet or exceed capacity
+	Monday at 11:00 has 2 of 4 slots filled
+	Wednesday at 19:00 has 4 of 5 slots filled
+	Thursday at 15:00 has 5 of 7 slots filled
+Employees are scheduled for between 2-4 contiguous hours
+	Sunday at 11:00 Saumya Ray scheduled for a single hour block
+	Sunday at 11:00 Jennifer Little scheduled for a single hour block
+	Sunday at 12:00 Sarah Ganci scheduled for a single hour block
+	Sunday at 12:00 Victoria Maxwell scheduled for a single hour block
+	Sunday at 13:00 Kyra Mulder scheduled for a single hour block
+	Sunday at 13:00 Lilyanne Zhang scheduled for a single hour block
+	Sunday at 16:00 Ahmad Atieh scheduled for a single hour block
+	Monday at 12:00 Stephen Firrincieli scheduled for over 4 hours contiguously
+	Monday at 13:00 Stephen Firrincieli scheduled for over 4 hours contiguously
+	Monday at 14:00 Stephen Firrincieli scheduled for over 4 hours contiguously
+	Monday at 15:00 Muttaqee Ahmad Ali scheduled for a single hour block
+	Monday at 15:00 Ahmed King scheduled for a single hour block
+	Monday at 15:00 Stephen Firrincieli scheduled for over 4 hours contiguously
+	Monday at 16:00 Stephen Firrincieli scheduled for over 4 hours contiguously
+	Monday at 19:00 Dong Yeop Lee scheduled for a single hour block
+	Monday at 19:00 Dorian Brandon scheduled for a single hour block
+	Monday at 19:00 Connor Hamlet scheduled for a single hour block
+	Tuesday at 12:00 Sydney Cole scheduled for a single hour block
+	Tuesday at 13:00 Katie Nuccio scheduled for a single hour block
+	Tuesday at 19:00 Katie Nuccio scheduled for a single hour block
+	Tuesday at 19:00 Nick Larson scheduled for a single hour block
+	Tuesday at 19:00 Dorian Brandon scheduled for a single hour block
+	Tuesday at 19:00 Connor Hamlet scheduled for a single hour block
+	Tuesday at 19:00 Jeffrey scheduled for a single hour block
+	Wednesday at 11:00 Hayden Lawler scheduled for a single hour block
+	Wednesday at 14:00 Abba Furry scheduled for a single hour block
+	Wednesday at 15:00 Connor Hamlet scheduled for over 4 hours contiguously
+	Wednesday at 16:00 Caleigh Link scheduled for a single hour block
+	Wednesday at 16:00 Connor Hamlet scheduled for over 4 hours contiguously
+	Wednesday at 17:00 Spencer Lichtenberg scheduled for a single hour block
+	Wednesday at 17:00 Meggie Cruser scheduled for a single hour block
+	Wednesday at 17:00 Connor Hamlet scheduled for over 4 hours contiguously
+	Wednesday at 18:00 Connor Hamlet scheduled for over 4 hours contiguously
+	Wednesday at 19:00 Grant Miller scheduled for a single hour block
+	Wednesday at 19:00 Connor Hamlet scheduled for over 4 hours contiguously
+	Thursday at 11:00 Spencer Lichtenberg scheduled for a single hour block
+	Thursday at 12:00 Muttaqee Ahmad Ali scheduled for a single hour block
+	Thursday at 13:00 Katie Nuccio scheduled for a single hour block
+	Thursday at 13:00 Nick Larson scheduled for a single hour block
+	Thursday at 15:00 Connie Jin scheduled for a single hour block
+	Thursday at 16:00 Wanyi Chen scheduled for a single hour block
+	Thursday at 17:00 Katie Nuccio scheduled for a single hour block
+	Thursday at 17:00 Spencer Lichtenberg scheduled for a single hour block
+	Friday at 11:00 Richa Shah scheduled for a single hour block
+	Friday at 11:00 Grant Miller scheduled for a single hour block
+	Friday at 11:00 Caleigh Link scheduled for a single hour block
+	Friday at 11:00 Jie He scheduled for a single hour block
+	Friday at 13:00 Benjamin Levine scheduled for a single hour block
+	Friday at 13:00 Grant Miller scheduled for a single hour block
+	Friday at 14:00 Ahmed King scheduled for a single hour block
+	Friday at 14:00 Mark Petersen scheduled for a single hour block
+	Friday at 15:00 Katie Nuccio scheduled for a single hour block
+	Friday at 15:00 Dorian Brandon scheduled for a single hour block
+	Friday at 19:00 Dong Yeop Lee scheduled for a single hour block
+	Friday at 19:00 Karen Cheng scheduled for a single hour block
+Average experience in every shift is > 1.5
+	Sunday at 12:00 has an average expertise of 1.5
+Gender representation in every shift
+	Monday at 11:00 has 0 women and 2 men scheduled
+	Wednesday at 15:00 has 0 women and 5 men scheduled
+	Wednesday at 18:00 has 0 women and 5 men scheduled
+	Wednesday at 19:00 has 0 women and 4 men scheduled
+
+======================
+Schedule
+======================
+** week1 **
+Sunday
+	11: (06) Melissa Fu, Saumya Ray, Benjamin Levine, Victoria Miller, Jennifer Little, Jie He
+	12: (06) Melissa Fu, Benjamin Levine, Victoria Miller, Jie He, Sarah Ganci, Victoria Maxwell
+	13: (08) Helen Qin, Melissa Fu, Kyra Mulder, Tabatha Seawell, Benjamin Levine, Lilyanne Zhang, Victoria Miller, Jie He
+	14: (09) Helen Qin, Melissa Fu, William Hansen, Jay Randolph, Cody McWherter, Tabatha Seawell, Benjamin Levine, Mohamed Lansari, Duncan Britton
+	15: (09) Helen Qin, Kaylee Llewellyn, William Hansen, Jay Randolph, Cody McWherter, Tabatha Seawell, Han Bit Yoon, Mohamed Lansari, Duncan Britton
+	16: (08) Helen Qin, Kaylee Llewellyn, Ahmad Atieh, Cody McWherter, Jay Randolph, Tabatha Seawell, Han Bit Yoon, Duncan Britton
+Monday
+	11: (02) Hayden Lawler, Cody McWherter
+	12: (04) Hayden Lawler, Cody McWherter, Meggie Cruser, Stephen Firrincieli
+	13: (04) Hayden Lawler, Meggie Cruser, Stephen Firrincieli, Jeffrey
+	14: (04) Hayden Lawler, Meggie Cruser, Stephen Firrincieli, Jeffrey
+	15: (06) Muttaqee Ahmad Ali, Ahmed King, Spencer Lichtenberg, Stephen Firrincieli, Dana Elhertani, Jeffrey
+	16: (06) Cody McWherter, Spencer Lichtenberg, Tabatha Seawell, Stephen Firrincieli, Dana Elhertani, Jeffrey
+	17: (06) Kaylee Llewellyn, Cody McWherter, Spencer Lichtenberg, Tabatha Seawell, Han Bit Yoon, Shane Steele-Pardue
+	18: (06) Kaylee Llewellyn, Tabatha Seawell, Han Bit Yoon, Shane Steele-Pardue, Stephen Firrincieli, Duncan Britton
+	19: (06) Kaylee Llewellyn, Dong Yeop Lee, Dorian Brandon, Stephen Firrincieli, Connor Hamlet, Duncan Britton
+Tuesday
+	11: (05) Kyra Mulder, Jay Randolph, Spencer Lichtenberg, Saumya Ray, Caleigh Link
+	12: (06) Kyra Mulder, Jay Randolph, Spencer Lichtenberg, Saumya Ray, Sydney Cole, Caleigh Link
+	13: (07) Katie Nuccio, Kyra Mulder, Ahmad Atieh, Jay Randolph, Spencer Lichtenberg, Krista Bellamy, Caleigh Link
+	14: (05) Kyra Mulder, Ahmad Atieh, Jay Randolph, Krista Bellamy, Abba Furry
+	15: (06) Karen Cheng, Han Bit Yoon, Connie Jin, Mark Petersen, Gabi Stein, Abba Furry
+	16: (07) Karen Cheng, Han Bit Yoon, Connie Jin, Mark Petersen, Gabi Stein, Wanyi Chen, Abba Furry
+	17: (07) Karen Cheng, Jay Randolph, Han Bit Yoon, Connie Jin, Gabi Stein, Wanyi Chen, Abba Furry
+	18: (06) Karen Cheng, Jay Randolph, Han Bit Yoon, Connie Jin, Gabi Stein, Wanyi Chen
+	19: (06) Katie Nuccio, Nick Larson, Dorian Brandon, Jay Randolph, Connor Hamlet, Jeffrey
+Wednesday
+	11: (04) Kate Goldenring, Hayden Lawler, Lilyanne Zhang, Victoria Miller
+	12: (04) Kate Goldenring, Lilyanne Zhang, Benjamin Levine, Victoria Miller
+	13: (04) Kate Goldenring, Lilyanne Zhang, Benjamin Levine, Shane Steele-Pardue
+	14: (05) Kate Goldenring, Lilyanne Zhang, Shane Steele-Pardue, Stephen Firrincieli, Abba Furry
+	15: (05) Muttaqee Ahmad Ali, Dorian Brandon, Shane Steele-Pardue, Stephen Firrincieli, Connor Hamlet
+	16: (06) Ahmed King, Muttaqee Ahmad Ali, Dorian Brandon, Caleigh Link, Shane Steele-Pardue, Connor Hamlet
+	17: (06) Ahmed King, Muttaqee Ahmad Ali, Dorian Brandon, Spencer Lichtenberg, Meggie Cruser, Connor Hamlet
+	18: (05) Dong Yeop Lee, Ahmed King, Muttaqee Ahmad Ali, Dorian Brandon, Connor Hamlet
+	19: (04) Dong Yeop Lee, Ahmed King, Grant Miller, Connor Hamlet
+Thursday
+	11: (08) Kyra Mulder, Spencer Lichtenberg, Saumya Ray, Jesse Akes, Benjamin Levine, Sydney Cole, Caleigh Link, Brooks Townsend
+	12: (08) Muttaqee Ahmad Ali, Kyra Mulder, Saumya Ray, Jesse Akes, Benjamin Levine, Sydney Cole, Caleigh Link, Brooks Townsend
+	13: (07) Katie Nuccio, Kyra Mulder, William Hansen, Ahmad Atieh, Nick Larson, Sydney Cole, Caleigh Link
+	14: (06) Dong Yeop Lee, Kyra Mulder, William Hansen, Ahmad Atieh, Caleigh Link, Sarah Ganci
+	15: (05) Dong Yeop Lee, Han Bit Yoon, Connie Jin, Mark Petersen, Sarah Ganci
+	16: (08) Dong Yeop Lee, Hank Hester, Han Bit Yoon, Mark Petersen, Grant Miller, Sarah Ganci, Brooks Townsend, Wanyi Chen
+	17: (10) Dong Yeop Lee, Hank Hester, Katie Nuccio, Spencer Lichtenberg, Grant Miller, Lydia Trogdon, Jennifer Little, Sarah Ganci, Brooks Townsend, Dana Elhertani
+	18: (06) Hank Hester, Tabatha Seawell, Grant Miller, Lydia Trogdon, Jennifer Little, Dana Elhertani
+	19: (06) Hank Hester, Tabatha Seawell, Grant Miller, Lydia Trogdon, Jennifer Little, Dana Elhertani
+Friday
+	11: (08) Richa Shah, Cody McWherter, Krista Bellamy, Grant Miller, Caleigh Link, Jie He, Mohamed Lansari, Brea Dionisio
+	12: (06) Hank Hester, Cody McWherter, Meggie Cruser, Krista Bellamy, Mohamed Lansari, Brea Dionisio
+	13: (08) Hank Hester, Cody McWherter, Meggie Cruser, Benjamin Levine, Grant Miller, Shane Steele-Pardue, Mohamed Lansari, Brea Dionisio
+	14: (09) Helen Qin, Hank Hester, Ahmed King, Richa Shah, Srihita Bongu, Meggie Cruser, Mark Petersen, Shane Steele-Pardue, Brea Dionisio
+	15: (10) Helen Qin, Hank Hester, Katie Nuccio, Richa Shah, Dorian Brandon, Srihita Bongu, Jesse Akes, Shane Steele-Pardue, Sarah Ganci, Victoria Maxwell
+	16: (07) Helen Qin, Richa Shah, Srihita Bongu, Jesse Akes, Shane Steele-Pardue, Sarah Ganci, Victoria Maxwell
+	17: (06) Helen Qin, Richa Shah, Srihita Bongu, Grant Miller, Sarah Ganci, Victoria Maxwell
+	18: (06) Ahmed King, Nick Larson, Dorian Brandon, Grant Miller, Sarah Ganci, Victoria Maxwell
+	19: (06) Dong Yeop Lee, Ahmed King, Karen Cheng, Dorian Brandon, Nick Larson, Grant Miller
+Saturday
+
+======================
+6.670 - Highest Score
+======================
+0.941 - Shifts where employees meet or exceed capacity
+1.000 - Staff capacity utilization
+0.827 - Employees are scheduled for between 2-4 contiguous hours
+0.980 - Average experience in every shift is > 1.5
+0.922 - Gender representation in every shift
+1.000 - No staff is scheduled for a shift they are not available for
+1.000 - Randomization is encouraged, but only using the Random instance provided
+
+======================
+Stats (n:1000)
+======================
+6.45 - Low
+6.67 - High
+6.55 +/- 0.03 - Average

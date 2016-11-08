@@ -84,7 +84,7 @@ public class KarenBot {
 
   private static void output(RunReport report) {
     Scorecard scorecard = report.getHigh();
-    writeOutput(scorecard);
+    writeOutput(scorecard, "TopSchedule" + "_" + scorecard.getScore());
     log("Diagnostics", scorecard.getDiagnostics());
     log("Schedule", scorecard.getSchedule().getWeek());
     String score = StringFormatter.format("%.3f - Highest Score", scorecard.getScore()).get();
@@ -92,10 +92,10 @@ public class KarenBot {
     log("Stats (n:" + report.getTrials() + ")", report.getStats());
   }
 
-  private static void writeOutput(Scorecard scorecard) {
+  public static void writeOutput(Scorecard scorecard, String name) {
     ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(scorecard.getSchedule().getWeek());
     try {
-      FileWriter output = new FileWriter(new File(_outputPath + "/output.csv"));
+      FileWriter output = new FileWriter(new File(_outputPath + "/" + name + ".csv"));
       output.write(",Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday\n");
       for (int hour = getEarliestHour(scorecard.getSchedule().getWeek()); hour < getLatestHour(scorecard.getSchedule().getWeek()); hour++) {
         output.write(hour + " -- " + (hour + 1));

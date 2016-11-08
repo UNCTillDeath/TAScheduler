@@ -1,5 +1,6 @@
 package comp110;
 
+import java.util.Date;
 import java.util.Random;
 
 public class Scorer {
@@ -35,7 +36,11 @@ public class Scorer {
   public RunReport runWithReport(int trials, boolean verbose) {
     RunReport report = new RunReport(trials, verbose);
     for (int i = 0; i < trials; i++) {
-      report.add(Scorer.evaluate(_schedule, _algo, new Random()));
+      Scorecard s = Scorer.evaluate(_schedule, _algo, new Random());
+      if (i != 0 && s.getScore() > report.getHighScore()){
+        KarenBot.writeOutput(s, Long.toString(new Date().getTime()) + "_" + s.getScore());
+      }
+      report.add(s);
     }
     return report;
   }

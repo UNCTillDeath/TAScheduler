@@ -395,7 +395,7 @@ public class FXAlgo implements SchedulingAlgo {
 
     KarenBot karenBot = new KarenBot(new FXAlgo());
 
-    karenBot.run("week1", 100000);
+    karenBot.run("week1", 1000);
 
   }
 

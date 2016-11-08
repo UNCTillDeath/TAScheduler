@@ -6,12 +6,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.sun.javafx.binding.StringFormatter;
 
 public class KarenBot {
 
   private SchedulingAlgo _algo;
+  private static String _outputPath;
 
   public KarenBot(SchedulingAlgo algo) {
     _algo = algo;
@@ -29,6 +31,10 @@ public class KarenBot {
     Staff staff;
 
     try {
+      String time = Long.toString(new Date().getTime());
+      File outputFolder = new File("output_" + time + "_" + trials);
+      outputFolder.mkdir();
+      _outputPath = outputFolder.getPath();
       week = DataIO.parseWeek("data/" + scenario + "/week.csv", scenario);
       staff = DataIO.parseStaff("data/" + scenario + "/staff");
     } catch (IOException e) {
@@ -81,7 +87,7 @@ public class KarenBot {
   private static void writeOutput(Scorecard scorecard) {
     ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(scorecard.getSchedule().getWeek());
     try {
-      FileWriter output = new FileWriter(new File("data/output.csv"));
+      FileWriter output = new FileWriter(new File(_outputPath + "/output.csv"));
       output.write(",Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday\n");
       for (int hour = getEarliestHour(scorecard.getSchedule().getWeek()); hour < getLatestHour(scorecard.getSchedule().getWeek()); hour++) {
         output.write(hour + " -- " + (hour + 1));
@@ -136,7 +142,7 @@ public class KarenBot {
     if (outputCapacityVerification) {
       int capacitySum = 0;
       try {
-        FileWriter output = new FileWriter(new File("data/capacityVerification.csv"));
+        FileWriter output = new FileWriter(new File(_outputPath + "/capacityVerification.csv"));
         output.write("Name,Capacity\n");
         for (Employee e : staff) {
           capacitySum += e.getCapacity();

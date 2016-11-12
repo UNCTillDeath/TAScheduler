@@ -10,6 +10,7 @@ import comp110.Schedule;
 import comp110.SchedulingAlgo;
 import comp110.Shift;
 import comp110.Staff;
+import comp110.Threader;
 import comp110.Week;
 
 public class FXAlgo implements SchedulingAlgo {
@@ -394,8 +395,8 @@ public class FXAlgo implements SchedulingAlgo {
   public static void main(String[] args) {
 
     KarenBot karenBot = new KarenBot(new FXAlgo());
-
-    karenBot.run("week1", 1000);
+    Threader threader = new Threader(karenBot, 8, "week1", 100000);
+    // karenBot.run("week1", 1000);
 
   }
 
@@ -605,6 +606,10 @@ public class FXAlgo implements SchedulingAlgo {
       if (_shifts.get(i).getDay() == 5 && _shifts.get(i).getHour() == 21)
         System.out.println("found " + _shifts.get(i).getDay() + "    " + _shifts.get(i).getHour());
     }
+  }
+
+  public SchedulingAlgo copy() {
+    return new FXAlgo();
   }
 
 }

@@ -5,17 +5,16 @@ import java.util.Random;
 
 public class Scorer {
 
-  private final static String UTILIZATION = "Staff capacity utilization";
+  private final static String UTILIZATION            = "Staff capacity utilization";
   private final static String PREFERRED_CAPACITY_MET = "Shifts where employees meet or exceed capacity";
-  private final static String CONTIGUOUS_BLOCKS = "Employees are scheduled for between 2-4 contiguous hours";
-  private final static String GENDER_REPRESENTATION = "Gender representation in every shift";
-  private final static String COMBINED_EXPERIENCE = "Average experience in every shift is > 1.5";
-  private final static String AVAILABILITY = "No staff is scheduled for a shift they are not available for";
-  private final static String SEED_BASED_DETERMINISM =
-      "Randomization is encouraged, but only using the Random instance provided";
+  private final static String CONTIGUOUS_BLOCKS      = "Employees are scheduled for between 2-4 contiguous hours";
+  private final static String GENDER_REPRESENTATION  = "Gender representation in every shift";
+  private final static String COMBINED_EXPERIENCE    = "Average experience in every shift is > 1.5";
+  private final static String AVAILABILITY           = "No staff is scheduled for a shift they are not available for";
+  private final static String SEED_BASED_DETERMINISM = "Randomization is encouraged, but only using the Random instance provided";
 
-  private Schedule _schedule;
-  private SchedulingAlgo _algo;
+  private Schedule            _schedule;
+  private SchedulingAlgo      _algo;
 
   public Scorer(Staff staff, Week week, SchedulingAlgo algo) {
     _schedule = new Schedule(staff, week);
@@ -37,8 +36,8 @@ public class Scorer {
     RunReport report = new RunReport(trials, verbose);
     for (int i = 0; i < trials; i++) {
       Scorecard s = Scorer.evaluate(_schedule, _algo, new Random());
-      //we will write out any schedules scoring >3 std dev above average
-      if (i != 0 && s.getScore() > report.getAverageScore() + (report.getStdev() * 3)){
+      // we will write out any schedules scoring >3 std dev above average
+      if (i != 0 && s.getScore() > report.getAverageScore() + (report.getStdev() * 3)) {
         KarenBot.writeOutput(s, Long.toString(new Date().getTime()) + "_" + s.getScore());
       }
       report.add(s);
@@ -90,8 +89,7 @@ public class Scorer {
           if (shift.size() >= shift.getCapacity()) {
             shiftsMeetingPreferredCapacity++;
           } else {
-            result.add(Week.dayString(day) + " at " + shift.getHour() + ":00 has " + shift.size() + " of "
-                + shift.getCapacity() + " slots filled");
+            result.add(Week.dayString(day) + " at " + shift.getHour() + ":00 has " + shift.size() + " of " + shift.getCapacity() + " slots filled");
           }
         }
       }
@@ -117,8 +115,7 @@ public class Scorer {
         // avoid gaming by overbooking
         result.setValue(percentUsed);
       } else {
-        result.add("You cannot overbook the staff. You scheduled " + (percentUsed * 100.0)
-            + " of the hours available.");
+        result.add("You cannot overbook the staff. You scheduled " + (percentUsed * 100.0) + " of the hours available.");
       }
     }
     return result;
@@ -126,7 +123,6 @@ public class Scorer {
 
   /*
    * Contiguous score is the % of hours scheduled in sequences of of 2-4 hours.
-   * 
    * The implementation of this scoreline is not efficient. Hide your eyes.
    */
   private static Scoreline contiguous(Schedule schedule) {
@@ -164,11 +160,9 @@ public class Scorer {
           }
 
           if (contiguous < 2) {
-            result.add(Week.dayString(day) + " at " + shift.getHour() + ":00 " + employee.getName()
-                + " scheduled for a single hour block");
+            result.add(Week.dayString(day) + " at " + shift.getHour() + ":00 " + employee.getName() + " scheduled for a single hour block");
           } else if (contiguous > 4) {
-            result.add(Week.dayString(day) + " at " + shift.getHour() + ":00 " + employee.getName()
-                + " scheduled for over 4 hours contiguously");
+            result.add(Week.dayString(day) + " at " + shift.getHour() + ":00 " + employee.getName() + " scheduled for over 4 hours contiguously");
           } else {
             contiguousShifts++;
           }
@@ -210,8 +204,7 @@ public class Scorer {
           if (women > 0 && men > 0) {
             shiftsWithGenderRepresentation++;
           } else {
-            result.add(Week.dayString(day) + " at " + shift.getHour() + ":00 has " + women + " women and " + men
-                + " men scheduled");
+            result.add(Week.dayString(day) + " at " + shift.getHour() + ":00 has " + women + " women and " + men + " men scheduled");
           }
         }
       }
@@ -273,8 +266,7 @@ public class Scorer {
         for (Employee employee : shift) {
           if (!employee.isAvailable(day, shift.getHour())) {
             notAvailable = true;
-            result.add(employee.getName() + " was scheduled for " + Week.dayString(day) + " at " + shift.getHour()
-                + " and is not available");
+            result.add(employee.getName() + " was scheduled for " + Week.dayString(day) + " at " + shift.getHour() + " and is not available");
           }
         }
       }

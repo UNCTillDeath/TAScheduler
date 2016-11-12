@@ -12,8 +12,8 @@ import com.sun.javafx.binding.StringFormatter;
 
 public class KarenBot implements Runnable {
 
-  private SchedulingAlgo _algo;
-  private static String _outputPath;
+  private SchedulingAlgo   _algo;
+  private static String    _outputPath;
   public static FileWriter _consoleOutput;
 
   public KarenBot(SchedulingAlgo algo) {
@@ -54,11 +54,11 @@ public class KarenBot implements Runnable {
 
     // Output Results
     output(report);
-    try {
-      _consoleOutput.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    // try {
+    // _consoleOutput.close();
+    // } catch (IOException e) {
+    // e.printStackTrace();
+    // }
   }
 
   private void verifyHours(Staff staff, Week week) {
@@ -75,14 +75,14 @@ public class KarenBot implements Runnable {
         }
       }
       if ((employeeHoursAvailability < 20 && e.getCapacity() > 5) || employeeHoursAvailability < 15) {
-       output += e.getName() + " only has " + employeeHoursAvailability + " available for scheduling (" + e.getCapacity() + ")\n";
+        output += e.getName() + " only has " + employeeHoursAvailability + " available for scheduling (" + e.getCapacity() + ")\n";
       }
     }
     output += "Total capacity: " + totalCapacity;
     log("Verify Hours", output);
   }
 
-  private static void output(RunReport report) {
+  private void output(RunReport report) {
     Scorecard scorecard = report.getHigh();
     writeOutput(scorecard, "TopSchedule" + "_" + scorecard.getScore());
     log("Diagnostics", scorecard.getDiagnostics());
@@ -115,7 +115,7 @@ public class KarenBot implements Runnable {
           output.write("\n");
         }
       }
-      output.close();
+      // output.close();
     } catch (IOException e) {
     }
   }
@@ -129,7 +129,7 @@ public class KarenBot implements Runnable {
       _consoleOutput.flush();
     } catch (IOException e) {
       e.printStackTrace();
-    }    
+    }
     out.println("======================");
     out.println(header);
     out.println("======================");
@@ -240,6 +240,10 @@ public class KarenBot implements Runnable {
 
   @Override
   public void run() {
-    
+
+  }
+
+  public KarenBot copy() {
+    return new KarenBot(_algo.copy());
   }
 }

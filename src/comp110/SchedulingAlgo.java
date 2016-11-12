@@ -5,5 +5,7 @@ import java.util.Random;
 public interface SchedulingAlgo {
 
   public Schedule run(Schedule input, Random random);
-  
+
+  public SchedulingAlgo copy();
+
 }

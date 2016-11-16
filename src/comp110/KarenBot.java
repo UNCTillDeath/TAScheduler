@@ -10,7 +10,7 @@ import java.util.Date;
 
 import com.sun.javafx.binding.StringFormatter;
 
-public class KarenBot implements Runnable {
+public class KarenBot {
 
   private SchedulingAlgo   _algo;
   private static String    _outputPath;
@@ -236,11 +236,6 @@ public class KarenBot implements Runnable {
       }
     }
     return max + 1;
-  }
-
-  @Override
-  public void run() {
-
   }
 
   public KarenBot copy() {

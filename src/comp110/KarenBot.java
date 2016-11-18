@@ -116,8 +116,20 @@ public class KarenBot {
         }
       }
       output.flush();
+      checkForDuplicates(name + ".csv");
       // output.close();
     } catch (IOException e) {
+    }
+  }
+
+  private static void checkForDuplicates(String name) {
+    File path = new File(_outputPath);
+    for (File f : path.listFiles()) {
+      if (f.getName().split("_").length >= 2) {
+        if (name.split("_")[1].equals(f.getName().split("_")[1])) {
+          f.delete();
+        }
+      }
     }
   }
 

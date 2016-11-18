@@ -3,11 +3,11 @@ package comp110;
 public class Employee {
 
   final private String _name;
-  private int _capacity;
-  private int _capacityUsed;
-  private boolean _isFemale;
-  private int _level; // 1: in 401, 2: in 410/411, 3: in major
-  private int[][] _availability;
+  private int          _capacity;
+  private int          _capacityUsed;
+  private boolean      _isFemale;
+  private int          _level;       // 1: in 401, 2: in 410/411, 3: in major
+  private int[][]      _availability;
 
   public Employee(String name, int capacity, boolean isFemale, int level, int[][] availability) {
     _availability = availability;

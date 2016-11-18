@@ -115,6 +115,7 @@ public class KarenBot {
           output.write("\n");
         }
       }
+      output.flush();
       // output.close();
     } catch (IOException e) {
     }

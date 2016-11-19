@@ -7,14 +7,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-
-import com.sun.javafx.binding.StringFormatter;
+import java.util.Formatter;
 
 public class KarenBot {
 
   private SchedulingAlgo   _algo;
   private static String    _outputPath;
   public static FileWriter _consoleOutput;
+  private static boolean   _haveOutputFolder = false;
 
   public KarenBot(SchedulingAlgo algo) {
     _algo = algo;
@@ -34,7 +34,10 @@ public class KarenBot {
     try {
       String time = Long.toString(new Date().getTime());
       File outputFolder = new File("output_" + time + "_" + trials);
-      outputFolder.mkdir();
+      if (!_haveOutputFolder) {
+        outputFolder.mkdir();
+        _haveOutputFolder = true;
+      }
       _outputPath = outputFolder.getPath();
       _consoleOutput = new FileWriter(_outputPath + "/consoleOutput.txt");
       week = DataIO.parseWeek("data/" + scenario + "/week.csv", scenario);
@@ -87,8 +90,10 @@ public class KarenBot {
     writeOutput(scorecard, "TopSchedule" + "_" + scorecard.getScore());
     log("Diagnostics", scorecard.getDiagnostics());
     log("Schedule", scorecard.getSchedule().getWeek());
-    String score = StringFormatter.format("%.3f - Highest Score", scorecard.getScore()).get();
-    log(score, scorecard);
+    Formatter f = new Formatter();
+    // String score;
+    f.format("%.3f - Highest Score", scorecard.getScore());
+    log(f.toString(), scorecard);
     log("Stats (n:" + report.getTrials() + ")", report.getStats());
   }
 
@@ -172,7 +177,7 @@ public class KarenBot {
     if (outputCapacityVerification) {
       int capacitySum = 0;
       try {
-        FileWriter output = new FileWriter(new File(_outputPath + "/capacityVerification.csv"));
+        FileWriter output = new FileWriter(_outputPath + "/capacityVerification.csv");
         output.write("Name,Capacity\n");
         for (Employee e : staff) {
           capacitySum += e.getCapacity();

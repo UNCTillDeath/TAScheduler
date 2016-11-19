@@ -1,15 +1,14 @@
 package comp110;
 
 import java.util.ArrayList;
-
-import com.sun.javafx.binding.StringFormatter;
+import java.util.Formatter;
 
 public class RunReport {
 
-  private boolean _verbose;
-  private int _trial, _trials;
+  private boolean           _verbose;
+  private int               _trial, _trials;
   private ArrayList<Double> _scores;
-  private Scorecard _high, _low;
+  private Scorecard         _high, _low;
 
   public RunReport(int trials, boolean verbose) {
     _trial = 0;
@@ -89,10 +88,13 @@ public class RunReport {
   }
 
   public String getStats() {
+    Formatter f1 = new Formatter();
     String results = "";
-    results += StringFormatter.format("%.2f - Low", this.getLowScore()).get() + "\n";
-    results += StringFormatter.format("%.2f - High", this.getHighScore()).get() + "\n";
-    results += StringFormatter.format("%.2f +/- %.2f - Average", this.getAverageScore(), this.getStdev()).get();
+    results += f1.format("%.2f - Low", this.getLowScore()).toString() + "\n";
+    Formatter f2 = new Formatter();
+    results += f2.format("%.2f - High", this.getHighScore()).toString() + "\n";
+    Formatter f3 = new Formatter();
+    results += f3.format("%.2f +/- %.2f - Average", this.getAverageScore(), this.getStdev()).toString();
     return results;
   }
 

@@ -14,7 +14,6 @@ public class KarenBot {
   private SchedulingAlgo   _algo;
   private static String    _outputPath;
   public static FileWriter _consoleOutput;
-  private static boolean   _haveOutputFolder = false;
 
   public KarenBot(SchedulingAlgo algo) {
     _algo = algo;
@@ -34,10 +33,7 @@ public class KarenBot {
     try {
       String time = Long.toString(new Date().getTime());
       File outputFolder = new File("output_" + time + "_" + trials);
-      if (!_haveOutputFolder) {
-        outputFolder.mkdir();
-        _haveOutputFolder = true;
-      }
+      outputFolder.mkdir();
       _outputPath = outputFolder.getPath();
       _consoleOutput = new FileWriter(_outputPath + "/consoleOutput.txt");
       week = DataIO.parseWeek("data/" + scenario + "/week.csv", scenario);
@@ -100,7 +96,7 @@ public class KarenBot {
   public static void writeOutput(Scorecard scorecard, String name) {
     ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(scorecard.getSchedule().getWeek());
     try {
-      FileWriter output = new FileWriter(new File(_outputPath + "/" + name + ".csv"));
+      FileWriter output = new FileWriter(_outputPath + "/" + name + ".csv");
       output.write(",Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday\n");
       for (int hour = getEarliestHour(scorecard.getSchedule().getWeek()); hour < getLatestHour(scorecard.getSchedule().getWeek()); hour++) {
         output.write(hour + " -- " + (hour + 1));

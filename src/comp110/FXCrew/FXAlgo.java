@@ -1,6 +1,7 @@
 package comp110.FXCrew;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -33,16 +34,15 @@ public class FXAlgo implements SchedulingAlgo {
   public Schedule run(Schedule input, Random random) {
 
     setup(input, random);
+    Collections.shuffle(_employees, random);
 
     scheduleStaff();
-
-    // scheduleRemainingEmployees();
 
     testSchedule();
 
     attemptOneHourFix();
 
-    scheduleRemainingEmployees();
+    scheduleRemainingEmployees(random);
 
     return input;
   }
@@ -137,24 +137,24 @@ public class FXAlgo implements SchedulingAlgo {
       // scoring goes here
 
       // gender
-      if (missingGender(shift) == 0 || hasGenderBalance(shift)) {
-        if (majorityRemaining() == 1) {
-          if (!e.getIsFemale()) {
-            score += .25;
-          }
-        } else {
-          if (e.getIsFemale()) {
-            score += .25;
-          }
-        }
-      } else {
-        if (e.getIsFemale() && missingGender(shift) == 2) {
-          score++;
-        }
-        if (!e.getIsFemale() && missingGender(shift) == 1) {
-          score++;
-        }
-      }
+      // if (missingGender(shift) == 0 || hasGenderBalance(shift)) {
+      // if (majorityRemaining() == 1) {
+      // if (!e.getIsFemale()) {
+      // score += .25;
+      // }
+      // } else {
+      // if (e.getIsFemale()) {
+      // score += .25;
+      // }
+      // }
+      // } else {
+      // if (e.getIsFemale() && missingGender(shift) == 2) {
+      // score++;
+      // }
+      // if (!e.getIsFemale() && missingGender(shift) == 1) {
+      // score++;
+      // }
+      // }
 
       if (getPotentialSkill(e, shift) < 1.5) {
 
@@ -209,9 +209,9 @@ public class FXAlgo implements SchedulingAlgo {
     }
 
     for (ScoredEmployee e : scoredEmployees) {
-      if (e.getScore() == highestScore) {
-        highestScores.add(e.getEmployee());
-      }
+      // if (e.getScore() == highestScore) {
+      highestScores.add(e.getEmployee());
+      // }
     }
 
     // Randomly chooses the index of one of the employees tied for highest score
@@ -400,27 +400,36 @@ public class FXAlgo implements SchedulingAlgo {
 
   }
 
-  private void scheduleRemainingEmployees() {
+  private void scheduleRemainingEmployees(Random rnd) {
     ArrayList<Employee> hasRemaining = getEmployeesWithRemainingCapacity();
     // System.out.println(hasRemaining.size());
 
-    // first time through we only schedule with shifts that have capacity
-    // remaining
+    Collections.shuffle(hasRemaining, rnd);
     for (Employee e : hasRemaining) {
 
       ArrayList<Shift> availableShifts = getShiftsAvailable(e);
 
+      // first time through we try to schedule contiguous
       for (Shift shift : availableShifts) {
-        // if (possibleHasRequiredSkill(e, shift)) {
-        if (shift.getCapacityRemaining() > 0 && e.getCapacityRemaining() > 0) {
+        if (this.isContiguous(e, shift) && e.getCapacityRemaining() > 0) {
           shift.add(e);
         }
       }
-    }
 
-    // second time through we only care about filling Employees remaining
-    // capacity
+      // second time through we only schedule with shifts that have capacity
+      // remaining
+      // for (Shift shift : availableShifts) {
+      // // if (possibleHasRequiredSkill(e, shift)) {
+      // if (shift.getCapacityRemaining() > 0 && e.getCapacityRemaining() > 0) {
+      // shift.add(e);
+      // }
+      // }
+    }
+    //
+    // // third time through we only care about filling Employees remaining
+    // // capacity
     hasRemaining = getEmployeesWithRemainingCapacity();
+    Collections.shuffle(hasRemaining, rnd);
     for (Employee e : hasRemaining) {
 
       ArrayList<Shift> availableShifts = getShiftsAvailable(e);

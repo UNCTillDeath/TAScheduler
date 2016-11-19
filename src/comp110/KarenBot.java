@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Formatter;
 
 public class KarenBot {
@@ -31,8 +30,7 @@ public class KarenBot {
     Staff staff;
 
     try {
-      String time = Long.toString(new Date().getTime());
-      File outputFolder = new File("output_" + time + "_" + trials);
+      File outputFolder = new File("output");
       outputFolder.mkdir();
       _outputPath = outputFolder.getPath();
       _consoleOutput = new FileWriter(_outputPath + "/consoleOutput.txt");

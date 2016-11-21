@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Formatter;
 
 public class KarenBot {
@@ -30,7 +31,8 @@ public class KarenBot {
     Staff staff;
 
     try {
-      File outputFolder = new File("output");
+      String time = Long.toString(new Date().getTime());
+      File outputFolder = new File("output_" + time + "_" + trials);
       outputFolder.mkdir();
       _outputPath = outputFolder.getPath();
       _consoleOutput = new FileWriter(_outputPath + "/consoleOutput.txt");
@@ -115,9 +117,10 @@ public class KarenBot {
         }
       }
       output.flush();
-      checkForDuplicates(name + ".csv");
+      // checkForDuplicates(name + ".csv"); THIS BREAKS LINUX FOR SOME REASON
       // output.close();
     } catch (IOException e) {
+      e.printStackTrace();
     }
   }
 

@@ -117,7 +117,7 @@ public class KarenBot {
         }
       }
       output.flush();
-      // checkForDuplicates(name + ".csv"); THIS BREAKS LINUX FOR SOME REASON
+      checkForDuplicates(name + ".csv"); // THIS BREAKS LINUX FOR SOME REASON
       // output.close();
     } catch (IOException e) {
       e.printStackTrace();
@@ -127,8 +127,8 @@ public class KarenBot {
   private static void checkForDuplicates(String name) {
     File path = new File(_outputPath);
     for (File f : path.listFiles()) {
-      if (f.getName().split("_").length >= 2) {
-        if (name.split("_")[1].equals(f.getName().split("_")[1])) {
+      if (f.getName().split("_").length >= 2 && f.getName().charAt(0) != '.') {
+        if (name.split("_")[1].equals(f.getName().split("_")[1]) && !name.equals(f.getName())) {
           f.delete();
         }
       }

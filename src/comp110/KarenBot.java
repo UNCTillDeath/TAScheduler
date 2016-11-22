@@ -35,9 +35,9 @@ public class KarenBot {
       File outputFolder = new File("output_" + time + "_" + trials);
       outputFolder.mkdir();
       _outputPath = outputFolder.getPath();
-      _consoleOutput = new FileWriter(_outputPath + "/consoleOutput.txt");
-      week = DataIO.parseWeek("data/" + scenario + "/week.csv", scenario);
-      staff = DataIO.parseStaff("data/" + scenario + "/staff");
+      _consoleOutput = new FileWriter(_outputPath + File.separator + "consoleOutput.txt");
+      week = DataIO.parseWeek("data" + File.separator + scenario + File.separator + "week.csv", scenario);
+      staff = DataIO.parseStaff("data" + File.separator + scenario + File.separator + "staff");
     } catch (IOException e) {
       e.printStackTrace();
       System.exit(1);
@@ -96,7 +96,7 @@ public class KarenBot {
   public static void writeOutput(Scorecard scorecard, String name) {
     ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(scorecard.getSchedule().getWeek());
     try {
-      FileWriter output = new FileWriter(_outputPath + "/" + name + ".csv");
+      FileWriter output = new FileWriter(_outputPath + File.separator + name + ".csv");
       output.write(",Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday\n");
       for (int hour = getEarliestHour(scorecard.getSchedule().getWeek()); hour < getLatestHour(scorecard.getSchedule().getWeek()); hour++) {
         output.write(hour + " -- " + (hour + 1));

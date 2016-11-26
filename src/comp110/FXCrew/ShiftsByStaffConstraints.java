@@ -140,7 +140,7 @@ public class ShiftsByStaffConstraints {
       if (bCapacity != bMalesAvailable && bMalesAvailable >= (bCapacity - bMalesAvailable)) {
         bGenderRatio = (double) bMalesAvailable / (double) (bCapacity - bMalesAvailable);
       } else {
-        bGenderRatio = (double) (bCapacity - bMalesAvailable) / (double) aMalesAvailable;
+        bGenderRatio = (double) (bCapacity - bMalesAvailable) / (double) bMalesAvailable;
       }
 
       aAvailableRatio = (double) aAvailable / (double) aCapacity;

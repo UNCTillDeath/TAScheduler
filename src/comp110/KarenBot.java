@@ -46,6 +46,9 @@ public class KarenBot {
 
     // Verify everyone has at least 20 available shifts for scheduling
     verifyHours(staff, week);
+    
+    // Find the ceiling on capacity scoreline
+    computeMaxCapacityScore(staff, week);
 
     // Run Algorithm for N trials and score it
     Scorer scorer = new Scorer(staff, week, algo);
@@ -58,6 +61,29 @@ public class KarenBot {
     // } catch (IOException e) {
     // e.printStackTrace();
     // }
+  }
+  
+  private void computeMaxCapacityScore(Staff staff, Week week){
+    int shiftsSatisfyingCapacity = 0;
+    
+    Shift[][] shifts = week.getShifts();
+    for (int day = 0; day < shifts.length; day++) {
+      for (int hour = 0; hour < shifts[0].length; hour++) {
+        int employeesAvailable = 0;
+        if (shifts[day][hour].getCapacity() > 0) {
+          for (Employee e : staff) {
+            if (e.isAvailable(day, hour)) {
+              employeesAvailable++;
+            }
+          }
+          if (employeesAvailable >= shifts[day][hour].getCapacity()) {
+            shiftsSatisfyingCapacity++;
+          }
+        }
+      }
+    }
+    System.out.println("Max Capacity Score Possible: " +  shiftsSatisfyingCapacity / (double) week.getNumberOfShifts());
+
   }
 
   private void verifyHours(Staff staff, Week week) {

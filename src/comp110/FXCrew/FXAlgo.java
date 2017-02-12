@@ -396,6 +396,7 @@ public class FXAlgo implements SchedulingAlgo {
 
     KarenBot karenBot = new KarenBot(new FXAlgo());
     Threader threader = new Threader(karenBot, 1, "spring-17", 1);
+
     // karenBot.run("week1", 1000);
 
   }

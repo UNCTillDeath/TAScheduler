@@ -18,4 +18,10 @@ public class WhoIsAvailable implements SchedulingAlgo {
   public Schedule run(Schedule input, Random random) {
     return null;
   }
+
+@Override
+public SchedulingAlgo copy() {
+	// TODO Auto-generated method stub
+	return new WhoIsAvailable();
+}
 }

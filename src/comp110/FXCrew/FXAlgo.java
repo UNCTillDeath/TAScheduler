@@ -27,6 +27,7 @@ public class FXAlgo implements SchedulingAlgo {
   private ArrayList<Employee> _employees;
 
   private Random              _random;
+  private int _chunkAmount = 0;
 
   private static final int    SHIFT_FILL_ATTEMPTS = 100;
 
@@ -43,6 +44,10 @@ public class FXAlgo implements SchedulingAlgo {
     attemptOneHourFix();
 
     scheduleRemainingEmployees(random);
+    
+    if(_chunkAmount > 0){
+    	System.out.println("Percentage of staff with 4 hour shifts is: " + ((double) _chunkAmount) / ((double) _employees.size()));
+    }
 
     return input;
   }
@@ -232,6 +237,10 @@ public class FXAlgo implements SchedulingAlgo {
     boolean success = chunkOfShift.scheduleEmployeeToChunk();
     if (highestScores.get(index).getCapacityRemaining() == 0) {
       _employees.remove(highestScores.get(index));
+    }else{
+    	if (chunkOfShift.getSize() >= 4){
+    		++_chunkAmount;
+    	}
     }
 
     // if (success) System.out.println("added");
@@ -395,7 +404,7 @@ public class FXAlgo implements SchedulingAlgo {
   public static void main(String[] args) {
 
     KarenBot karenBot = new KarenBot(new FXAlgo());
-    Threader threader = new Threader(karenBot, 1, "spring-17", 1);
+    Threader threader = new Threader(karenBot, 1, "spring-17", 1000);
 
     // karenBot.run("week1", 1000);
 

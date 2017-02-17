@@ -1,9 +1,9 @@
 package comp110;
 
 public class Storage{
-  public enum EStorageResult { SUCCESS, FAILED };
-  
-  public Storage(){
+
+  public Storage(Logic logic){
+    
   }
   
   public void pullFiles(){

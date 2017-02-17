@@ -4,8 +4,11 @@ public class Logic{
   public void run(){
 
   }
-  public void storagePullCompleteCallback(){
+  public void storagePullCompleteCallback(boolean success, String message){
 
+  }
+  public void storagePullCompleteCallback(boolean success, String message){
+    
   }
   public void uiRequestSchedule(){
 

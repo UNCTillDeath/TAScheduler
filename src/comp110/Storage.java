@@ -7,13 +7,13 @@ public class Storage{
   public void pushFiles(){
 
   }
-  public void getFilesPath(){
+  public String getFilesPath(){
+    return "";
+  }
+  public void setUsername(String username){
 
   }
-  public void setUsername(){
-
-  }
-  public void setPassword(){
+  public void setPassword(String password){
     
   }
 }

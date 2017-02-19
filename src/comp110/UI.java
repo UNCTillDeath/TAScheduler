@@ -32,6 +32,7 @@ public class UI extends Application {
 
   private Stage      _availabilityStage;
   private Stage      _scheduleStage;
+  private Stage      _swapStage;
   private GridPane   _grid;
   private Controller _controller;
 
@@ -60,8 +61,9 @@ public class UI extends Application {
     showScheduleButton.setOnAction(_controller::uiRequestSchedule);
     topBar.getChildren().add(showScheduleButton);
 
-    Button showSwapAvailability = new Button("Show Swaps");
-    topBar.getChildren().add(showSwapAvailability);
+    Button showSwapAvailabilityButton = new Button("Show Swaps");
+    showSwapAvailabilityButton.setOnAction(_controller::uiRequestSwaps);
+    topBar.getChildren().add(showSwapAvailabilityButton);
 
     _grid = new GridPane();
     _grid.setGridLinesVisible(true);
@@ -133,6 +135,16 @@ public class UI extends Application {
     _scheduleStage.setTitle("Current Schedule");
 
   }
+  
+  private void renderSwapStage(Schedule schedule){
+    Group root = new Group();
+    Scene scene = new Scene(root);
+    _swapStage.setScene(scene);
+    
+    
+    _swapStage.sizeToScene();
+    _swapStage.setTitle("Available for Swaps");
+  }
 
   private GridPane writeSchedule(Schedule schedule) {
     GridPane schedulePane = new GridPane();
@@ -141,13 +153,13 @@ public class UI extends Application {
     ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(schedule.getWeek());
     
     for (int day = 0; day < 7; day++) {
-      schedulePane.add(new Label(Week.dayString(day)), day, 0);
+      schedulePane.add(new Label(Week.dayString(day)), day + 1, 0); //+1 to account for hour column
     }
    
     int hourRow = 0;    
     for (int hour = getEarliestHour(schedule.getWeek()); hour < getLatestHour(
         schedule.getWeek()); hour++) {
-      Label dayLabel = new Label(hour + " -- " + (hour + 1));
+      Label dayLabel = new Label((hour % 12 == 0 ? 12 : hour % 12) + " -- " + ((hour + 1) % 12 == 0 ? 12 : (hour + 1) % 12));
       dayLabel.setMaxWidth(Double.MAX_VALUE);
       dayLabel.setAlignment(Pos.CENTER);
       schedulePane.add(dayLabel, 0, hourRow + 1); //+1 to account for day row
@@ -230,6 +242,12 @@ public class UI extends Application {
     renderScheduleStage(schedule);
     _scheduleStage.show();
 
+  }
+  
+  public void displayPossibleSwaps(Schedule schedule){
+    _swapStage = new Stage();
+    renderSwapStage(schedule);
+    _swapStage.show();
   }
 
   public static void main(String[] args) {

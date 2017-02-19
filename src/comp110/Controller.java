@@ -49,8 +49,8 @@ public class Controller {
 
   }
 
-  public void uiRequestSwaps() {
-
+  public void uiRequestSwaps(ActionEvent event) {
+    ui.displayPossibleSwaps(null);
   }
 
   public void uiRequestSaveAvailability(ActionEvent event) {

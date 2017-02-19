@@ -2,7 +2,7 @@ package comp110;
 
 public class Storage{
 
-  public Storage(Logic logic){
+  public Storage(Controller logic){
     
   }
   

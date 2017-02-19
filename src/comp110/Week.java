@@ -1,6 +1,8 @@
 package comp110;
 
-public class Week {
+import java.io.Serializable;
+
+public class Week implements Serializable {
 
   private String _title;
   private Shift[][] _shifts;

@@ -1,6 +1,8 @@
 package comp110;
 
-public class Schedule {
+import java.io.Serializable;
+
+public class Schedule implements Serializable {
 
   private Staff _staff;
   private Week _week;

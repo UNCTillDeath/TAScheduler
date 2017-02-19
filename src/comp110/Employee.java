@@ -1,6 +1,8 @@
 package comp110;
 
-public class Employee {
+import java.io.Serializable;
+
+public class Employee implements Serializable {
 
   final private String _name;
   private int          _capacity;

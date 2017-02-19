@@ -1,9 +1,10 @@
 package comp110;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 
-public class Staff extends HashSet<Employee> {
+public class Staff extends HashSet<Employee> implements Serializable {
 
   private static final long serialVersionUID = -5759157599215444115L;
 

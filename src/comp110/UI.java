@@ -1,5 +1,10 @@
 package comp110;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -24,15 +29,14 @@ import javafx.stage.Stage;
 
 public class UI extends Application {
 
-  private Stage    _availabilityStage;
-  private Stage    _schedule;
-  private GridPane _grid;
+  private Stage      _availabilityStage;
+  private Stage      _scheduleStage;
+  private GridPane   _grid;
   private Controller _controller;
 
   @Override
   public void start(Stage primaryStage) throws Exception {
     _availabilityStage = primaryStage;
-    _schedule = new Stage();
     _controller = new Controller();
     displayAvailable(null);
   }
@@ -41,16 +45,23 @@ public class UI extends Application {
     Group availabilityRoot = new Group();
     Scene availabilityScene = new Scene(availabilityRoot);
     BorderPane rootPane = new BorderPane();
-    
+
     HBox topBar = new HBox();
     TextField onyenField = new TextField("Enter onyen here");
     topBar.getChildren().add(onyenField);
     rootPane.setTop(topBar);
-    
+
     Button pullScheduleButton = new Button("Pull Schedule");
     topBar.getChildren().add(pullScheduleButton);
-    pullScheduleButton.setOnAction(_controller::uiRequestSchedule);
-    
+    pullScheduleButton.setOnAction(_controller::uiRequestEmployeeAvailability);
+
+    Button showScheduleButton = new Button("Show Current Schedule");
+    showScheduleButton.setOnAction(_controller::uiRequestSchedule);
+    topBar.getChildren().add(showScheduleButton);
+
+    Button showSwapAvailability = new Button("Show Swaps");
+    topBar.getChildren().add(showSwapAvailability);
+
     _grid = new GridPane();
     _grid.setGridLinesVisible(true);
 
@@ -66,17 +77,20 @@ public class UI extends Application {
         HBox box = new HBox();
         if (day == 0) {
           int time = (hour + 9) % 12;
-          Label timeLabel = new Label((time % 12 == 0 ? 12 : time) + " - " + ((time + 1) % 12 == 0 ? 12 : time + 1));
+          Label timeLabel = new Label((time % 12 == 0 ? 12 : time) + " - "
+              + ((time + 1) % 12 == 0 ? 12 : time + 1));
           timeLabel.setMaxWidth(Double.MAX_VALUE);
           timeLabel.setAlignment(Pos.CENTER);
           box.getChildren().add(timeLabel);
 
         } else {
           CheckBox check = new CheckBox();
-          if (e != null){
-            if (e.isAvailable(day - 1, hour + 9)){ //map day and hour onto our space
+          if (e != null) {
+            if (e.isAvailable(day - 1, hour + 9)) { // map day and hour onto our
+                                                    // space
               check.setSelected(true);
-              box.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+              box.setBackground(
+                  new Background(new BackgroundFill(Color.GREEN, null, null)));
             }
           }
           check.setOnAction(_controller::handleCheck);
@@ -89,14 +103,14 @@ public class UI extends Application {
       }
     }
     rootPane.setCenter(_grid);
-    
+
     HBox bottomBar = new HBox();
     Button saveButton = new Button("Save");
     saveButton.setPrefWidth(460);
     saveButton.setOnAction(_controller::uiRequestSaveAvailability);
     bottomBar.getChildren().add(saveButton);
     rootPane.setBottom(bottomBar);
-    
+
     availabilityRoot.getChildren().add(rootPane);
     _availabilityStage.setScene(availabilityScene);
     _availabilityStage.setTitle("COMP110 TA Availability");
@@ -105,11 +119,107 @@ public class UI extends Application {
 
   }
 
-  
+  private void renderScheduleStage(Schedule schedule) {
+    Group root = new Group();
+    Scene scene = new Scene(root);
+    _scheduleStage.setScene(scene);
+    GridPane schedulePane = writeSchedule(schedule);
+    root.getChildren().add(schedulePane);
+    _scheduleStage.setTitle("Current Schedule");
+
+  }
+
+  private GridPane writeSchedule(Schedule schedule) {
+    GridPane schedulePane = new GridPane();
+    schedulePane.setGridLinesVisible(true);
+    ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(schedule.getWeek());
+    // output.write(",Sunday, Monday, Tuesday, Wednesday, Thursday, Friday,
+    // Saturday\n");
+    for (int hour = getEarliestHour(schedule.getWeek()); hour < getLatestHour(
+        schedule.getWeek()); hour++) {
+      schedulePane.add(new Label(hour + " -- " + (hour + 1)), 0, hour - getEarliestHour(schedule.getWeek()));
+      int max = getMaxSize(hour, schedule.getWeek());
+//      if (max == 0) {
+//        output.write("\n");
+//      }
+      for (int i = 0; i < max; i++) {
+        //output.write(",");
+        for (int day = 0; day < 7; day++) {
+          if (i < shifts.get(day).get(hour).size()) {
+           schedulePane.add(new Label(shifts.get(day).get(hour).get(i).toString()), day + 1, i);
+          } //else {
+//            output.write(",");
+//          }
+        }
+        //output.write("\n");
+      }
+    }
+    return schedulePane;
+  }
+
+  private static int getMaxSize(int hour, Week week) {
+    int max = 0;
+    for (int day = 0; day < 7; day++) {
+      if (week.getShift(day, hour).size() > max) {
+        max = week.getShift(day, hour).size();
+      }
+    }
+    return max;
+  }
+
+  private static int getEarliestHour(Week week) {
+    int min = 10000;
+    for (int day = 0; day < 7; day++) {
+      for (int hour = 0; hour < 24; hour++) {
+        if (week.getShift(day, hour).size() > 0) {
+          if (hour < min) {
+            min = hour;
+          }
+        }
+      }
+    }
+    return min;
+  }
+
+  private static int getLatestHour(Week week) {
+    int max = 0;
+    for (int day = 0; day < 7; day++) {
+      for (int hour = 0; hour < 24; hour++) {
+        if (week.getShift(day, hour).size() > 0) {
+          if (hour > max) {
+            max = hour;
+          }
+        }
+      }
+    }
+    return max + 1;
+  }
+
+  private static ArrayList<ArrayList<ArrayList<Employee>>> shiftsAsArray(Week week) {
+    ArrayList<ArrayList<ArrayList<Employee>>> shifts = new ArrayList<ArrayList<ArrayList<Employee>>>();
+    for (int day = 0; day < 7; day++) {
+      shifts.add(new ArrayList<ArrayList<Employee>>());
+      for (int hour = 0; hour < 24; hour++) {
+        shifts.get(day).add(new ArrayList<Employee>());
+        for (Employee e : week.getShift(day, hour)) {
+          shifts.get(day).get(hour).add(e);
+        }
+      }
+    }
+
+    return shifts;
+  }
 
   public void displayAvailable(Employee e) {
     renderAvailabilityStage(e);
     _availabilityStage.show();
+  }
+
+  public void displaySchedule(Schedule schedule) {
+    _scheduleStage = new Stage();
+    renderScheduleStage(schedule);
+    _scheduleStage.show();
+
   }
 
   public static void main(String[] args) {

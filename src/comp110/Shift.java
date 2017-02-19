@@ -1,11 +1,12 @@
 package comp110;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Shift extends HashSet<Employee> {
+public class Shift extends HashSet<Employee> implements Serializable {
 
   /* Even though we don't serialize, this keeps Java from complaining... */
   private static final long serialVersionUID = 5723878473617645106L;

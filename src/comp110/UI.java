@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -77,7 +78,7 @@ public class UI extends Application {
         HBox box = new HBox();
         if (day == 0) {
           int time = (hour + 9) % 12;
-          Label timeLabel = new Label((time % 12 == 0 ? 12 : time) + " - "
+          Label timeLabel = new Label((time % 12 == 0 ? 12 : time) + " -- "
               + ((time + 1) % 12 == 0 ? 12 : time + 1));
           timeLabel.setMaxWidth(Double.MAX_VALUE);
           timeLabel.setAlignment(Pos.CENTER);
@@ -106,7 +107,7 @@ public class UI extends Application {
 
     HBox bottomBar = new HBox();
     Button saveButton = new Button("Save");
-    saveButton.setPrefWidth(460);
+    saveButton.setPrefWidth(465);
     saveButton.setOnAction(_controller::uiRequestSaveAvailability);
     bottomBar.getChildren().add(saveButton);
     rootPane.setBottom(bottomBar);
@@ -124,35 +125,44 @@ public class UI extends Application {
     Scene scene = new Scene(root);
     _scheduleStage.setScene(scene);
     GridPane schedulePane = writeSchedule(schedule);
-    root.getChildren().add(schedulePane);
+    ScrollPane scroll = new ScrollPane();
+    scroll.setPrefSize(700, 800);
+    scroll.setContent(schedulePane);
+    root.getChildren().add(scroll);
+    _scheduleStage.sizeToScene();
     _scheduleStage.setTitle("Current Schedule");
 
   }
 
   private GridPane writeSchedule(Schedule schedule) {
     GridPane schedulePane = new GridPane();
+    schedulePane.setAlignment(Pos.CENTER);
     schedulePane.setGridLinesVisible(true);
     ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(schedule.getWeek());
-    // output.write(",Sunday, Monday, Tuesday, Wednesday, Thursday, Friday,
-    // Saturday\n");
+    
+    for (int day = 0; day < 7; day++) {
+      schedulePane.add(new Label(Week.dayString(day)), day, 0);
+    }
+   
+    int hourRow = 0;    
     for (int hour = getEarliestHour(schedule.getWeek()); hour < getLatestHour(
         schedule.getWeek()); hour++) {
-      schedulePane.add(new Label(hour + " -- " + (hour + 1)), 0, hour - getEarliestHour(schedule.getWeek()));
+      Label dayLabel = new Label(hour + " -- " + (hour + 1));
+      dayLabel.setMaxWidth(Double.MAX_VALUE);
+      dayLabel.setAlignment(Pos.CENTER);
+      schedulePane.add(dayLabel, 0, hourRow + 1); //+1 to account for day row
+      
       int max = getMaxSize(hour, schedule.getWeek());
-//      if (max == 0) {
-//        output.write("\n");
-//      }
+      
       for (int i = 0; i < max; i++) {
         //output.write(",");
         for (int day = 0; day < 7; day++) {
           if (i < shifts.get(day).get(hour).size()) {
-           schedulePane.add(new Label(shifts.get(day).get(hour).get(i).toString()), day + 1, i);
-          } //else {
-//            output.write(",");
-//          }
+           schedulePane.add(new Label(shifts.get(day).get(hour).get(i).toString()), day + 1, hourRow + i + 1); //+1 to account for day row
+          }
         }
-        //output.write("\n");
       }
+      hourRow += max;
     }
     return schedulePane;
   }

@@ -249,9 +249,16 @@ public class UI extends Application {
     renderSwapStage(schedule);
     _swapStage.show();
   }
+  
+  public Credentials getUsernamePassword() {
+	  
+	  return null;
+  }
 
   public static void main(String[] args) {
     Application.launch(args);
   }
+  
+
 
 }

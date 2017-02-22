@@ -1,8 +1,9 @@
 package comp110;
 
 public class Parser{
-  public void parseAvailable(){
+  public Employee parseAvailable(String file){
 
+	  return null;
   }
   public void parseSchedule(){
 

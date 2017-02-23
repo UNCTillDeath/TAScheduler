@@ -252,7 +252,7 @@ public class UI extends Application {
   
   public Credentials getUsernamePassword() {
 	  
-	  return null;
+	  return new Credentials("test", "test");
   }
 
   public static void main(String[] args) {

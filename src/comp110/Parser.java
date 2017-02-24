@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Parser{
-  public Employee parseAvailable(String file){
+  public Employee parseEmployee(String file){
 	  File csv = new File(file);
 	  BufferedReader csvReader = null;
 	  String name = "";
@@ -56,8 +56,15 @@ public class Parser{
       }
       return new Employee(name, capacity, gender.equals("M") ? false : true, level, availability);
     }
-  public void parseSchedule(){
-
+  public Staff parseSchedule(String dir){
+	  Staff staff = new Staff();
+	  File csvDirectory = new File(dir);
+	  BufferedReader csvReader = null;
+	  int counter = 0;
+	  for (File csv : csvDirectory.listFiles()) {
+		  staff.add(parseEmployee(csv.toString()));
+	  }
+	  return staff; 
   }
   public void writeFile(){
 
@@ -65,8 +72,8 @@ public class Parser{
   
   public static void main(String[] args){
 	  Parser parser = new Parser();
-	  Employee employee = parser.parseAvailable("C:/Users/Keith Whitley/git/TAScheduler/data/spring-17/staff/aatieh.csv");
-	  System.out.println(employee.getName());
+	  Staff staff = parser.parseSchedule("C:/Users/Keith Whitley/git/TAScheduler/data/spring-17/staff/");
+	  System.out.println(staff.toString());
 	  
   }
   

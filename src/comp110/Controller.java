@@ -27,19 +27,17 @@ public class Controller {
 	private boolean _done = false;
 
 
-	public Controller() {
+	public Controller(UI ui) {
 
 		//initialize UI, storage, and parser
 		_storage = new Storage(this);
 		_parser = new Parser();
-		Application.launch(UI.class);
+		
+		
 
-
-		_ui = UI.getInstance();
-		_ui.setController(this);
+		_ui = ui;
 
 		//get username and password from UI ... 
-		_ui.getUsernamePassword();
 
 
 

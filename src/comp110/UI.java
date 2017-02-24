@@ -43,6 +43,10 @@ public class UI extends Application {
   
   @Override
   public void start(Stage primaryStage) throws Exception {
+	_controller = new Controller(this);	
+	//get username pass
+	
+	
     _availabilityStage = primaryStage;
     displayAvailable(null);
   }

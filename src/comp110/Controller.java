@@ -24,6 +24,7 @@ public class Controller {
 	private boolean _filesPulled = false;
 	private Employee _employee;
 	private Credentials credentials;
+	private boolean _done = false;
 
 
 	public Controller() {
@@ -50,6 +51,10 @@ public class Controller {
 
 	public void run() {
 
+	}
+	
+	public boolean getDone() {
+		return _done;
 	}
 
 	public void uiUsernamePasswordCallback(Credentials credentials) {

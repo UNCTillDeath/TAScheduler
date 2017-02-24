@@ -1,9 +1,11 @@
 package comp110;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.Background;
@@ -13,54 +15,63 @@ import javafx.scene.paint.Color;
 
 public class Controller {
 
-	private UI ui;
-	private Storage storage;
-	private Parser parser;
-	private String username;
-	private String password;
-	private String fileFromStorage;
-	private boolean filesPulled = false;
-	private Employee available;
+	private UI _ui;
+	private Storage _storage;
+	private Parser _parser;
+	private String _username;
+	private String _password;
+	private String _fileFromStorage;
+	private boolean _filesPulled = false;
+	private Employee _employee;
+	private Credentials credentials;
 
 
 	public Controller() {
 
 		//initialize UI, storage, and parser
-		ui = new UI();
-		storage = new Storage(this);
-		parser = new Parser();
+		_storage = new Storage(this);
+		_parser = new Parser();
+		Application.launch(UI.class);
+
+
+		_ui = UI.getInstance();
+		_ui.setController(this);
 
 		//get username and password from UI ... 
-		Credentials credentials = ui.getUsernamePassword();
-		username = credentials.getUsername();
-		password = credentials.getPassword();
+		_ui.getUsernamePassword();
 
-		//set username and password on storage
-		storage.setUsername(username);
-		storage.setPassword(password);
 
-		//pull files
-		storage.pullFiles();
+
+
 
 		//get available object from parser
-		if (filesPulled) {
-			available = parser.parseAvailable(fileFromStorage);
 
-			//display available object on ui
-			ui.displayAvailable(available);
-		}
 	}
 
 	public void run() {
 
 	}
 
-	public void storagePullCompleteCallback(boolean success, String message) {
-		filesPulled = success;
-		if (success) {
-			fileFromStorage = message;
-		}
+	public void uiUsernamePasswordCallback(Credentials credentials) {
+		_username = credentials.getUsername();
+		_password = credentials.getPassword();
+		_storage.setUsername(_username);
+		_storage.setPassword(_password);
+
+
+		//pull files
+		_storage.pullFiles();
 	}
+
+	public void storagePullCompleteCallback(boolean success, String message) {
+		if (success) {
+			_employee = _parser.parseEmployee(_storage.getFilesPath() + File.separator + "data" + File.separator + "spring-17" + File.separator + _username + ".csv");
+		}
+
+		//display available object on ui
+		_ui.displayAvailable(_employee);
+	}
+
 
 	public void uiRequestSchedule(ActionEvent event) {
 		Schedule schedule = null;
@@ -78,19 +89,16 @@ public class Controller {
 			c.printStackTrace();
 			return;
 		}
-		ui.displaySchedule(schedule);
+		_ui.displaySchedule(schedule);
 	}
 
 	public void uiRequestEmployeeAvailability(ActionEvent event) {
-		
+
 	}
 
-	public void uiUsernamePasswordCallback() {
-		
-	}
 
 	public void uiRequestSwaps(ActionEvent event) {
-		ui.displayPossibleSwaps(null);
+		_ui.displayPossibleSwaps(null);
 	}
 
 	public void uiRequestSaveAvailability(ActionEvent event) {

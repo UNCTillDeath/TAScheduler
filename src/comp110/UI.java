@@ -35,12 +35,24 @@ public class UI extends Application {
   private Stage      _swapStage;
   private GridPane   _grid;
   private Controller _controller;
+  private static UI _staticUI;
 
+  public UI () {
+	  _staticUI = this;
+  }
+  
   @Override
   public void start(Stage primaryStage) throws Exception {
     _availabilityStage = primaryStage;
-    _controller = new Controller();
     displayAvailable(null);
+  }
+  
+  public static UI getInstance() {
+	  return _staticUI;
+  }
+  
+  public void setController(Controller controller) {
+	  _controller = controller;
   }
 
   private void renderAvailabilityStage(Employee e) {
@@ -255,9 +267,6 @@ public class UI extends Application {
 	  return new Credentials("test", "test");
   }
 
-  public static void main(String[] args) {
-    Application.launch(args);
-  }
   
 
 

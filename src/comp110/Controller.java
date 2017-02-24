@@ -53,6 +53,9 @@ public class Controller {
 	
 	public void setDone(boolean done) {
 		_done = done;
+		if (done) {
+			_storage.cleanup();
+		}
 	}
 	
 	public boolean getDone() {
@@ -77,6 +80,10 @@ public class Controller {
 
 		//display available object on ui
 		_ui.displayAvailable(_employee);
+	}
+	
+	public void storagePushCompleteCallback(boolean success, String message) {
+		
 	}
 
 

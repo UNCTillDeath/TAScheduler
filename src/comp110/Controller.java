@@ -53,6 +53,10 @@ public class Controller {
 
 	}
 	
+	public void setDone(boolean done) {
+		_done = done;
+	}
+	
 	public boolean getDone() {
 		return _done;
 	}

@@ -86,7 +86,9 @@ public class UI extends Application {
 	
 	
     _availabilityStage = primaryStage;
-  }
+    _availabilityStage.setOnCloseRequest(event -> {
+      _controller.setDone(true);
+  });  }
   
   private void loginToGithub(ActionEvent event){
     _controller.uiUsernamePasswordCallback(new Credentials(_usernameField.getText(), _passwordField.getText()));

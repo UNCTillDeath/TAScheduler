@@ -29,6 +29,7 @@ public class DataIO {
     BufferedReader csvReader = null;
     int counter = 0;
     for (File csv : csvDirectory.listFiles()) {
+      String onyen = csv.getName().substring(0, csv.getName().length() - 4);
       String name = "";
       String gender = "";
       int capacity = 0;
@@ -62,7 +63,7 @@ public class DataIO {
           }
         }
       }
-      staff.add(new Employee(name, capacity, gender.equals("M") ? false : true, level, availability));
+      staff.add(new Employee(name, onyen, capacity, gender.equals("M") ? false : true, level, availability));
     }
     return staff;
   }

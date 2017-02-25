@@ -3,11 +3,16 @@ package comp110;
 import static java.lang.System.out;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 
 public class KarenBot {
 
@@ -110,6 +115,22 @@ public class KarenBot {
   private void output(RunReport report) {
     Scorecard scorecard = report.getHigh();
     writeOutput(scorecard, "TopSchedule" + "_" + scorecard.getScore());
+    Gson gson = new Gson();
+    try {
+      gson.toJson(scorecard.getSchedule().getWeek().toJsonWeek(), new FileWriter(_outputPath + File.separator + "schedule.json"));
+    } catch (JsonIOException | IOException e) {
+      e.printStackTrace();
+    }
+    
+    try {
+      FileOutputStream fileOut = new FileOutputStream(_outputPath + File.separator + "schedule.ser");
+      ObjectOutputStream out = new ObjectOutputStream(fileOut);
+      out.writeObject(report.getHigh().getSchedule());
+      out.close();
+      fileOut.close();
+    } catch (IOException i) {
+      i.printStackTrace();
+    }
     log("Diagnostics", scorecard.getDiagnostics());
     log("Schedule", scorecard.getSchedule().getWeek());
     Formatter f = new Formatter();

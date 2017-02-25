@@ -5,13 +5,15 @@ import java.io.Serializable;
 public class Employee implements Serializable {
 
   final private String _name;
+  private String _onyen;
   private int          _capacity;
   private int          _capacityUsed;
   private boolean      _isFemale;
   private int          _level;       // 1: in 401, 2: in 410/411, 3: in major
   private int[][]      _availability;
 
-  public Employee(String name, int capacity, boolean isFemale, int level, int[][] availability) {
+  public Employee(String name, String onyen, int capacity, boolean isFemale, int level, int[][] availability) {
+    _onyen = onyen;
     _availability = availability;
     _name = name;
     _capacity = capacity;
@@ -44,6 +46,10 @@ public class Employee implements Serializable {
 
   public String getName() {
     return _name;
+  }
+  
+  public String getOnyen() {
+    return _onyen;
   }
 
   public int getCapacity() {
@@ -111,7 +117,7 @@ public class Employee implements Serializable {
         availability[day][hour] = _availability[day][hour];
       }
     }
-    Employee copy = new Employee(_name, _capacity, _isFemale, _level, availability);
+    Employee copy = new Employee(_name, _onyen, _capacity, _isFemale, _level, availability);
     return copy;
   }
 

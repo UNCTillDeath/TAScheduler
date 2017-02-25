@@ -9,6 +9,7 @@ public class Parser{
   public Employee parseEmployee(String file){
 	  File csv = new File(file);
 	  BufferedReader csvReader = null;
+    String onyen = csv.getName().substring(0, csv.getName().length() - 4);
 	  String name = "";
       String gender = "";
       int capacity = 0;
@@ -54,7 +55,7 @@ public class Parser{
           }
         }
       }
-      return new Employee(name, capacity, gender.equals("M") ? false : true, level, availability);
+      return new Employee(name, onyen, capacity, gender.equals("M") ? false : true, level, availability);
     }
   public Staff parseSchedule(String dir){
 	  Staff staff = new Staff();

@@ -134,4 +134,8 @@ public class Week implements Serializable {
     }
     return sb.toString();
   }
+  
+  public JsonWeek toJsonWeek(){
+    return new JsonWeek(_shifts);
+  }
 }

@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
@@ -23,6 +24,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
@@ -30,12 +32,16 @@ import javafx.stage.Stage;
 
 public class UI extends Application {
 
+  private Stage _passwordStage;
   private Stage      _availabilityStage;
   private Stage      _scheduleStage;
   private Stage      _swapStage;
   private GridPane   _grid;
   private Controller _controller;
   private static UI _staticUI;
+  private TextField _usernameField;
+  private PasswordField _passwordField;
+  
 
   public UI () {
 	  _staticUI = this;
@@ -44,11 +50,46 @@ public class UI extends Application {
   @Override
   public void start(Stage primaryStage) throws Exception {
 	_controller = new Controller(this);	
-	//get username pass
+	_passwordStage = new Stage();
+	Group passwordGroup = new Group();
+	Scene passwordScene = new Scene(passwordGroup);
+	_passwordStage.setScene(passwordScene);
+	
+	VBox vbox = new VBox();
+	vbox.setPadding(new Insets(10, 0, 0, 10));
+	vbox.setSpacing(10);
+  HBox hbox1 = new HBox();
+  HBox hbox2 = new HBox();
+  HBox hbox3 = new HBox();
+  hbox1.setSpacing(10);
+  hbox1.setAlignment(Pos.CENTER_LEFT);  
+  hbox2.setSpacing(10);
+  hbox2.setAlignment(Pos.CENTER_LEFT); 
+  hbox3.setSpacing(10);
+  hbox3.setAlignment(Pos.CENTER);
+  
+	_usernameField = new TextField();
+	_passwordField = new PasswordField();
+  Label usernameLabel = new Label("Username");
+  Label passwordLabel = new Label("Password ");
+  Button submitButton = new Button("Login");
+  submitButton.setOnAction(this::loginToGithub);
+  hbox3.getChildren().add(submitButton);
+  hbox1.getChildren().addAll(usernameLabel, _usernameField);
+  hbox2.getChildren().addAll(passwordLabel, _passwordField);
+	vbox.getChildren().addAll(hbox1, hbox2, hbox3);
+	passwordGroup.getChildren().add(vbox);
+	_passwordStage.sizeToScene();
+	_passwordStage.setResizable(false);
+	_passwordStage.show();
 	
 	
     _availabilityStage = primaryStage;
-    displayAvailable(null);
+  }
+  
+  private void loginToGithub(ActionEvent event){
+    _controller.uiUsernamePasswordCallback(new Credentials(_usernameField.getText(), _passwordField.getText()));
+    _passwordStage.close();
   }
   
   public static UI getInstance() {

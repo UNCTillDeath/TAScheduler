@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.Background;
@@ -79,7 +80,7 @@ public class Controller {
 		}
 
 		//display available object on ui
-		_ui.displayAvailable(_employee);
+		Platform.runLater(() ->_ui.displayAvailable(_employee));
 	}
 	
 	public void storagePushCompleteCallback(boolean success, String message) {

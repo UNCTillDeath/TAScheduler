@@ -41,6 +41,7 @@ public class UI extends Application {
   private static UI _staticUI;
   private TextField _usernameField;
   private PasswordField _passwordField;
+  private TextField _onyenField;
   
 
   public UI () {
@@ -106,20 +107,20 @@ public class UI extends Application {
     BorderPane rootPane = new BorderPane();
 
     HBox topBar = new HBox();
-    TextField onyenField = new TextField("Enter onyen here");
-    topBar.getChildren().add(onyenField);
+    _onyenField = new TextField("Enter onyen here");
+    topBar.getChildren().add(_onyenField);
     rootPane.setTop(topBar);
 
     Button pullScheduleButton = new Button("Pull Schedule");
     topBar.getChildren().add(pullScheduleButton);
-    pullScheduleButton.setOnAction(_controller::uiRequestEmployeeAvailability);
+    pullScheduleButton.setOnAction(this::onyenSubmit);
 
     Button showScheduleButton = new Button("Show Current Schedule");
     showScheduleButton.setOnAction(_controller::uiRequestSchedule);
     topBar.getChildren().add(showScheduleButton);
 
     Button showSwapAvailabilityButton = new Button("Show Swaps");
-    showSwapAvailabilityButton.setOnAction(_controller::uiRequestSwaps);
+    showSwapAvailabilityButton.setOnAction(this::buttonPressSwap);
     topBar.getChildren().add(showSwapAvailabilityButton);
 
     _grid = new GridPane();
@@ -153,7 +154,7 @@ public class UI extends Application {
                   new Background(new BackgroundFill(Color.GREEN, null, null)));
             }
           }
-          check.setOnAction(_controller::handleCheck);
+          check.setOnAction(this::handleCheck);
           box.getChildren().add(check);
           box.setAlignment(Pos.CENTER);
           box.setMinHeight(30);
@@ -177,6 +178,14 @@ public class UI extends Application {
     _availabilityStage.sizeToScene();
     _availabilityStage.setResizable(false);
 
+  }
+  
+  private void buttonPressSwap(ActionEvent event){
+    _controller.uiRequestSwaps();
+  }
+  
+  private void onyenSubmit(ActionEvent event){
+    _controller.uiRequestEmployeeAvailability(_onyenField.getText());
   }
 
   private void renderScheduleStage(Schedule schedule) {
@@ -308,8 +317,17 @@ public class UI extends Application {
   }
   
   public Credentials getUsernamePassword() {
-	  
-	  return new Credentials("test", "test");
+	  return new Credentials(_usernameField.getText(), _passwordField.getText());
+  }
+  
+  public void handleCheck(ActionEvent event) {
+    CheckBox check = (CheckBox) event.getSource();
+    HBox parent = (HBox) check.getParent();
+    if (check.isSelected()) {
+      parent.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+    } else {
+      parent.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+    }
   }
 
   

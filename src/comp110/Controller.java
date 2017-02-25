@@ -26,6 +26,7 @@ public class Controller {
 	private Employee _employee;
 	private Credentials credentials;
 	private boolean _done = false;
+	Schedule _schedule;
 
 
 	public Controller(UI ui) {
@@ -80,7 +81,7 @@ public class Controller {
 		}
 
 		//display available object on ui
-		Platform.runLater(() ->_ui.displayAvailable(_employee));
+		Platform.runLater(() -> _ui.displayAvailable(_employee));
 	}
 	
 	public void storagePushCompleteCallback(boolean success, String message) {
@@ -89,11 +90,10 @@ public class Controller {
 
 
 	public void uiRequestSchedule(ActionEvent event) {
-		Schedule schedule = null;
 		try {
 			FileInputStream fileIn = new FileInputStream("testData/schedule.ser");
 			ObjectInputStream in = new ObjectInputStream(fileIn);
-			schedule = (Schedule) in.readObject();
+			_schedule = (Schedule) in.readObject();
 			in.close();
 			fileIn.close();
 		} catch (IOException e) {
@@ -104,29 +104,19 @@ public class Controller {
 			c.printStackTrace();
 			return;
 		}
-		_ui.displaySchedule(schedule);
+		Platform.runLater(() -> _ui.displaySchedule(_schedule));
 	}
 
-	public void uiRequestEmployeeAvailability(ActionEvent event) {
+	public void uiRequestEmployeeAvailability(String onyen) {
 
 	}
 
 
-	public void uiRequestSwaps(ActionEvent event) {
-		_ui.displayPossibleSwaps(null);
+	public void uiRequestSwaps() {
+		Platform.runLater(() -> _ui.displayPossibleSwaps(_schedule));
 	}
 
 	public void uiRequestSaveAvailability(ActionEvent event) {
 
-	}
-
-	public void handleCheck(ActionEvent event) {
-		CheckBox check = (CheckBox) event.getSource();
-		HBox parent = (HBox) check.getParent();
-		if (check.isSelected()) {
-			parent.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
-		} else {
-			parent.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
-		}
 	}
 }

@@ -234,7 +234,7 @@ public class FXAlgo implements SchedulingAlgo {
     ChunkEmployee chunkEmployee = (ChunkEmployee) highestScores.get(index);
     Chunk chunkOfShift = chunkEmployee.getChunk(shift);
 
-    boolean success = chunkOfShift.scheduleEmployeeToChunk();
+    boolean success = chunkEmployee.scheduleEmployeeToChunk(chunkOfShift);
     if (highestScores.get(index).getCapacityRemaining() == 0) {
       _employees.remove(highestScores.get(index));
     }else{
@@ -404,7 +404,7 @@ public class FXAlgo implements SchedulingAlgo {
   public static void main(String[] args) {
 
     KarenBot karenBot = new KarenBot(new FXAlgo());
-    Threader threader = new Threader(karenBot, 1, "spring-17", 1000);
+    Threader threader = new Threader(karenBot, 1, "spring-17", 100);
 
     // karenBot.run("week1", 1000);
 

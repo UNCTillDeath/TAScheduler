@@ -10,11 +10,10 @@ import comp110.Week;
 // Sort of like a lazy decorator
 public class ChunkEmployee extends Employee {
 
-  Employee    _originalEmployee;
   List<Chunk> _chunks;
 
   public ChunkEmployee(Employee e, Week week) {
-    super(e.getName(), e.getCapacity(), e.getIsFemale(), e.getLevel(), e.getAvailability());
+    super(e.getName(), e.getOnyen(), e.getCapacity(), e.getIsFemale(), e.getLevel(), e.getAvailability());
     _chunks = populateChunks(week);
   }
 
@@ -35,9 +34,6 @@ public class ChunkEmployee extends Employee {
     return null;
   }
 
-  public Employee getEmployee() {
-    return _originalEmployee;
-  }
 
   private List<Chunk> populateChunks(Week week) {
     List<Chunk> chunks = new ArrayList<>();
@@ -57,7 +53,7 @@ public class ChunkEmployee extends Employee {
           // If we're not currently in a chunk and the employee is available for
           // this shift,
           // Make a new chunk from this shift
-          chunks.add(new Chunk(this, weekShifts[day][hour]));
+          chunks.add(new Chunk(weekShifts[day][hour]));
           inChunk = true;
         } else {
           inChunk = false;
@@ -68,6 +64,18 @@ public class ChunkEmployee extends Employee {
 
     return chunks;
   }
+  
+  public boolean scheduleEmployeeToChunk(Chunk c) {
+    boolean success = true;
+    for (Shift s : c.getShifts()) {
+      if (this.getCapacityRemaining() > 0 && s.getCapacityRemaining() > 0) {
+        if (!s.add(this)) {
+          success = false;
+        }
+      }
+    }
+    return success;
+}
 
   public String toString() {
     return this.getName();

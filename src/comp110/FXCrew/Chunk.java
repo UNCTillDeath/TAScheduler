@@ -9,14 +9,12 @@ import comp110.Shift;
 
 public class Chunk implements Serializable{
 
-  private Employee    _employee;
   private int         _day;
   private int         _startHour;
   private int         _endHour;
   private List<Shift> _shifts;
 
-  Chunk(Employee employee, Shift shift) {
-    _employee = employee;
+  Chunk(Shift shift) {
     _day = shift.getDay();
     _startHour = shift.getHour();
     _endHour = shift.getHour();
@@ -32,17 +30,17 @@ public class Chunk implements Serializable{
       _startHour = shift.getHour();
   }
 
-  public boolean scheduleEmployeeToChunk() {
-    boolean success = true;
-    for (Shift s : _shifts) {
-      if (_employee.getCapacityRemaining() > 0 && s.getCapacityRemaining() > 0) {
-        if (!s.add(_employee)) {
-          success = false;
-        }
-      }
-    }
-    return success;
-  }
+//  public boolean scheduleEmployeeToChunk() {
+//    boolean success = true;
+//    for (Shift s : _shifts) {
+//      if (_employee.getCapacityRemaining() > 0 && s.getCapacityRemaining() > 0) {
+//        if (!s.add(_employee)) {
+//          success = false;
+//        }
+//      }
+//    }
+//    return success;
+//  }
 
   @Override
   public String toString() {
@@ -51,10 +49,6 @@ public class Chunk implements Serializable{
 
   public List<Shift> getShifts() {
     return _shifts;
-  }
-
-  public Employee getEmployee() {
-    return _employee;
   }
 
   public int getDay() {

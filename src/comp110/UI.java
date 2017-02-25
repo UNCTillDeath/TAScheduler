@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -315,6 +316,14 @@ public class UI extends Application {
     } else {
       parent.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
     }
+  }
+  
+  public void displayMessage(String message){
+    Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.setHeaderText("Error");
+    alert.setContentText(message);
+    alert.showAndWait();
+    
   }
 
   

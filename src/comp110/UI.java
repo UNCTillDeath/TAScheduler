@@ -1,10 +1,6 @@
 package comp110;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -20,14 +16,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class UI extends Application {
@@ -38,16 +30,11 @@ public class UI extends Application {
   private Stage      _swapStage;
   private GridPane   _grid;
   private Controller _controller;
-  private static UI _staticUI;
   private TextField _usernameField;
   private PasswordField _passwordField;
   private TextField _onyenField;
   
 
-  public UI () {
-	  _staticUI = this;
-  }
-  
   @Override
   public void start(Stage primaryStage) throws Exception {
 	_controller = new Controller(this);	
@@ -84,25 +71,22 @@ public class UI extends Application {
 	_passwordStage.setResizable(false);
 	_passwordStage.show();
 	
-	
+
     _availabilityStage = primaryStage;
     _availabilityStage.setOnCloseRequest(event -> {
-      _controller.setDone(true);
+      _controller.cleanup();
+      try{
+    	  // give time for cleanup to complete
+      Thread.sleep(2000);
+      }catch(Exception e){ /* dont care about an exception here */}
   });  }
   
   private void loginToGithub(ActionEvent event){
     _controller.uiUsernamePasswordCallback(new Credentials(_usernameField.getText(), _passwordField.getText()));
-    _passwordStage.close();
+    displayAvailable(null);
+//    _passwordStage.close();
   }
   
-  public static UI getInstance() {
-	  return _staticUI;
-  }
-  
-  public void setController(Controller controller) {
-	  _controller = controller;
-  }
-
   private void renderAvailabilityStage(Employee e) {
     Group availabilityRoot = new Group();
     Scene availabilityScene = new Scene(availabilityRoot);
@@ -303,6 +287,7 @@ public class UI extends Application {
   public void displayAvailable(Employee e) {
     renderAvailabilityStage(e);
     _availabilityStage.show();
+    _passwordStage.close();
   }
 
   public void displaySchedule(Schedule schedule) {

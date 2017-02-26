@@ -120,5 +120,9 @@ public class Employee implements Serializable {
     Employee copy = new Employee(_name, _onyen, _capacity, _isFemale, _level, availability);
     return copy;
   }
+  
+  public String toString(){
+    return this.getName();
+  }
 
 }

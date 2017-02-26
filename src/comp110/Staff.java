@@ -1,6 +1,7 @@
 package comp110;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -49,6 +50,16 @@ public class Staff extends HashSet<Employee> implements Serializable {
       }
     }
     return this.size() == other.size();
+  }
+  
+  public ArrayList<String> getWhoIsAvailable(int day, int hour) {
+    ArrayList<String> whoIsAvailable = new ArrayList<String>();
+    for (Employee e : this) {
+      if (e.isAvailable(day, hour)) {
+        whoIsAvailable.add(e.toString());
+      }
+    }
+    return whoIsAvailable;
   }
 
   public Employee getEmployeeByName(String name) {

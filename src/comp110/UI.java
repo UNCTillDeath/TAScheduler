@@ -1,16 +1,22 @@
 package comp110;
 
 import java.util.ArrayList;
+
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -22,72 +28,76 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class UI extends Application {
 
-  private Stage _passwordStage;
-  private Stage      _availabilityStage;
-  private Stage      _scheduleStage;
-  private Stage      _swapStage;
-  private GridPane   _grid;
-  private Controller _controller;
-  private TextField _usernameField;
+  private Stage         _passwordStage;
+  private Stage         _availabilityStage;
+  private Stage         _scheduleStage;
+  private Stage         _swapStage;
+  private GridPane      _grid;
+  private Controller    _controller;
+  private TextField     _usernameField;
   private PasswordField _passwordField;
-  private TextField _onyenField;
-  
+  private TextField     _onyenField;
+  private Employee      _currentEmployee;
+  private Button        _showSwapAvailabilityButton;
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-	_controller = new Controller(this);	
-	_passwordStage = new Stage();
-	Group passwordGroup = new Group();
-	Scene passwordScene = new Scene(passwordGroup);
-	_passwordStage.setScene(passwordScene);
-	
-	VBox vbox = new VBox();
-	vbox.setPadding(new Insets(10, 0, 0, 10));
-	vbox.setSpacing(10);
-  HBox hbox1 = new HBox();
-  HBox hbox2 = new HBox();
-  HBox hbox3 = new HBox();
-  hbox1.setSpacing(10);
-  hbox1.setAlignment(Pos.CENTER_LEFT);  
-  hbox2.setSpacing(10);
-  hbox2.setAlignment(Pos.CENTER_LEFT); 
-  hbox3.setSpacing(10);
-  hbox3.setAlignment(Pos.CENTER);
-  
-	_usernameField = new TextField();
-	_passwordField = new PasswordField();
-  Label usernameLabel = new Label("Username");
-  Label passwordLabel = new Label("Password ");
-  Button submitButton = new Button("Login");
-  submitButton.setOnAction(this::loginToGithub);
-  hbox3.getChildren().add(submitButton);
-  hbox1.getChildren().addAll(usernameLabel, _usernameField);
-  hbox2.getChildren().addAll(passwordLabel, _passwordField);
-	vbox.getChildren().addAll(hbox1, hbox2, hbox3);
-	passwordGroup.getChildren().add(vbox);
-	_passwordStage.sizeToScene();
-	_passwordStage.setResizable(false);
-	_passwordStage.show();
-	
+    _controller = new Controller(this);
+    _passwordStage = new Stage();
+    Group passwordGroup = new Group();
+    Scene passwordScene = new Scene(passwordGroup);
+    _passwordStage.setScene(passwordScene);
+
+    VBox vbox = new VBox();
+    vbox.setPadding(new Insets(10, 0, 0, 10));
+    vbox.setSpacing(10);
+    HBox hbox1 = new HBox();
+    HBox hbox2 = new HBox();
+    HBox hbox3 = new HBox();
+    hbox1.setSpacing(10);
+    hbox1.setAlignment(Pos.CENTER_LEFT);
+    hbox2.setSpacing(10);
+    hbox2.setAlignment(Pos.CENTER_LEFT);
+    hbox3.setSpacing(10);
+    hbox3.setAlignment(Pos.CENTER);
+
+    _usernameField = new TextField();
+    _passwordField = new PasswordField();
+    Label usernameLabel = new Label("Username");
+    Label passwordLabel = new Label("Password ");
+    Button submitButton = new Button("Login");
+    submitButton.setOnAction(this::loginToGithub);
+    hbox3.getChildren().add(submitButton);
+    hbox1.getChildren().addAll(usernameLabel, _usernameField);
+    hbox2.getChildren().addAll(passwordLabel, _passwordField);
+    vbox.getChildren().addAll(hbox1, hbox2, hbox3);
+    passwordGroup.getChildren().add(vbox);
+    _passwordStage.sizeToScene();
+    _passwordStage.setResizable(false);
+    _passwordStage.show();
 
     _availabilityStage = primaryStage;
     _availabilityStage.setOnCloseRequest(event -> {
       _controller.cleanup();
-      try{
-    	  // give time for cleanup to complete
-      Thread.sleep(2000);
-      }catch(Exception e){ /* dont care about an exception here */}
-  });  }
-  
-  private void loginToGithub(ActionEvent event){
-    _controller.uiUsernamePasswordCallback(new Credentials(_usernameField.getText(), _passwordField.getText()));
-    displayAvailable(null);
-//    _passwordStage.close();
+      try {
+        // give time for cleanup to complete
+        Thread.sleep(2000);
+      } catch (Exception e) {
+        /* dont care about an exception here */}
+    });
   }
-  
+
+  private void loginToGithub(ActionEvent event) {
+    _controller.uiUsernamePasswordCallback(
+        new Credentials(_usernameField.getText(), _passwordField.getText()));
+    displayAvailable(null);
+    // _passwordStage.close();
+  }
+
   private void renderAvailabilityStage(Employee e) {
     Group availabilityRoot = new Group();
     Scene availabilityScene = new Scene(availabilityRoot);
@@ -106,9 +116,12 @@ public class UI extends Application {
     showScheduleButton.setOnAction(_controller::uiRequestSchedule);
     topBar.getChildren().add(showScheduleButton);
 
-    Button showSwapAvailabilityButton = new Button("Show Swaps");
-    showSwapAvailabilityButton.setOnAction(this::buttonPressSwap);
-    topBar.getChildren().add(showSwapAvailabilityButton);
+    _showSwapAvailabilityButton = new Button("Show Swaps");
+    if (e == null) { // only do this first time we paint the scene
+      _showSwapAvailabilityButton.setDisable(true);
+    }
+    _showSwapAvailabilityButton.setOnAction(this::buttonPressSwap);
+    topBar.getChildren().add(_showSwapAvailabilityButton);
 
     _grid = new GridPane();
     _grid.setGridLinesVisible(true);
@@ -166,13 +179,14 @@ public class UI extends Application {
     _availabilityStage.setResizable(false);
 
   }
-  
-  private void buttonPressSwap(ActionEvent event){
+
+  private void buttonPressSwap(ActionEvent event) {
     _controller.uiRequestSwaps();
   }
-  
-  private void onyenSubmit(ActionEvent event){
+
+  private void onyenSubmit(ActionEvent event) {
     _controller.uiRequestEmployeeAvailability(_onyenField.getText());
+    _showSwapAvailabilityButton.setDisable(false);
   }
 
   private void renderScheduleStage(Schedule schedule) {
@@ -188,15 +202,65 @@ public class UI extends Application {
     _scheduleStage.setTitle("Current Schedule");
 
   }
-  
-  private void renderSwapStage(Schedule schedule){
+
+  private void renderSwapStage(Schedule schedule) {
     Group root = new Group();
     Scene scene = new Scene(root);
+    BorderPane rootPane = new BorderPane();
+    root.getChildren().add(rootPane);
     _swapStage.setScene(scene);
+    javafx.collections.ObservableList<String> scheduledShifts = FXCollections
+        .observableArrayList(this.getScheduledShifts(schedule));
+    ListView<String> scheduledShiftsListView = new ListView<String>(scheduledShifts);
+    HBox listBox = new HBox();
+    listBox.getChildren().add(scheduledShiftsListView);
     
-    
+
+    ListView<String> availableSwapsListView = new ListView<String>();
+    HBox swapBox = new HBox();
+    swapBox.getChildren().add(availableSwapsListView);
+    scheduledShiftsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+          System.out.println("ListView selection changed from oldValue = " 
+                  + oldValue + " to newValue = " + newValue);
+          javafx.collections.ObservableList<String> availableToSwap = FXCollections
+              .observableArrayList(getOrderedPotentialSwaps(schedule, Week.dayInt(newValue.split(" ")[0]), Integer.parseInt(newValue.split(" ")[1])));
+          availableSwapsListView.setItems(availableToSwap);
+      }
+  });
+    rootPane.setLeft(listBox);
+    rootPane.setRight(swapBox);
+
+
     _swapStage.sizeToScene();
     _swapStage.setTitle("Available for Swaps");
+  }
+
+  //the hour gets passed in as regular time and needs to be converted to military time
+  private ArrayList<String> getOrderedPotentialSwaps(Schedule s, int day, int hour) {
+    if (hour < 9){ //only hours from 9am to pm are valid so this works
+      hour += 12;
+    }
+    //TODO actually implement an ordering
+    System.out.println(day + " " + hour);
+    ArrayList<String> swapCandidates = new ArrayList<String>();
+    swapCandidates.addAll(s.getStaff().getWhoIsAvailable(day, hour));
+    return swapCandidates;
+  }
+
+  private ArrayList<String> getScheduledShifts(Schedule schedule) {
+    ArrayList<String> scheduledShifts = new ArrayList<String>();
+    for (int day = 0; day < schedule.getWeek().getShifts().length; day++){
+      for (int hour = 0; hour < schedule.getWeek().getShifts()[day].length; hour++){
+        for (Employee e : schedule.getWeek().getShift(day, hour)){
+          if (e.getName().equals(_currentEmployee.getName())){
+            scheduledShifts.add(Week.dayString(day) + " " + (hour % 12 == 0 ? 12 : hour % 12) + " -- " + ((hour + 1) % 12 == 0 ? 12 : (hour + 1) % 12));
+          }
+        }
+      }
+    }
+    return scheduledShifts;
   }
 
   private GridPane writeSchedule(Schedule schedule) {
@@ -204,26 +268,31 @@ public class UI extends Application {
     schedulePane.setAlignment(Pos.CENTER);
     schedulePane.setGridLinesVisible(true);
     ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(schedule.getWeek());
-    
+
     for (int day = 0; day < 7; day++) {
-      schedulePane.add(new Label(Week.dayString(day)), day + 1, 0); //+1 to account for hour column
+      schedulePane.add(new Label(Week.dayString(day)), day + 1, 0); // +1 to
+                                                                    // account
+                                                                    // for hour
+                                                                    // column
     }
-   
-    int hourRow = 0;    
+
+    int hourRow = 0;
     for (int hour = getEarliestHour(schedule.getWeek()); hour < getLatestHour(
         schedule.getWeek()); hour++) {
-      Label dayLabel = new Label((hour % 12 == 0 ? 12 : hour % 12) + " -- " + ((hour + 1) % 12 == 0 ? 12 : (hour + 1) % 12));
+      Label dayLabel = new Label((hour % 12 == 0 ? 12 : hour % 12) + " -- "
+          + ((hour + 1) % 12 == 0 ? 12 : (hour + 1) % 12));
       dayLabel.setMaxWidth(Double.MAX_VALUE);
       dayLabel.setAlignment(Pos.CENTER);
-      schedulePane.add(dayLabel, 0, hourRow + 1); //+1 to account for day row
-      
+      schedulePane.add(dayLabel, 0, hourRow + 1); // +1 to account for day row
+
       int max = getMaxSize(hour, schedule.getWeek());
-      
+
       for (int i = 0; i < max; i++) {
-        //output.write(",");
+        // output.write(",");
         for (int day = 0; day < 7; day++) {
           if (i < shifts.get(day).get(hour).size()) {
-           schedulePane.add(new Label(shifts.get(day).get(hour).get(i).toString()), day + 1, hourRow + i + 1); //+1 to account for day row
+            schedulePane.add(new Label(shifts.get(day).get(hour).get(i).toString()),
+                day + 1, hourRow + i + 1); // +1 to account for day row
           }
         }
       }
@@ -286,6 +355,7 @@ public class UI extends Application {
   }
 
   public void displayAvailable(Employee e) {
+    _currentEmployee = e;
     renderAvailabilityStage(e);
     _availabilityStage.show();
     _passwordStage.close();
@@ -297,17 +367,17 @@ public class UI extends Application {
     _scheduleStage.show();
 
   }
-  
-  public void displayPossibleSwaps(Schedule schedule){
+
+  public void displayPossibleSwaps(Schedule schedule) {
     _swapStage = new Stage();
     renderSwapStage(schedule);
     _swapStage.show();
   }
-  
+
   public Credentials getUsernamePassword() {
-	  return new Credentials(_usernameField.getText(), _passwordField.getText());
+    return new Credentials(_usernameField.getText(), _passwordField.getText());
   }
-  
+
   public void handleCheck(ActionEvent event) {
     CheckBox check = (CheckBox) event.getSource();
     HBox parent = (HBox) check.getParent();
@@ -317,16 +387,13 @@ public class UI extends Application {
       parent.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
     }
   }
-  
-  public void displayMessage(String message){
+
+  public void displayMessage(String message) {
     Alert alert = new Alert(Alert.AlertType.ERROR);
     alert.setHeaderText("Error");
     alert.setContentText(message);
     alert.showAndWait();
-    
+
   }
-
-  
-
 
 }

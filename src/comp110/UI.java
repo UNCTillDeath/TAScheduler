@@ -1,6 +1,13 @@
 package comp110;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -238,15 +245,68 @@ public class UI extends Application {
   }
 
   //the hour gets passed in as regular time and needs to be converted to military time
-  private ArrayList<String> getOrderedPotentialSwaps(Schedule s, int day, int hour) {
+  private ArrayList<String> getOrderedPotentialSwaps(Schedule schedule, int day, int hour) {
     if (hour < 9){ //only hours from 9am to pm are valid so this works
       hour += 12;
     }
     //TODO actually implement an ordering
-    System.out.println(day + " " + hour);
     ArrayList<String> swapCandidates = new ArrayList<String>();
-    swapCandidates.addAll(s.getStaff().getWhoIsAvailable(day, hour));
-    return swapCandidates;
+    swapCandidates.addAll(schedule.getStaff().getWhoIsAvailable(day, hour));
+    swapCandidates.remove(_currentEmployee.getName()); //remove yourself from the list
+    //now score each one
+    Map<Employee, Double> scoredEmployees = new HashMap<Employee, Double>();
+    for (String otherEmployeeName : swapCandidates){
+      Employee otherEmployee = schedule.getStaff().getEmployeeByName(otherEmployeeName);
+      scoredEmployees.put(otherEmployee, 0.0);
+      ArrayList<Shift> scheduledShifts = new ArrayList<Shift>();
+      //get the shifts this employee is scheduled for
+      for (int i = 0; i < schedule.getWeek().getShifts().length; i++){
+        for (int j = 0; j < schedule.getWeek().getShifts()[i].length; j++){
+          for (Employee e : schedule.getWeek().getShift(i, j)){
+            if (e.getName().equals(otherEmployee.getName())){
+              scheduledShifts.add(schedule.getWeek().getShift(i, j));
+            }
+          }
+        }
+      }
+      //now see which shifts of other employee currentEmployee is available for
+      for (Shift shift : scheduledShifts){
+        if (_currentEmployee.isAvailable(shift.getDay(), shift.getHour())){
+          scoredEmployees.put(otherEmployee, scoredEmployees.get(otherEmployee) + 1);
+        }
+      }
+      //divide by total number of shifts otherEmployee has
+      scoredEmployees.put(otherEmployee, scoredEmployees.get(otherEmployee) / scheduledShifts.size());
+    }
+    //now that we have populated the map, sort by score write out the candidates in order
+    scoredEmployees = sortByValue(scoredEmployees);
+    ArrayList<String> orderedSwapCandidates = new ArrayList<String>();
+    for (Employee e : scoredEmployees.keySet()){
+      //only write out employees we have the potential to swap with
+      if (scoredEmployees.get(e) > 0){
+        orderedSwapCandidates.add(e.getName() + " " + scoredEmployees.get(e));
+      }
+    }
+    
+    return orderedSwapCandidates;
+  }
+  
+  // http://stackoverflow.com/questions/109383/sort-a-mapkey-value-by-values-java
+  public static <K, V extends Comparable<? super V>> Map<K, V>
+      sortByValue(Map<K, V> map) {
+    List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
+    Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
+      @Override
+      public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
+        return (o1.getValue()).compareTo(o2.getValue()) * -1;
+      }
+    });
+
+    Map<K, V> result = new LinkedHashMap<>();
+    for (Map.Entry<K, V> entry : list) {
+      result.put(entry.getKey(), entry.getValue());
+    }
+    return result;
   }
 
   private ArrayList<String> getScheduledShifts(Schedule schedule) {

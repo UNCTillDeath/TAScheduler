@@ -282,7 +282,7 @@ public class Storage{
 
                     // check the return value of the command
                     if (p.exitValue() != 0){
-                        // unable to pull...lots of reasons but someting descriptive should be stored in last_line
+                        // unable to pull...lots of reasons but something descriptive should be stored in last_line
                         Storage.this.m_controller.storagePushCompleteCallback(false, all_lines);
                         return;
                     }
@@ -329,7 +329,8 @@ public class Storage{
             for (int i = 0; i < children.length; ++i){
                 boolean success = deleteDirectory(new File(directory, children[i]));
                 if (success == false){
-                    return false;
+                    // need to force a delete somehow....
+                	// this is very likely because a file was not being closed
                 }
             }
         }

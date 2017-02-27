@@ -37,7 +37,7 @@ public class Storage{
             in = new FileInputStream(DEFAULT_CONFIG_FILE);
             // create a buffered reader to read strings from the file
             reader = new BufferedReader(new InputStreamReader(in));
-            // read the repo, username, and password
+            // read the repo and set default username and password
             this.m_github_repo_owner = reader.readLine();
             this.m_github_repo_name = reader.readLine();
             this.m_username = DEFAULT_GITHUB_USERNAME;
@@ -90,7 +90,7 @@ public class Storage{
                             Storage.this.m_github_repo_name + ".git");
 
                     // set the directory to the current directory
-                    // the pull will cause a new directory to be created with the name of the repo
+                    // the clone will cause a new directory to be created with the name of the repo
                     pb.directory(new File("."));
                     pb.redirectErrorStream(true);
 
@@ -120,7 +120,7 @@ public class Storage{
 
                     // check the return value of the command
                     if (p.exitValue() != 0){
-                        // unable to pull...lots of reasons but someting descriptive should be stored in last_line
+                        // unable to pull...lots of reasons but something descriptive should be stored in all_lines
                         Storage.this.m_controller.storagePullCompleteCallback(false, all_lines);
                         return;
                     }
@@ -184,7 +184,7 @@ public class Storage{
                     }
 
                     // add successful
-                    // execute commit - m "message"
+                    // execute commit -m "message"
                     pb = new ProcessBuilder("git", "commit", "-m", DEFAULT_COMMIT_MESSAGE);
 
                     // set the directory
@@ -301,6 +301,14 @@ public class Storage{
 
     public String getFilesPath(){
         return "./" + this.m_github_repo_name;
+    }
+    
+    public String getFilePathToOnyen(String onyen){
+    	return (this.getFilesPath() + "/data/spring-17/staff/" + onyen + ".csv");
+    }
+    
+    public String getFilePathToSchedule(){
+    	return this.getFilesPath() + "needtofigurethisout";
     }
 
     public void setUsername(String username){

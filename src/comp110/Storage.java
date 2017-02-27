@@ -40,8 +40,8 @@ public class Storage{
             // read the repo, username, and password
             this.m_github_repo_owner = reader.readLine();
             this.m_github_repo_name = reader.readLine();
-            this.m_username = reader.readLine();
-            this.m_password = reader.readLine();
+            this.m_username = DEFAULT_GITHUB_USERNAME;
+            this.m_password = DEFAULT_GITHUB_PASSWORD;
         }
         catch (IOException e){
             // unable to find file to open or error reading from file

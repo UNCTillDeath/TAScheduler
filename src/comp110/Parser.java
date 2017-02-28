@@ -44,6 +44,7 @@ public class Parser{
 			// TODO Auto-generated catch block
 			System.err.println("IO Error: " + name);
 			e1.printStackTrace();
+      return null; 
 		}
         for (int day = 0; day < 7; day++) {
           // Offset by 1 accounts for label in CSV
@@ -52,16 +53,22 @@ public class Parser{
           } catch (NumberFormatException e) {
             System.err.println("Error:" + name);
             e.printStackTrace();
+            return null; 
           }
         }
+      }
+      try{
+        csvReader.close();
+      } catch (IOException e){
+            System.err.println("Error:" + name);
+            e.printStackTrace();
+            return null;
       }
       return new Employee(name, onyen, capacity, gender.equals("M") ? false : true, level, availability);
     }
   public Staff parseSchedule(String dir){
 	  Staff staff = new Staff();
 	  File csvDirectory = new File(dir);
-	  BufferedReader csvReader = null;
-	  int counter = 0;
 	  for (File csv : csvDirectory.listFiles()) {
 		  staff.add(parseEmployee(csv.toString()));
 	  }

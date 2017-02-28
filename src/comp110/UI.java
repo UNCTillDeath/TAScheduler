@@ -54,6 +54,8 @@ public class UI extends Application {
   private Schedule _schedule;
   private int _currentDay1;
   private int _currentDay2;
+  private Employee _swapEmployee1;
+  private Employee _swapEmployee2;
 
   @Override
   public void start(Stage primaryStage) throws Exception {
@@ -213,6 +215,7 @@ public class UI extends Application {
     root.getChildren().add(rootPane);
     Scene scene = new Scene(root);
     performSwapStage.setScene(scene);
+    Button saveButton = new Button("Swap!");
     HBox topBox = new HBox();
     HBox bottomBox = new HBox();
     //TOP BOX STUFF
@@ -252,6 +255,18 @@ public class UI extends Application {
       }
   });
     
+    personListView1.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        _swapEmployee1 = _schedule.getStaff().getEmployeeByName(newValue);
+        if (_swapEmployee1 != null && _swapEmployee2 != null){
+          saveButton.setDisable(false);
+        }
+      }
+  });
+    
+    
+    
     //BOTTOM BOX STUFF
     
     javafx.collections.ObservableList<String> dayList2 = FXCollections
@@ -290,17 +305,30 @@ public class UI extends Application {
       }
   });
     
-    Button saveButton = new Button("Swap!");
-    saveButton.setPrefWidth(744);
-    rootPane.setBottom(saveButton);
-    //TODO set on action and add change listeners to get current employee value
+    personListView2.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        _swapEmployee2 = _schedule.getStaff().getEmployeeByName(newValue);
+        if (_swapEmployee1 != null && _swapEmployee2 != null){
+          saveButton.setDisable(false);
+        }
+      }
+  });
     
+    saveButton.setDisable(true);
+    saveButton.setPrefWidth(744);
+    saveButton.setOnAction(this::performSwap);
+    rootPane.setBottom(saveButton);    
     
     rootPane.setTop(topBox);
     rootPane.setCenter(bottomBox);
     performSwapStage.sizeToScene();
     performSwapStage.setTitle("Perform Swap");
     performSwapStage.show();
+  }
+  
+  private void performSwap(ActionEvent event){
+    //TODO actually swap the two employees
   }
   
   //only return a list of days that have scheduled shifts in them

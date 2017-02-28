@@ -52,10 +52,14 @@ public class UI extends Application {
   private Button        _showSwapAvailabilityButton;
   private Button _performSwapButton;
   private Schedule _schedule;
-  private int _currentDay1;
-  private int _currentDay2;
+  private int _swapDay1;
+  private int _swapDay2;
+  private int _swapHour1;
+  private int _swapHour2;
   private Employee _swapEmployee1;
   private Employee _swapEmployee2;
+
+
 
   @Override
   public void start(Stage primaryStage) throws Exception {
@@ -225,18 +229,18 @@ public class UI extends Application {
     topBox.getChildren().add(dayListView1);
     ListView<String> hourListView1 = new ListView<String>();
     topBox.getChildren().add(hourListView1);
-    _currentDay1 = 0;
+    _swapDay1 = 0;
     dayListView1.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        _currentDay1 = Week.dayInt(newValue);
+        _swapDay1 = Week.dayInt(newValue);
           javafx.collections.ObservableList<String> hours = FXCollections
               .observableArrayList(getHoursList(newValue)); //newValue is the new day
           hourListView1.setItems(hours);
       }
   });
 
-    ListView<String> personListView1 = new ListView<String>();
+    ListView<Label> personListView1 = new ListView<Label>();
     topBox.getChildren().add(personListView1);
     hourListView1.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
       @Override
@@ -245,20 +249,25 @@ public class UI extends Application {
           if (newHour < 9){
             newHour += 12;
           }
-          List<String> scheduledEmployees = new ArrayList<String>();
-          for (Employee e : _schedule.getWeek().getShift(_currentDay1, newHour)){
-            scheduledEmployees.add(e.getName());
+          _swapHour1 = newHour;
+          List<Label> scheduledEmployees = new ArrayList<Label>();
+          for (Employee e : _schedule.getWeek().getShift(_swapDay1, newHour)){
+        	  Label toAdd = new Label(e.getName());
+        	  if (toAdd.getText().equals(_currentEmployee.getName())){
+        		  toAdd.setTextFill(Color.RED);
+        	  }
+            scheduledEmployees.add(toAdd);
           }
-          javafx.collections.ObservableList<String> people = FXCollections
+          javafx.collections.ObservableList<Label> people = FXCollections
               .observableArrayList(scheduledEmployees);
           personListView1.setItems(people);
       }
   });
     
-    personListView1.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+    personListView1.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Label>() {
       @Override
-      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        _swapEmployee1 = _schedule.getStaff().getEmployeeByName(newValue);
+      public void changed(ObservableValue<? extends Label> observable, Label oldValue, Label newValue) {
+        _swapEmployee1 = _schedule.getStaff().getEmployeeByName(newValue.getText());
         if (_swapEmployee1 != null && _swapEmployee2 != null){
           saveButton.setDisable(false);
         }
@@ -268,25 +277,25 @@ public class UI extends Application {
     
     
     //BOTTOM BOX STUFF
-    
+
     javafx.collections.ObservableList<String> dayList2 = FXCollections
         .observableArrayList(getDaysList());
     ListView<String> dayListView2 = new ListView<String>(dayList2);
     bottomBox.getChildren().add(dayListView2);
     ListView<String> hourListView2 = new ListView<String>();
     bottomBox.getChildren().add(hourListView2);
-    _currentDay2 = 0;
+    _swapDay2 = 0;
     dayListView2.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        _currentDay2 = Week.dayInt(newValue);
+        _swapDay2 = Week.dayInt(newValue);
           javafx.collections.ObservableList<String> hours = FXCollections
               .observableArrayList(getHoursList(newValue)); //newValue is the new day
           hourListView2.setItems(hours);
       }
   });
 
-    ListView<String> personListView2 = new ListView<String>();
+    ListView<Label> personListView2 = new ListView<Label>();
     bottomBox.getChildren().add(personListView2);
     hourListView2.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
       @Override
@@ -295,20 +304,25 @@ public class UI extends Application {
           if (newHour < 9){
             newHour += 12;
           }
-          List<String> scheduledEmployees = new ArrayList<String>();
-          for (Employee e : _schedule.getWeek().getShift(_currentDay1, newHour)){
-            scheduledEmployees.add(e.getName());
+          _swapHour2 = newHour;
+          List<Label> scheduledEmployees = new ArrayList<Label>();
+          for (Employee e : _schedule.getWeek().getShift(_swapDay2, newHour)){
+        	  Label toAdd = new Label(e.getName());
+        	  if (toAdd.getText().equals(_currentEmployee.getName())){
+        		  toAdd.setTextFill(Color.RED);
+        	  }
+            scheduledEmployees.add(toAdd);
           }
-          javafx.collections.ObservableList<String> people = FXCollections
+          javafx.collections.ObservableList<Label> people = FXCollections
               .observableArrayList(scheduledEmployees);
           personListView2.setItems(people);
       }
   });
     
-    personListView2.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+    personListView2.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Label>() {
       @Override
-      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        _swapEmployee2 = _schedule.getStaff().getEmployeeByName(newValue);
+      public void changed(ObservableValue<? extends Label> observable, Label oldValue, Label newValue) {
+        _swapEmployee2 = _schedule.getStaff().getEmployeeByName(newValue.getText());
         if (_swapEmployee1 != null && _swapEmployee2 != null){
           saveButton.setDisable(false);
         }
@@ -320,6 +334,14 @@ public class UI extends Application {
     saveButton.setOnAction(this::performSwap);
     rootPane.setBottom(saveButton);    
     
+    dayListView1.setPrefHeight(250);
+    dayListView2.setPrefHeight(250);
+    hourListView1.setPrefHeight(250);
+    hourListView2.setPrefHeight(250);
+    personListView1.setPrefHeight(250);
+    personListView2.setPrefHeight(250);
+
+    
     rootPane.setTop(topBox);
     rootPane.setCenter(bottomBox);
     performSwapStage.sizeToScene();
@@ -328,7 +350,12 @@ public class UI extends Application {
   }
   
   private void performSwap(ActionEvent event){
-    //TODO actually swap the two employees
+	  //remove employees
+	  _schedule.getWeek().getShift(_swapDay1, _swapHour1).remove(_swapEmployee1);
+	  _schedule.getWeek().getShift(_swapDay2, _swapHour2).remove(_swapEmployee2);
+	  //add employees
+	  _schedule.getWeek().getShift(_swapDay1, _swapHour1).add(_swapEmployee2);
+	  _schedule.getWeek().getShift(_swapDay2, _swapHour2).add(_swapEmployee1);
   }
   
   //only return a list of days that have scheduled shifts in them

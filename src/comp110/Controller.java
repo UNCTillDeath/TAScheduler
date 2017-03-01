@@ -88,4 +88,8 @@ public class Controller {
 	public void uiRequestSaveAvailability(ActionEvent event) {
 
 	}
+	
+	public Schedule getSchedule(){
+	  return _schedule;
+	}
 }

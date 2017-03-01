@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.FileWriter;
+import java.util.List;
+import java.io.PrintWriter;
+
 
 public class Parser{
   public Employee parseEmployee(String file){
@@ -74,15 +78,61 @@ public class Parser{
 	  }
 	  return staff; 
   }
-  public void writeFile(){
+  public void writeFile(Employee employee) throws IOException{
+    PrintWriter fw = new PrintWriter("/home/keith/Documents/test/writetest.csv");
+    StringBuilder sb = new StringBuilder();
+    
+    //Name
+    sb.append("Name:,");
+    sb.append(employee.getName());
+    sb.append(",,,,,,\n");
 
+    //Gender
+    sb.append("Gender (enter M or F):,");
+
+    if(employee.getIsFemale()){
+      sb.append("F");
+    } else{
+      sb.append("M");
+    }
+    sb.append(",,,,,,\n");
+
+    //Capacity
+    sb.append("Capacity:,");
+    sb.append(employee.getCapacity());
+    sb.append(",,,,,,\n");
+  
+    //Level
+    sb.append("Level (1 - in 401; 2 - in 410/411; 3 - in major),");
+    sb.append(employee.getLevel());
+    sb.append(",,,,,,\n");
+    
+    //Week
+    sb.append(",0. Sun,1. Mon,2. Tue,3. Weds,4. Thu,5. Fri,6. Sat\n");
+
+
+    //Schedule
+    int[][] avail = employee.getAvailability();
+    for(int hour = 0; hour < 24; hour++){
+      sb.append(hour); 
+      for(int day = 0; day < avail.length; day++){
+        sb.append(',');
+        sb.append(avail[day][hour]);
+      }
+      sb.append('\n');
+    }
+    fw.write(sb.toString()); 
+    fw.close();
   }
   
   public static void main(String[] args){
-	  Parser parser = new Parser();
-	  Staff staff = parser.parseSchedule("C:/Users/Keith Whitley/git/TAScheduler/data/spring-17/staff/");
-	  System.out.println(staff.toString());
-	  
+    Parser parser = new Parser(); 
+    Employee emp = parser.parseEmployee("/home/keith/git/TAScheduler/data/spring-17/staff/aatieh.csv");
+    
+    try{
+      parser.writeFile(emp); 
+    } catch(IOException e){
+        e.printStackTrace();
+    }
   }
-  
 }

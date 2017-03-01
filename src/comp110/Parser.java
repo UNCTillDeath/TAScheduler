@@ -79,7 +79,13 @@ public class Parser{
 	  return staff; 
   }
   public void writeFile(Employee employee) throws IOException{
-    PrintWriter fw = new PrintWriter("/home/keith/Documents/test/writetest.csv");
+
+    //This works but I dont know if its ideal
+    String filePath = new File("").getAbsolutePath(); //get project path
+    String folder = "data/test/" + employee.getOnyen() + ".csv"; //get file location
+    filePath = filePath.replace("src",folder); //replace src
+    System.out.println("Writing Schedule to" + filePath); 
+    PrintWriter fw = new PrintWriter(filePath);
     StringBuilder sb = new StringBuilder();
     
     //Name
@@ -113,6 +119,8 @@ public class Parser{
 
     //Schedule
     int[][] avail = employee.getAvailability();
+
+    //for loop is backwards to write line by line
     for(int hour = 0; hour < 24; hour++){
       sb.append(hour); 
       for(int day = 0; day < avail.length; day++){

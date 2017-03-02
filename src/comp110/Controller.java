@@ -64,9 +64,10 @@ public class Controller {
 			fileIn.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+			_ui.displayMessage("File IO error");
 			return;
 		} catch (ClassNotFoundException c) {
-			System.out.println("Class not found");
+			_ui.displayMessage("Class not found");
 			c.printStackTrace();
 			return;
 		}
@@ -75,8 +76,12 @@ public class Controller {
 
 	public void uiRequestEmployeeAvailability(String onyen) {
 		// parse the employee
+		try {
 		_employee = _parser.parseEmployee(_storage.getFilesPath() + File.separator + "data" + File.separator + "spring-17" + File.separator + "staff" + File.separator + onyen + ".csv");
-
+		} catch (Exception e) {
+			e.printStackTrace();
+			_ui.displayMessage("Could not pull schedule");
+		}
 		//display available object on ui
 		Platform.runLater(() -> _ui.displayAvailable(_employee));
 	}

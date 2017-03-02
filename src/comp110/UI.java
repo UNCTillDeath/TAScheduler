@@ -47,6 +47,7 @@ public class UI extends Application {
   private Controller    _controller;
   private TextField     _usernameField;
   private PasswordField _passwordField;
+  private Button		_password_submit_button;
   private TextField     _onyenField;
   private Employee      _currentEmployee;
   private Button        _showSwapAvailabilityButton;
@@ -61,10 +62,14 @@ public class UI extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
+	  // create controller
     _controller = new Controller(this);
+    
+    // create the dialog to collect github username/password
+    // and show it as the first thing
     _passwordStage = new Stage();
     Group passwordGroup = new Group();
-    Scene passwordScene = new Scene(passwordGroup);
+    Scene passwordScene = new Scene(passwordGroup); 
     _passwordStage.setScene(passwordScene);
 
     VBox vbox = new VBox();
@@ -84,9 +89,9 @@ public class UI extends Application {
     _passwordField = new PasswordField();
     Label usernameLabel = new Label("Username");
     Label passwordLabel = new Label("Password ");
-    Button submitButton = new Button("Login");
-    submitButton.setOnAction(this::loginToGithub);
-    hbox3.getChildren().add(submitButton);
+    _password_submit_button = new Button("Login");
+    _password_submit_button.setOnAction(this::loginToGithub);
+    hbox3.getChildren().add(_password_submit_button);
     hbox1.getChildren().addAll(usernameLabel, _usernameField);
     hbox2.getChildren().addAll(passwordLabel, _passwordField);
     vbox.getChildren().addAll(hbox1, hbox2, hbox3);
@@ -95,25 +100,33 @@ public class UI extends Application {
     _passwordStage.setResizable(false);
     _passwordStage.show();
 
+    // not sure what this does
     _availabilityStage = primaryStage;
+    
+    // code to call on exit of the application
     _availabilityStage.setOnCloseRequest(event -> {
-      _controller.cleanup();
-      try {
-        // give time for cleanup to complete
-        Thread.sleep(2000);
-      } catch (Exception e) {
-        /* dont care about an exception here */}
-    });
+    	// call the controller cleanup
+    	_controller.cleanup();
+    	try {
+    		// give time for cleanup to complete
+    		Thread.sleep(2000);
+		} catch (Exception e) {
+			/* dont care about an exception here */}
+	});
   }
 
   private void loginToGithub(ActionEvent event) {
-    _controller.uiUsernamePasswordCallback(
-        new Credentials(_usernameField.getText(), _passwordField.getText()));
-    displayAvailable(null);
-    // _passwordStage.close();
+	  // user has entered the username and password for github
+	  // send that info to the controller so it can pull the files
+	  _controller.uiUsernamePasswordCallback(new Credentials(_usernameField.getText(), _passwordField.getText()));
+	  
+	  // disable the password submit button until pull is done
+	  _password_submit_button.setDisable(true);
   }
 
   private void renderAvailabilityStage(Employee e) {
+	  // need to comment more
+	  
     Group availabilityRoot = new Group();
     Scene availabilityScene = new Scene(availabilityRoot);
     BorderPane rootPane = new BorderPane();
@@ -123,14 +136,17 @@ public class UI extends Application {
     topBar.getChildren().add(_onyenField);
     rootPane.setTop(topBar);
 
-    Button pullScheduleButton = new Button("Pull Schedule");
-    topBar.getChildren().add(pullScheduleButton);
-    pullScheduleButton.setOnAction(this::onyenSubmit);
+    // create button to get availability
+    Button getAvailabilityButton = new Button("Get Availability");
+    topBar.getChildren().add(getAvailabilityButton);
+    getAvailabilityButton.setOnAction(this::getAvailability);
 
+    // create button to show current schedule
     Button showScheduleButton = new Button("Show Current Schedule");
-    showScheduleButton.setOnAction(_controller::uiRequestSchedule);
+    showScheduleButton.setOnAction(this::requestScheduleButtonPressed);
     topBar.getChildren().add(showScheduleButton);
 
+    // create button to show the swap stage stuff
     _showSwapAvailabilityButton = new Button("Show Swaps");
     if (e == null) { // only do this first time we paint the scene
       _showSwapAvailabilityButton.setDisable(true);
@@ -138,6 +154,7 @@ public class UI extends Application {
     _showSwapAvailabilityButton.setOnAction(this::buttonPressShowPotentialSwaps);
     topBar.getChildren().add(_showSwapAvailabilityButton);
 
+    // create button to do the swap stage stuff
     _performSwapButton = new Button("Swap");
     if (e == null) {
       _performSwapButton.setDisable(true);
@@ -145,6 +162,7 @@ public class UI extends Application {
     _performSwapButton.setOnAction(this::buttonPressSwap);
     topBar.getChildren().add(_performSwapButton);
 
+    // comment this stuff
     _grid = new GridPane();
     _grid.setGridLinesVisible(true);
 
@@ -187,10 +205,11 @@ public class UI extends Application {
     }
     rootPane.setCenter(_grid);
 
+    // create the save button
     HBox bottomBar = new HBox();
     Button saveButton = new Button("Save");
     saveButton.setPrefWidth(465);
-    saveButton.setOnAction(_controller::uiRequestSaveAvailability);
+    saveButton.setOnAction(this::saveButtonPressed);
     bottomBar.getChildren().add(saveButton);
     rootPane.setBottom(bottomBar);
 
@@ -199,15 +218,16 @@ public class UI extends Application {
     _availabilityStage.setTitle("COMP110 TA Availability");
     _availabilityStage.sizeToScene();
     _availabilityStage.setResizable(false);
-
   }
 
   private void buttonPressShowPotentialSwaps(ActionEvent event) {
-    _controller.uiRequestSwaps();
+	  // request controller to give it the information for the swaps
+	  _controller.uiRequestSwaps();
   }
 
   private void buttonPressSwap(ActionEvent event) {
-    this.renderPerformSwapStage();
+	  // start the perform swap stage
+	  this.renderPerformSwapStage();
   }
 
   private void renderPerformSwapStage() {
@@ -425,10 +445,20 @@ public class UI extends Application {
     return hoursList;
   }
 
-  private void onyenSubmit(ActionEvent event) {
-    _controller.uiRequestEmployeeAvailability(_onyenField.getText());
-    _showSwapAvailabilityButton.setDisable(false);
-    _performSwapButton.setDisable(false);
+  private void getAvailability(ActionEvent event) {
+	  // ask the controller to load an employee availbility file based on the onyen
+	  String onyen = this._onyenField.getText();
+	  if ((onyen.equals("") == true) || (onyen.equals("Enter onyen here")) == true){
+		  // need to put an onyen in first
+		  this.displayMessage("Please first enter an onyen");
+	  }
+	  else{
+		  // ask controller to load it
+		this._controller.uiRequestEmployeeAvailability(_onyenField.getText());
+		// disable the swap buttons
+		this._showSwapAvailabilityButton.setDisable(false);
+		this._performSwapButton.setDisable(false);		  
+	  }
   }
 
   private void renderScheduleStage(Schedule schedule) {
@@ -568,6 +598,8 @@ public class UI extends Application {
   }
 
   private GridPane writeSchedule(Schedule schedule) {
+	  // need to consider if current employee is null...meaning no onyen put in yet
+	  
     GridPane schedulePane = new GridPane();
     schedulePane.setAlignment(Pos.CENTER);
     schedulePane.setGridLinesVisible(true);
@@ -598,8 +630,8 @@ public class UI extends Application {
             Label scheduledEmployee = new Label(
                 shifts.get(day).get(hour).get(i).toString());
             // highlight your name on the schedule
-            if (shifts.get(day).get(hour).get(i).toString()
-                .equals(_currentEmployee.getName())) {
+            if ((this._currentEmployee != null) && (shifts.get(day).get(hour).get(i).toString()
+                .equals(_currentEmployee.getName()))) {
               scheduledEmployee.setTextFill(Color.RED);
             }
             schedulePane.add(scheduledEmployee, day + 1, hourRow + i + 1); // +1
@@ -670,17 +702,16 @@ public class UI extends Application {
   }
 
   public void displayAvailable(Employee e) {
+	  // called from the controller when an Employee object is ready for display
     _currentEmployee = e;
     renderAvailabilityStage(e);
     _availabilityStage.show();
-    _passwordStage.close();
   }
 
   public void displaySchedule(Schedule schedule) {
     _scheduleStage = new Stage();
-    renderScheduleStage(_controller.getSchedule());
+    renderScheduleStage(schedule);
     _scheduleStage.show();
-
   }
 
   public void displayPossibleSwaps(Schedule schedule) {
@@ -708,7 +739,41 @@ public class UI extends Application {
     alert.setHeaderText("Error");
     alert.setContentText(message);
     alert.showAndWait();
+  }
+
+  public void githubPullResult(boolean success, String message){
+	  if (success == true){
+		  // login was successful
+		  // move to next stage
+		  // display a null employee because we dont have the onyen yet
+		  this.displayAvailable(null);
+		  // can close the password stage
+		  this._passwordStage.close();
+	  }
+	  else{
+		  // pull failed...highly likely wrong username and password
+		  this.displayMessage("Unable to pull files from github");
+		  // renable the submit button
+		  this._password_submit_button.setDisable(false);
+	  }
+  }
+
+  public void githubPushResult(boolean success, String message){
+	if (success == true){
+		  // save was successful
+	  }
+	  else{
+		  // push failed
+		  this.displayMessage("Unable to push files to github");
+	  }
+  }
+
+  public void saveButtonPressed(ActionEvent e){
 
   }
 
+  public void requestScheduleButtonPressed(ActionEvent e){
+	  // ask the controller for the schedule
+	  this._controller.uiRequestSchedule();	
+  }
 }

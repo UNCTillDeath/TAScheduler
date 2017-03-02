@@ -308,7 +308,7 @@ public class Storage{
     }
     
     public String getFilePathToSchedule(){
-    	return this.getFilesPath() + "needtofigurethisout";
+    	return (this.getFilesPath() + "/testData/schedule.ser");
     }
 
     public void setUsername(String username){

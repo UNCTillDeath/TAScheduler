@@ -82,7 +82,7 @@ public class Parser{
 
     //This works but I dont know if its ideal
     String filePath = new File("").getAbsolutePath(); //get project path
-    String folder = "data/test/" + employee.getOnyen() + ".csv"; //get file location
+    String folder = "data/test/" + employee.getOnyen() + ".csv"; //get file location, currently just a test folder
     filePath = filePath.replace("src",folder); //replace src
     System.out.println("Writing Schedule to" + filePath); 
     PrintWriter fw = new PrintWriter(filePath);

@@ -132,7 +132,13 @@ public class UI extends Application {
     BorderPane rootPane = new BorderPane();
 
     HBox topBar = new HBox();
-    _onyenField = new TextField("Enter onyen here");
+    if (e != null){
+    	this._onyenField = new TextField(e.getOnyen());
+    }
+    else
+    {
+    	_onyenField = new TextField("Enter onyen here");
+    }
     topBar.getChildren().add(_onyenField);
     rootPane.setTop(topBar);
 

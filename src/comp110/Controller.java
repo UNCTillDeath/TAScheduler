@@ -150,7 +150,9 @@ public class Controller {
 		}
 	}
 
-	public void uiRequestSaveAvailability(ActionEvent event) {
-
+	public void uiRequestSaveAvailability(Employee e) {
+		// need to tell parser to save this employee object and what filename to save it as
+		String filename = this._storage.getFilePathToOnyen(e.getOnyen());
+		this._ui.displayMessage("Not yet implemented");
 	}
 }

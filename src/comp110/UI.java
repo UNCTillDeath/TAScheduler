@@ -775,7 +775,8 @@ public class UI extends Application {
   }
 
   public void saveButtonPressed(ActionEvent e){
-
+	  // need to send to controller to save the current modified Employee object
+	  this.displayMessage("Not yet implemented");
   }
 
   public void requestScheduleButtonPressed(ActionEvent e){

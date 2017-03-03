@@ -150,9 +150,23 @@ public class Controller {
 		}
 	}
 
-	public void uiRequestSaveAvailability(Employee e) {
+	public void uiRequestSaveAvailability(Employee employee) {
 		// need to tell parser to save this employee object and what filename to save it as
-		String filename = this._storage.getFilePathToOnyen(e.getOnyen());
-		this._ui.displayMessage("Not yet implemented");
+		if (employee == null){
+			// unable to save
+			this._ui.displayMessage("Unable to save employee object: employee is null");
+			return;
+		}
+		
+		String filename = this._storage.getFilePathToOnyen(employee.getOnyen());
+		try{
+			// have the parser write out the file
+			this._parser.writeFile(employee, filename);
+			// have storage push to the repo
+			this._storage.pushFiles();
+		} catch (IOException e){
+			// unable to save
+			this._ui.displayMessage("Unable to save employee object: " + e.getMessage());
+		}	
 	}
 }

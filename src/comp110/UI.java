@@ -776,7 +776,9 @@ public class UI extends Application {
 
   public void saveButtonPressed(ActionEvent e){
 	  // need to send to controller to save the current modified Employee object
-	  this.displayMessage("Not yet implemented");
+	  if (this._currentEmployee != null){
+		  this._controller.uiRequestSaveAvailability(this._currentEmployee);
+	  }
   }
 
   public void requestScheduleButtonPressed(ActionEvent e){

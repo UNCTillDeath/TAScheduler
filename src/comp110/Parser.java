@@ -70,6 +70,7 @@ System.err.println("IO Error: " + name);
   }
   return new Employee(name, onyen, capacity, gender.equals("M") ? false : true, level, availability);
 }
+
   public Staff parseSchedule(String dir){
 	  Staff staff = new Staff();
 	  File csvDirectory = new File(dir);
@@ -77,15 +78,19 @@ System.err.println("IO Error: " + name);
 		  staff.add(parseEmployee(csv.toString()));
 	  }
 	  return staff; 
+  
   }
-  public void writeFile(Employee employee) throws IOException{
+  
+  public void writeFile(Employee employee, String filename) throws IOException{
 
     //This works but I dont know if its ideal
+	  /*
     String filePath = new File("").getAbsolutePath(); //get project path
     String folder = "data/test/" + employee.getOnyen() + ".csv"; //get file location, currently just a test folder
     filePath = filePath.replace("src",folder); //replace src
-    System.out.println("Writing Schedule to" + filePath); 
-    PrintWriter fw = new PrintWriter(filePath);
+	   */
+    System.out.println("Writing Schedule to" + filename); 
+    PrintWriter fw = new PrintWriter(filename);
     StringBuilder sb = new StringBuilder();
     
     //Name
@@ -138,7 +143,7 @@ System.err.println("IO Error: " + name);
     Employee emp = parser.parseEmployee("/home/keith/git/TAScheduler/data/spring-17/staff/aatieh.csv");
     
     try{
-      parser.writeFile(emp); 
+      parser.writeFile(emp, "test.csv"); 
     } catch(IOException e){
         e.printStackTrace();
     }

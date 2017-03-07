@@ -7,44 +7,45 @@ import java.io.ObjectInputStream;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 
-public class Controller {
+public class Controller implements Storage_v2.Storage_v2Listener {
 
 	private UI _ui;
-	private Storage _storage;
+	private Storage_v2 _storage;
 	private Parser _parser;
 	private Schedule _schedule; 
 
 	public Controller(UI ui) {
 
 		//initialize UI, storage, and parser
-		_storage = new Storage(this);
+		_storage = new Storage_v2(this, ".");
 		_parser = new Parser();
 		_ui = ui;
 		this._schedule = null;
 	}
 
 	public void cleanup() {
-		_storage.cleanup();
+		_storage.delete_storage();
 	}
 	
 	public void uiUsernamePasswordCallback(Credentials credentials) {
 		// save username and password for github
-		_storage.setUsername(credentials.getUsername());
-		_storage.setPassword(credentials.getPassword());
+		_storage.set_username(credentials.getUsername());
+		_storage.set_password(credentials.getPassword());
 
 		// pull files from github
-		_storage.pullFiles();
+		_storage.get_files();
 	}
 
-	public void storagePullCompleteCallback(boolean success, String message) {
-		// let the ui know
-		Platform.runLater(() -> _ui.githubPullResult(success, message));
-	}
 	
-	public void storagePushCompleteCallback(boolean success, String message) {
+    public void storage_get_files_complete(boolean success, String message){
 		// let the ui know
-		Platform.runLater(() -> _ui.githubPushResult(success, message));
-	}
+		Platform.runLater(() -> _ui.githubPullResult(success, message));    	
+    }
+    
+    public void storage_save_files_complete(boolean success, String message){
+		// let the ui know
+		Platform.runLater(() -> _ui.githubPushResult(success, message));    	
+    }
 
 	public void uiRequestSchedule() {
 		/*************************************************
@@ -57,7 +58,8 @@ public class Controller {
 		ObjectInputStream in = null;
 		try {
 			// open the filestreams and read the object
-			fileIn = new FileInputStream(_storage.getFilePathToSchedule());
+			String filename = _storage.get_schedule_json_filename();
+			fileIn = new FileInputStream(filename);
 			in = new ObjectInputStream(fileIn);
 			this._schedule = (Schedule) in.readObject();
 		} catch (Exception e) {
@@ -88,7 +90,7 @@ public class Controller {
 
 	public void uiRequestEmployeeAvailability(String onyen) {
 		// parse the employee
-		Employee employee = _parser.parseEmployee(_storage.getFilePathToOnyen(onyen));
+		Employee employee = _parser.parseEmployee(_storage.get_availability_csv_filename_from_onyen(onyen));
 		
 		if (employee == null){
 			_ui.displayMessage("Unable to pull availability for " + onyen);
@@ -118,7 +120,7 @@ public class Controller {
 		ObjectInputStream in = null;
 		try {
 			// open the filestreams and read the object
-			fileIn = new FileInputStream(_storage.getFilePathToSchedule());
+			fileIn = new FileInputStream(_storage.get_schedule_json_filename());
 			in = new ObjectInputStream(fileIn);
 			this._schedule = (Schedule) in.readObject();
 		} catch (Exception e) {
@@ -158,12 +160,12 @@ public class Controller {
 			return;
 		}
 		
-		String filename = this._storage.getFilePathToOnyen(employee.getOnyen());
+		String filename = this._storage.get_availability_csv_filename_from_onyen(employee.getOnyen());
 		try{
 			// have the parser write out the file
 			this._parser.writeFile(employee, filename);
 			// have storage push to the repo
-			this._storage.pushFiles();
+			this._storage.save_files();
 		} catch (IOException e){
 			// unable to save
 			this._ui.displayMessage("Unable to save employee object: " + e.getMessage());

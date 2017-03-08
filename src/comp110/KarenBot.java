@@ -2,11 +2,13 @@ package comp110;
 
 import static java.lang.System.out;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
@@ -117,7 +119,11 @@ public class KarenBot {
     writeOutput(scorecard, "TopSchedule" + "_" + scorecard.getScore());
     Gson gson = new Gson();
     try {
-      gson.toJson(scorecard.getSchedule().getWeek().toJsonWeek(), new FileWriter(_outputPath + File.separator + "schedule.json"));
+      JsonWeek jsonWeek = scorecard.getSchedule().getWeek().toJsonWeek();
+      BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(new File(_outputPath + File.separator + "schedule.json")),65536);
+      String json = gson.toJson(jsonWeek);
+      writer.write(json.getBytes());
+      writer.close();
     } catch (JsonIOException | IOException e) {
       e.printStackTrace();
     }

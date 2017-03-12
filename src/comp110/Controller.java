@@ -93,7 +93,8 @@ public class Controller implements Storage_v2.Storage_v2Listener {
 		Employee employee = _parser.parseEmployee(_storage.get_availability_csv_filename_from_onyen(onyen));
 		
 		if (employee == null){
-			_ui.displayMessage("Unable to pull availability for " + onyen);
+			_ui.createNewEmployeeCSV(onyen);
+			//_ui.displayMessage("Unable to pull availability for " + onyen);
 		}
 		else {
 			//display available object on ui

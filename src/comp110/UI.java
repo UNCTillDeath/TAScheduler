@@ -22,6 +22,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -816,6 +817,48 @@ public class UI extends Application {
 		alert.setHeaderText("Error");
 		alert.setContentText(message);
 		alert.showAndWait();
+	}
+	
+	public void createNewEmployeeCSV(String onyen){
+		Stage dialogueBox = new Stage();
+		Group root = new Group();
+		Scene scene = new Scene(root);
+
+		VBox vbox = new VBox();
+		vbox.setPadding(new Insets(10, 0, 0, 10));
+		vbox.setSpacing(10);
+		
+		HBox hbox1 = new HBox();
+		hbox1.setSpacing(10);
+		hbox1.setAlignment(Pos.CENTER_LEFT);
+		
+		Label text = new Label(onyen + " does not have an availability object yet. Would you like to create one?");
+		hbox1.getChildren().add(text);
+		
+		HBox hbox2 = new HBox();
+		hbox2.setSpacing(10);
+		hbox2.setAlignment(Pos.CENTER);
+		
+		Button yes = new Button("Yes");
+		yes.setOnAction((event) -> {
+			dialogueBox.close();
+		});
+		Button no = new Button("No");
+		no.setOnAction((event) -> {
+			dialogueBox.close();
+			_onyenField.setText("Enter onyen here");
+			this.displayMessage("Try again, enter a valid onyen");
+		});
+		hbox2.getChildren().addAll(yes, no);
+		
+		vbox.getChildren().addAll(hbox1, hbox2);
+		root.getChildren().add(vbox);
+		dialogueBox.initModality(Modality.APPLICATION_MODAL);
+		dialogueBox.setTitle("Invalid onyen");
+		dialogueBox.setScene(scene);
+		dialogueBox.sizeToScene();
+		dialogueBox.showAndWait();
+		
 	}
 
 	public void githubPullResult(boolean success, String message) {

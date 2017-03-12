@@ -55,6 +55,10 @@ public class Employee implements Serializable {
   public int getCapacity() {
     return _capacity;
   }
+  
+  public void setCapacity(int capacity){
+	  _capacity = capacity;
+  }
 
   public int getCapacityUsed() {
     return _capacityUsed;

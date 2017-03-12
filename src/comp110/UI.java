@@ -23,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
@@ -138,6 +139,8 @@ public class UI extends Application {
 		Group availabilityRoot = new Group();
 		Scene availabilityScene = new Scene(availabilityRoot);
 		BorderPane rootPane = new BorderPane();
+		VBox topBox = new VBox();
+		rootPane.setTop(topBox);
 
 		HBox topBar = new HBox();
 		if (e != null) {
@@ -148,7 +151,7 @@ public class UI extends Application {
 
 		}
 		topBar.getChildren().add(_onyenField);
-		rootPane.setTop(topBar);
+		topBox.getChildren().add(topBar);
 
 		// create button to get availability
 		Button getAvailabilityButton = new Button("Get Availability");
@@ -175,6 +178,35 @@ public class UI extends Application {
 		}
 		_performSwapButton.setOnAction(this::buttonPressSwap);
 		topBar.getChildren().add(_performSwapButton);
+		
+		//middle bar with employee demographic info
+		HBox middleBar = new HBox();
+		topBox.getChildren().add(middleBar);
+		
+		TextField nameField = new TextField();
+		ComboBox<String> genderDropdown = new ComboBox<String>();
+		genderDropdown.getItems().addAll("Male", "Female");
+		genderDropdown.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				_currentEmployee.setIsFemale(newValue.equals("Female") ? true : false);
+				_saveAvailabilityButton.setDisable(false);
+			}
+		});	
+		
+		ComboBox<Integer> capacityDropdown = new ComboBox<Integer>();
+		for (int i = 1; i <= 10; i++){
+			capacityDropdown.getItems().add(i);
+		}
+		capacityDropdown.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Integer>() {
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+				_currentEmployee.setCapacity(newValue);
+				_saveAvailabilityButton.setDisable(false);
+			}
+		});	
+		
+		middleBar.getChildren().addAll(nameField, genderDropdown, capacityDropdown);
 
 		// comment this stuff
 		_grid = new GridPane();

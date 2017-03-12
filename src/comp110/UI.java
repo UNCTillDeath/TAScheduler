@@ -144,6 +144,8 @@ public class UI extends Application {
 			this._onyenField = new TextField(e.getOnyen());
 		} else {
 			_onyenField = new TextField("Enter onyen here");
+			_onyenField.setOnKeyPressed((event) -> { if(event.getCode() == KeyCode.ENTER) { getAvailability(null); } });
+
 		}
 		topBar.getChildren().add(_onyenField);
 		rootPane.setTop(topBar);
@@ -198,7 +200,7 @@ public class UI extends Application {
 					box.getChildren().add(timeLabel);
 
 				} else {
-					CheckBox check = new CheckBox();
+					TimedCheckBox check = new TimedCheckBox(day, hour);
 					if (e != null) {
 						if (e.isAvailable(day - 1, hour + 9)) { // map day and
 																// hour onto our
@@ -727,13 +729,18 @@ public class UI extends Application {
 
 	public void handleCheck(ActionEvent event) {
 		_saveAvailabilityButton.setDisable(false);
-		CheckBox check = (CheckBox) event.getSource();
+		TimedCheckBox check = (TimedCheckBox) event.getSource();
+		int[][] updatedAvailability = _currentEmployee.getAvailability();
 		HBox parent = (HBox) check.getParent();
 		if (check.isSelected()) {
 			parent.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+			updatedAvailability[check.getDay()][check.getHour()] = 1;
 		} else {
 			parent.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+			updatedAvailability[check.getDay()][check.getHour()] = 0;
+
 		}
+		_currentEmployee.setAvailability(updatedAvailability);
 	}
 
 	public void displayMessage(String message) {

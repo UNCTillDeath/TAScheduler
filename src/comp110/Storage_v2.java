@@ -25,7 +25,7 @@ public class Storage_v2 {
 
     // constants
     private static final String DEFAULT_LOCAL_REPO_FOLDER = "/repo";
-    private static final String DEFAULT_GITHUB_REPO = "https://github.com/djsteffey/tascheduler_data.git";
+    private static final String DEFAULT_GITHUB_REPO = "https://github.com/UNCTillDeath/TAScheduler.git";
     private static final String DEFAULT_GITHUB_USERNAME = "";
     private static final String DEFAULT_GITHUB_PASSWORD = "";
     private static final String DEFAULT_COMMIT_MESSAGE = "Updated TA Availability by TAScheduler - Android";
@@ -64,15 +64,15 @@ public class Storage_v2 {
     }
 
     public String get_availability_csv_filename_from_onyen(String onyen){
-        return this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER + "/staff/" + onyen + ".csv";
+        return this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER + "/data/spring-17/staff/" + onyen + ".csv";
     }
 
     public String get_schedule_json_filename(){
-        return this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER + "/schedule/schedule.ser";
+        return this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER + "/testData/schedule.ser";
     }
 
     public String get_path_to_onyen_csv_directory(){
-        return this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER + "/staff/";
+        return this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER + "/data/spring-17/staff/";
     }
 
     public void get_files(){

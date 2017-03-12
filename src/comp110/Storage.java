@@ -1,3 +1,4 @@
+/*
 package comp110;
 
 import java.io.*;
@@ -337,3 +338,4 @@ public class Storage{
         return directory.delete();
     }
 }
+*/

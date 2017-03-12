@@ -40,6 +40,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 
 public class UI extends Application {
@@ -77,7 +78,14 @@ public class UI extends Application {
 		Group passwordGroup = new Group();
 		Scene passwordScene = new Scene(passwordGroup);
 		_passwordStage.setScene(passwordScene);
-
+		//prevent user from closing stage directly, we only want to close it
+		//programmatically after authentication
+		_passwordStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+		    @Override
+		    public void handle(WindowEvent event) {
+		        event.consume();
+		    }
+		});
 		VBox vbox = new VBox();
 		vbox.setPadding(new Insets(10, 0, 0, 10));
 		vbox.setSpacing(10);
@@ -140,6 +148,7 @@ public class UI extends Application {
 		Scene availabilityScene = new Scene(availabilityRoot);
 		BorderPane rootPane = new BorderPane();
 		VBox topBox = new VBox();
+		topBox.setAlignment(Pos.CENTER);
 		rootPane.setTop(topBox);
 
 		HBox topBar = new HBox();
@@ -184,7 +193,15 @@ public class UI extends Application {
 		topBox.getChildren().add(middleBar);
 		
 		TextField nameField = new TextField();
+		if (e != null){
+			nameField.setText(e.getName());
+		} else {
+			nameField.setText("Name");
+		}
 		ComboBox<String> genderDropdown = new ComboBox<String>();
+		if (e != null){
+			genderDropdown.getSelectionModel().select(e.getIsFemale() ? "Female" : "Male");
+		}
 		genderDropdown.getItems().addAll("Male", "Female");
 		genderDropdown.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
@@ -198,6 +215,10 @@ public class UI extends Application {
 		for (int i = 1; i <= 10; i++){
 			capacityDropdown.getItems().add(i);
 		}
+		if (e != null){
+			//have to -1 because it is pulling by index and list is zero indexed
+			capacityDropdown.getSelectionModel().select(e.getCapacity() - 1);
+		}
 		capacityDropdown.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Integer>() {
 			@Override
 			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
@@ -206,7 +227,21 @@ public class UI extends Application {
 			}
 		});	
 		
-		middleBar.getChildren().addAll(nameField, genderDropdown, capacityDropdown);
+		ComboBox<String> levelDropdown = new ComboBox<String>();
+		levelDropdown.getItems().addAll("1 - In 401", "2 - In 410/411", "3 - In Major");
+		if (e != null){
+			//have to -1 because it is pulling by index and list is zero indexed
+			levelDropdown.getSelectionModel().select(e.getLevel() - 1);
+		}
+		levelDropdown.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				_currentEmployee.setLevel(Integer.parseInt(newValue.split(" ")[0]));
+				_saveAvailabilityButton.setDisable(false);
+			}
+		});	
+		
+		middleBar.getChildren().addAll(nameField, genderDropdown, capacityDropdown, levelDropdown);
 
 		// comment this stuff
 		_grid = new GridPane();

@@ -200,7 +200,7 @@ public class UI extends Application {
 					box.getChildren().add(timeLabel);
 
 				} else {
-					TimedCheckBox check = new TimedCheckBox(day, hour);
+					TimedCheckBox check = new TimedCheckBox(day - 1, hour + 9);
 					if (e != null) {
 						if (e.isAvailable(day - 1, hour + 9)) { // map day and
 																// hour onto our
@@ -731,6 +731,7 @@ public class UI extends Application {
 		_saveAvailabilityButton.setDisable(false);
 		TimedCheckBox check = (TimedCheckBox) event.getSource();
 		int[][] updatedAvailability = _currentEmployee.getAvailability();
+		System.out.println("Day: " + check.getDay() + " Hour: " + check.getHour());
 		HBox parent = (HBox) check.getParent();
 		if (check.isSelected()) {
 			parent.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));

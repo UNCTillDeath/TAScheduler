@@ -199,6 +199,11 @@ public class UI extends Application {
 		} else {
 			nameField.setText("Name");
 		}
+		nameField.textProperty().addListener((observable, oldValue, newValue) -> {
+			if (e != null){
+				e.setName(newValue);
+			}
+		});
 		ComboBox<String> genderDropdown = new ComboBox<String>();
 		if (e != null){
 			genderDropdown.getSelectionModel().select(e.getIsFemale() ? "Female" : "Male");
@@ -841,6 +846,8 @@ public class UI extends Application {
 		
 		Button yes = new Button("Yes");
 		yes.setOnAction((event) -> {
+			_currentEmployee = new Employee("", _onyenField.getText(), 0, false, 0, new int[7][24]);
+			this.renderAvailabilityStage(_currentEmployee);
 			dialogueBox.close();
 		});
 		Button no = new Button("No");

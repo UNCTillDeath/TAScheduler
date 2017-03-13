@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Employee implements Serializable {
 
-  final private String _name;
+  private String _name;
   private String _onyen;
   private int          _capacity;
   private int          _capacityUsed;
@@ -46,6 +46,10 @@ public class Employee implements Serializable {
 
   public String getName() {
     return _name;
+  }
+  
+  public void setName(String name){
+	  _name = name;
   }
   
   public String getOnyen() {

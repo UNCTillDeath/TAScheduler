@@ -453,6 +453,7 @@ public class UI extends Application {
 		rootPane.setTop(topBox);
 		rootPane.setCenter(bottomBox);
 		performSwapStage.sizeToScene();
+		performSwapStage.setResizable(false);
 		performSwapStage.setTitle("Perform Swap");
 		performSwapStage.show();
 	}
@@ -584,6 +585,7 @@ public class UI extends Application {
 		rootPane.setRight(swapBox);
 
 		_swapStage.sizeToScene();
+		_swapStage.setResizable(false);
 		_swapStage.setTitle("Available for Swaps");
 	}
 

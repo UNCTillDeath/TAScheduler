@@ -79,13 +79,13 @@ public class UI extends Application {
 		Group passwordGroup = new Group();
 		Scene passwordScene = new Scene(passwordGroup);
 		_passwordStage.setScene(passwordScene);
-		//prevent user from closing stage directly, we only want to close it
-		//programmatically after authentication
+		// prevent user from closing stage directly, we only want to close it
+		// programmatically after authentication
 		_passwordStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-		    @Override
-		    public void handle(WindowEvent event) {
-		        event.consume();
-		    }
+			@Override
+			public void handle(WindowEvent event) {
+				event.consume();
+			}
 		});
 		VBox vbox = new VBox();
 		vbox.setPadding(new Insets(10, 0, 0, 10));
@@ -102,12 +102,16 @@ public class UI extends Application {
 
 		_usernameField = new TextField();
 		_passwordField = new PasswordField();
-		//bind enter key to button press
-		_passwordField.setOnKeyPressed((event) -> { if(event.getCode() == KeyCode.ENTER) { loginToGithub(null); } });
+		// bind enter key to button press
+		_passwordField.setOnKeyPressed((event) -> {
+			if (event.getCode() == KeyCode.ENTER) {
+				loginToGithub(null);
+			}
+		});
 		Label usernameLabel = new Label("Username");
 		Label passwordLabel = new Label("Password ");
 		_passwordSubmitButton = new Button("Login");
-		//bind enter key to button press
+		// bind enter key to button press
 		_passwordSubmitButton.defaultButtonProperty().bind(_passwordSubmitButton.focusedProperty());
 		_passwordSubmitButton.setOnAction(this::loginToGithub);
 		hbox3.getChildren().add(_passwordSubmitButton);
@@ -118,9 +122,9 @@ public class UI extends Application {
 		_passwordStage.sizeToScene();
 		_passwordStage.setResizable(false);
 		_availabilityStage = primaryStage;
-		//load a blank stage behind password box so it looks pretty
+		// load a blank stage behind password box so it looks pretty
 		this.displayAvailable(null);
-		//password stage should be modal
+		// password stage should be modal
 		_passwordStage.initModality(Modality.APPLICATION_MODAL);
 		_passwordStage.showAndWait();
 
@@ -154,12 +158,16 @@ public class UI extends Application {
 		rootPane.setTop(topBox);
 
 		HBox topBar = new HBox();
-		//populate fields with employee
+		// populate fields with employee
 		if (e != null) {
 			this._onyenField = new TextField(e.getOnyen());
 		} else {
 			_onyenField = new TextField("Enter onyen here");
-			_onyenField.setOnKeyPressed((event) -> { if(event.getCode() == KeyCode.ENTER) { getAvailability(null); } });
+			_onyenField.setOnKeyPressed((event) -> {
+				if (event.getCode() == KeyCode.ENTER) {
+					getAvailability(null);
+				}
+			});
 
 		}
 		topBar.getChildren().add(_onyenField);
@@ -190,24 +198,24 @@ public class UI extends Application {
 		}
 		_performSwapButton.setOnAction(this::buttonPressSwap);
 		topBar.getChildren().add(_performSwapButton);
-		
-		//middle bar with employee demographic info
+
+		// middle bar with employee demographic info
 		HBox middleBar = new HBox();
 		topBox.getChildren().add(middleBar);
-		
+
 		TextField nameField = new TextField();
-		if (e != null){
+		if (e != null) {
 			nameField.setText(e.getName());
 		} else {
 			nameField.setText("Name");
 		}
 		nameField.textProperty().addListener((observable, oldValue, newValue) -> {
-			if (e != null){
+			if (e != null) {
 				e.setName(newValue);
 			}
 		});
 		ComboBox<String> genderDropdown = new ComboBox<String>();
-		if (e != null){
+		if (e != null) {
 			genderDropdown.getSelectionModel().select(e.getIsFemale() ? "Female" : "Male");
 		}
 		genderDropdown.getItems().addAll("Male", "Female");
@@ -217,14 +225,15 @@ public class UI extends Application {
 				_currentEmployee.setIsFemale(newValue.equals("Female") ? true : false);
 				_saveAvailabilityButton.setDisable(false);
 			}
-		});	
-		
+		});
+
 		ComboBox<Integer> capacityDropdown = new ComboBox<Integer>();
-		for (int i = 1; i <= 10; i++){
+		for (int i = 1; i <= 10; i++) {
 			capacityDropdown.getItems().add(i);
 		}
-		if (e != null){
-			//have to -1 because it is pulling by index and list is zero indexed
+		if (e != null) {
+			// have to -1 because it is pulling by index and list is zero
+			// indexed
 			capacityDropdown.getSelectionModel().select(e.getCapacity() - 1);
 		}
 		capacityDropdown.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Integer>() {
@@ -233,33 +242,34 @@ public class UI extends Application {
 				_currentEmployee.setCapacity(newValue);
 				_saveAvailabilityButton.setDisable(false);
 			}
-		});	
-		
+		});
+
 		ComboBox<String> levelDropdown = new ComboBox<String>();
 		levelDropdown.getItems().addAll("1 - In 401", "2 - In 410/411", "3 - In Major");
-		if (e != null){
-			//have to -1 because it is pulling by index and list is zero indexed
+		if (e != null) {
+			// have to -1 because it is pulling by index and list is zero
+			// indexed
 			levelDropdown.getSelectionModel().select(e.getLevel() - 1);
 		}
 		levelDropdown.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				//grab the level # and use it to update employee
+				// grab the level # and use it to update employee
 				_currentEmployee.setLevel(Integer.parseInt(newValue.split(" ")[0]));
 				_saveAvailabilityButton.setDisable(false);
 			}
-		});	
-		
+		});
+
 		middleBar.getChildren().addAll(nameField, genderDropdown, capacityDropdown, levelDropdown);
-		
-		//this grid contains the checkboxes to mark availability
+
+		// this grid contains the checkboxes to mark availability
 		_grid = new GridPane();
 		_grid.setGridLinesVisible(true);
 
-		for (int day = 0; day < 8; day++) { 
+		for (int day = 0; day < 8; day++) {
 			// 8 to account for first column with hours
 			if (day != 0) {
-				//all labels are -1 offset
+				// all labels are -1 offset
 				Label dayLabel = new Label(Week.dayString(day - 1));
 				dayLabel.setMaxWidth(Double.MAX_VALUE);
 				dayLabel.setAlignment(Pos.CENTER);
@@ -268,7 +278,7 @@ public class UI extends Application {
 			for (int hour = 0; hour < 12; hour++) {
 				HBox box = new HBox();
 				if (day == 0) {
-					//if we are at hour column write out hour labels
+					// if we are at hour column write out hour labels
 					int time = (hour + 9) % 12;
 					Label timeLabel = new Label(
 							(time % 12 == 0 ? 12 : time) + " -- " + ((time + 1) % 12 == 0 ? 12 : time + 1));
@@ -279,13 +289,13 @@ public class UI extends Application {
 				} else {
 					TimedCheckBox check = new TimedCheckBox(day - 1, hour + 9);
 					if (e != null) {
-						if (e.isAvailable(day - 1, hour + 9)) { 
+						if (e.isAvailable(day - 1, hour + 9)) {
 							// map day and hour onto our space
 							check.setSelected(true);
 							box.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
 						}
 					}
-					//when checked handoff to handleCheck
+					// when checked handoff to handleCheck
 					check.setOnAction(this::handleCheck);
 					box.getChildren().add(check);
 					box.setAlignment(Pos.CENTER);
@@ -345,7 +355,7 @@ public class UI extends Application {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				_swapDay1 = Week.dayInt(newValue);
 				javafx.collections.ObservableList<String> hours = FXCollections
-						.observableArrayList(getHoursList(newValue)); 
+						.observableArrayList(getHoursList(newValue));
 				// newValue is the new day
 				hourListView1.setItems(hours);
 			}
@@ -358,7 +368,7 @@ public class UI extends Application {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				int newHour = Integer.parseInt(newValue.split(" ")[0]);
 				if (newHour < 9) {
-					//convert hour back into military time
+					// convert hour back into military time
 					newHour += 12;
 				}
 				_swapHour1 = newHour;
@@ -386,7 +396,7 @@ public class UI extends Application {
 		});
 
 		// BOTTOM BOX STUFF
-		//everything is identical to the top box logic
+		// everything is identical to the top box logic
 		javafx.collections.ObservableList<String> dayList2 = FXCollections.observableArrayList(getDaysList());
 		ListView<String> dayListView2 = new ListView<String>(dayList2);
 		bottomBox.getChildren().add(dayListView2);
@@ -398,7 +408,7 @@ public class UI extends Application {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				_swapDay2 = Week.dayInt(newValue);
 				javafx.collections.ObservableList<String> hours = FXCollections
-						.observableArrayList(getHoursList(newValue)); 
+						.observableArrayList(getHoursList(newValue));
 				hourListView2.setItems(hours);
 			}
 		});
@@ -437,7 +447,7 @@ public class UI extends Application {
 		});
 
 		saveButton.setDisable(true);
-		//TODO figure out how to not hardcode this and just make it fill stage
+		// TODO figure out how to not hardcode this and just make it fill stage
 		saveButton.setPrefWidth(744);
 		saveButton.setOnAction(this::performSwap);
 		rootPane.setBottom(saveButton);
@@ -483,8 +493,8 @@ public class UI extends Application {
 		List<String> daysList = new ArrayList<String>();
 		for (int day = 0; day < 7; day++) {
 			for (int hour = 0; hour < _schedule.getWeek().getShifts()[day].length; hour++) {
-				//if at least one shift is populated
-				if (_schedule.getWeek().getShifts()[day][hour].size() > 0 && !daysList.contains(Week.dayString(day))) { 
+				// if at least one shift is populated
+				if (_schedule.getWeek().getShifts()[day][hour].size() > 0 && !daysList.contains(Week.dayString(day))) {
 					daysList.add(Week.dayString(day));
 				}
 			}
@@ -536,7 +546,8 @@ public class UI extends Application {
 	}
 
 	private void renderScheduleStage(Schedule schedule) {
-		//gridpane wrapped in scrollpane, should perhaps make overall stage smaller
+		// gridpane wrapped in scrollpane, should perhaps make overall stage
+		// smaller
 		_schedule = schedule;
 		Group root = new Group();
 		Scene scene = new Scene(root);
@@ -569,7 +580,8 @@ public class UI extends Application {
 		scheduledShiftsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				//we sort the list of potential swaps by likelihood it will be compatible
+				// we sort the list of potential swaps by likelihood it will be
+				// compatible
 				javafx.collections.ObservableList<String> availableToSwap = FXCollections
 						.observableArrayList(getOrderedPotentialSwaps(schedule, Week.dayInt(newValue.split(" ")[0]),
 								Integer.parseInt(newValue.split(" ")[1])));
@@ -592,7 +604,7 @@ public class UI extends Application {
 		}
 		ArrayList<String> swapCandidates = new ArrayList<String>();
 		swapCandidates.addAll(schedule.getStaff().getWhoIsAvailable(day, hour));
-		//remove yourself from the list
+		// remove yourself from the list
 		swapCandidates.remove(_currentEmployee.getName());
 		// now score each one
 		Map<Employee, Double> scoredEmployees = new HashMap<Employee, Double>();
@@ -651,7 +663,8 @@ public class UI extends Application {
 		return result;
 	}
 
-	//returns strings in the proper label format of all the shifts _currentEmployee is scheduled for
+	// returns strings in the proper label format of all the shifts
+	// _currentEmployee is scheduled for
 	private ArrayList<String> getScheduledShifts(Schedule schedule) {
 		ArrayList<String> scheduledShifts = new ArrayList<String>();
 		for (int day = 0; day < schedule.getWeek().getShifts().length; day++) {
@@ -677,7 +690,7 @@ public class UI extends Application {
 		ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(schedule.getWeek());
 
 		for (int day = 0; day < 7; day++) {
-			//+1 for hour column
+			// +1 for hour column
 			schedulePane.add(new Label(Week.dayString(day)), day + 1, 0);
 		}
 
@@ -687,7 +700,7 @@ public class UI extends Application {
 					(hour % 12 == 0 ? 12 : hour % 12) + " -- " + ((hour + 1) % 12 == 0 ? 12 : (hour + 1) % 12));
 			dayLabel.setMaxWidth(Double.MAX_VALUE);
 			dayLabel.setAlignment(Pos.CENTER);
-			//+1 to account for day row
+			// +1 to account for day row
 			schedulePane.add(dayLabel, 0, hourRow + 1);
 
 			int max = getMaxSize(hour, schedule.getWeek());
@@ -701,7 +714,7 @@ public class UI extends Application {
 								&& (shifts.get(day).get(hour).get(i).toString().equals(_currentEmployee.getName()))) {
 							scheduledEmployee.setTextFill(Color.RED);
 						}
-						//+1 to account for day row
+						// +1 to account for day row
 						schedulePane.add(scheduledEmployee, day + 1, hourRow + i + 1);
 					}
 				}
@@ -711,7 +724,7 @@ public class UI extends Application {
 		return schedulePane;
 	}
 
-	//gets the size of the longest shift for any given hour across all days
+	// gets the size of the longest shift for any given hour across all days
 	private static int getMaxSize(int hour, Week week) {
 		int max = 0;
 		for (int day = 0; day < 7; day++) {
@@ -722,7 +735,7 @@ public class UI extends Application {
 		return max;
 	}
 
-	//gets earliest scheduled hour in the week
+	// gets earliest scheduled hour in the week
 	private static int getEarliestHour(Week week) {
 		int min = 10000;
 		for (int day = 0; day < 7; day++) {
@@ -737,7 +750,7 @@ public class UI extends Application {
 		return min;
 	}
 
-	//gets latest scheduled hour in the week
+	// gets latest scheduled hour in the week
 	private static int getLatestHour(Week week) {
 		int max = 0;
 		for (int day = 0; day < 7; day++) {
@@ -752,7 +765,7 @@ public class UI extends Application {
 		return max + 1;
 	}
 
-	//turn the week object into 3D array to make it easier to write out
+	// turn the week object into 3D array to make it easier to write out
 	private static ArrayList<ArrayList<ArrayList<Employee>>> shiftsAsArray(Week week) {
 		ArrayList<ArrayList<ArrayList<Employee>>> shifts = new ArrayList<ArrayList<ArrayList<Employee>>>();
 		for (int day = 0; day < 7; day++) {
@@ -815,9 +828,9 @@ public class UI extends Application {
 		alert.setContentText(message);
 		alert.showAndWait();
 	}
-	
-	//called whenever someone inputs an invalid onyen
-	public void createNewEmployeeCSV(String onyen){
+
+	// called whenever someone inputs an invalid onyen
+	public void createNewEmployeeCSV(String onyen) {
 		Stage dialogueBox = new Stage();
 		Group root = new Group();
 		Scene scene = new Scene(root);
@@ -825,18 +838,18 @@ public class UI extends Application {
 		VBox vbox = new VBox();
 		vbox.setPadding(new Insets(10, 0, 0, 10));
 		vbox.setSpacing(10);
-		
+
 		HBox hbox1 = new HBox();
 		hbox1.setSpacing(10);
 		hbox1.setAlignment(Pos.CENTER_LEFT);
-		
+
 		Label text = new Label(onyen + " does not have an availability object yet. Would you like to create one?");
 		hbox1.getChildren().add(text);
-		
+
 		HBox hbox2 = new HBox();
 		hbox2.setSpacing(10);
 		hbox2.setAlignment(Pos.CENTER);
-		
+
 		Button yes = new Button("Yes");
 		yes.setOnAction((event) -> {
 			_currentEmployee = new Employee("", _onyenField.getText(), 0, false, 0, new int[7][24]);
@@ -850,7 +863,7 @@ public class UI extends Application {
 			this.displayMessage("Try again, enter a valid onyen");
 		});
 		hbox2.getChildren().addAll(yes, no);
-		
+
 		vbox.getChildren().addAll(hbox1, hbox2);
 		root.getChildren().add(vbox);
 		dialogueBox.initModality(Modality.APPLICATION_MODAL);
@@ -859,7 +872,7 @@ public class UI extends Application {
 		dialogueBox.setScene(scene);
 		dialogueBox.sizeToScene();
 		dialogueBox.showAndWait();
-		
+
 	}
 
 	public void githubPullResult(boolean success, String message) {

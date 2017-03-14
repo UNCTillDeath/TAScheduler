@@ -102,10 +102,12 @@ public class UI extends Application {
 
 		_usernameField = new TextField();
 		_passwordField = new PasswordField();
+		//bind enter key to button press
 		_passwordField.setOnKeyPressed((event) -> { if(event.getCode() == KeyCode.ENTER) { loginToGithub(null); } });
 		Label usernameLabel = new Label("Username");
 		Label passwordLabel = new Label("Password ");
 		_passwordSubmitButton = new Button("Login");
+		//bind enter key to button press
 		_passwordSubmitButton.defaultButtonProperty().bind(_passwordSubmitButton.focusedProperty());
 		_passwordSubmitButton.setOnAction(this::loginToGithub);
 		hbox3.getChildren().add(_passwordSubmitButton);
@@ -115,9 +117,10 @@ public class UI extends Application {
 		passwordGroup.getChildren().add(vbox);
 		_passwordStage.sizeToScene();
 		_passwordStage.setResizable(false);
-		// not sure what this does
 		_availabilityStage = primaryStage;
+		//load a blank stage behind password box so it looks pretty
 		this.displayAvailable(null);
+		//password stage should be modal
 		_passwordStage.initModality(Modality.APPLICATION_MODAL);
 		_passwordStage.showAndWait();
 
@@ -143,8 +146,6 @@ public class UI extends Application {
 	}
 
 	private void renderAvailabilityStage(Employee e) {
-		// need to comment more
-
 		Group availabilityRoot = new Group();
 		Scene availabilityScene = new Scene(availabilityRoot);
 		BorderPane rootPane = new BorderPane();
@@ -153,6 +154,7 @@ public class UI extends Application {
 		rootPane.setTop(topBox);
 
 		HBox topBar = new HBox();
+		//populate fields with employee
 		if (e != null) {
 			this._onyenField = new TextField(e.getOnyen());
 		} else {
@@ -242,21 +244,22 @@ public class UI extends Application {
 		levelDropdown.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				//grab the level # and use it to update employee
 				_currentEmployee.setLevel(Integer.parseInt(newValue.split(" ")[0]));
 				_saveAvailabilityButton.setDisable(false);
 			}
 		});	
 		
 		middleBar.getChildren().addAll(nameField, genderDropdown, capacityDropdown, levelDropdown);
-
-		// comment this stuff
+		
+		//this grid contains the checkboxes to mark availability
 		_grid = new GridPane();
 		_grid.setGridLinesVisible(true);
 
-		for (int day = 0; day < 8; day++) { // 8 to account for first column
-											// with
-											// hours
+		for (int day = 0; day < 8; day++) { 
+			// 8 to account for first column with hours
 			if (day != 0) {
+				//all labels are -1 offset
 				Label dayLabel = new Label(Week.dayString(day - 1));
 				dayLabel.setMaxWidth(Double.MAX_VALUE);
 				dayLabel.setAlignment(Pos.CENTER);
@@ -265,6 +268,7 @@ public class UI extends Application {
 			for (int hour = 0; hour < 12; hour++) {
 				HBox box = new HBox();
 				if (day == 0) {
+					//if we are at hour column write out hour labels
 					int time = (hour + 9) % 12;
 					Label timeLabel = new Label(
 							(time % 12 == 0 ? 12 : time) + " -- " + ((time + 1) % 12 == 0 ? 12 : time + 1));
@@ -275,13 +279,13 @@ public class UI extends Application {
 				} else {
 					TimedCheckBox check = new TimedCheckBox(day - 1, hour + 9);
 					if (e != null) {
-						if (e.isAvailable(day - 1, hour + 9)) { // map day and
-																// hour onto our
-																// space
+						if (e.isAvailable(day - 1, hour + 9)) { 
+							// map day and hour onto our space
 							check.setSelected(true);
 							box.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
 						}
 					}
+					//when checked handoff to handleCheck
 					check.setOnAction(this::handleCheck);
 					box.getChildren().add(check);
 					box.setAlignment(Pos.CENTER);
@@ -341,11 +345,8 @@ public class UI extends Application {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				_swapDay1 = Week.dayInt(newValue);
 				javafx.collections.ObservableList<String> hours = FXCollections
-						.observableArrayList(getHoursList(newValue)); // newValue
-																		// is
-																		// the
-																		// new
-																		// day
+						.observableArrayList(getHoursList(newValue)); 
+				// newValue is the new day
 				hourListView1.setItems(hours);
 			}
 		});
@@ -357,6 +358,7 @@ public class UI extends Application {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				int newHour = Integer.parseInt(newValue.split(" ")[0]);
 				if (newHour < 9) {
+					//convert hour back into military time
 					newHour += 12;
 				}
 				_swapHour1 = newHour;
@@ -384,7 +386,7 @@ public class UI extends Application {
 		});
 
 		// BOTTOM BOX STUFF
-
+		//everything is identical to the top box logic
 		javafx.collections.ObservableList<String> dayList2 = FXCollections.observableArrayList(getDaysList());
 		ListView<String> dayListView2 = new ListView<String>(dayList2);
 		bottomBox.getChildren().add(dayListView2);
@@ -396,11 +398,7 @@ public class UI extends Application {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				_swapDay2 = Week.dayInt(newValue);
 				javafx.collections.ObservableList<String> hours = FXCollections
-						.observableArrayList(getHoursList(newValue)); // newValue
-																		// is
-																		// the
-																		// new
-																		// day
+						.observableArrayList(getHoursList(newValue)); 
 				hourListView2.setItems(hours);
 			}
 		});
@@ -439,6 +437,7 @@ public class UI extends Application {
 		});
 
 		saveButton.setDisable(true);
+		//TODO figure out how to not hardcode this and just make it fill stage
 		saveButton.setPrefWidth(744);
 		saveButton.setOnAction(this::performSwap);
 		rootPane.setBottom(saveButton);
@@ -484,12 +483,8 @@ public class UI extends Application {
 		List<String> daysList = new ArrayList<String>();
 		for (int day = 0; day < 7; day++) {
 			for (int hour = 0; hour < _schedule.getWeek().getShifts()[day].length; hour++) {
-				if (_schedule.getWeek().getShifts()[day][hour].size() > 0 && !daysList.contains(Week.dayString(day))) { // at
-																														// least
-																														// one
-																														// shift
-																														// is
-																														// populated
+				//if at least one shift is populated
+				if (_schedule.getWeek().getShifts()[day][hour].size() > 0 && !daysList.contains(Week.dayString(day))) { 
 					daysList.add(Week.dayString(day));
 				}
 			}
@@ -541,6 +536,7 @@ public class UI extends Application {
 	}
 
 	private void renderScheduleStage(Schedule schedule) {
+		//gridpane wrapped in scrollpane, should perhaps make overall stage smaller
 		_schedule = schedule;
 		Group root = new Group();
 		Scene scene = new Scene(root);
@@ -573,8 +569,7 @@ public class UI extends Application {
 		scheduledShiftsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				System.out.println(
-						"ListView selection changed from oldValue = " + oldValue + " to newValue = " + newValue);
+				//we sort the list of potential swaps by likelihood it will be compatible
 				javafx.collections.ObservableList<String> availableToSwap = FXCollections
 						.observableArrayList(getOrderedPotentialSwaps(schedule, Week.dayInt(newValue.split(" ")[0]),
 								Integer.parseInt(newValue.split(" ")[1])));
@@ -597,9 +592,8 @@ public class UI extends Application {
 		}
 		ArrayList<String> swapCandidates = new ArrayList<String>();
 		swapCandidates.addAll(schedule.getStaff().getWhoIsAvailable(day, hour));
-		swapCandidates.remove(_currentEmployee.getName()); // remove yourself
-															// from
-															// the list
+		//remove yourself from the list
+		swapCandidates.remove(_currentEmployee.getName());
 		// now score each one
 		Map<Employee, Double> scoredEmployees = new HashMap<Employee, Double>();
 		for (String otherEmployeeName : swapCandidates) {
@@ -657,6 +651,7 @@ public class UI extends Application {
 		return result;
 	}
 
+	//returns strings in the proper label format of all the shifts _currentEmployee is scheduled for
 	private ArrayList<String> getScheduledShifts(Schedule schedule) {
 		ArrayList<String> scheduledShifts = new ArrayList<String>();
 		for (int day = 0; day < schedule.getWeek().getShifts().length; day++) {
@@ -682,12 +677,8 @@ public class UI extends Application {
 		ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(schedule.getWeek());
 
 		for (int day = 0; day < 7; day++) {
-			schedulePane.add(new Label(Week.dayString(day)), day + 1, 0); // +1
-																			// to
-																			// account
-																			// for
-																			// hour
-																			// column
+			//+1 for hour column
+			schedulePane.add(new Label(Week.dayString(day)), day + 1, 0);
 		}
 
 		int hourRow = 0;
@@ -696,13 +687,12 @@ public class UI extends Application {
 					(hour % 12 == 0 ? 12 : hour % 12) + " -- " + ((hour + 1) % 12 == 0 ? 12 : (hour + 1) % 12));
 			dayLabel.setMaxWidth(Double.MAX_VALUE);
 			dayLabel.setAlignment(Pos.CENTER);
-			schedulePane.add(dayLabel, 0, hourRow + 1); // +1 to account for day
-														// row
+			//+1 to account for day row
+			schedulePane.add(dayLabel, 0, hourRow + 1);
 
 			int max = getMaxSize(hour, schedule.getWeek());
 
 			for (int i = 0; i < max; i++) {
-				// output.write(",");
 				for (int day = 0; day < 7; day++) {
 					if (i < shifts.get(day).get(hour).size()) {
 						Label scheduledEmployee = new Label(shifts.get(day).get(hour).get(i).toString());
@@ -711,12 +701,8 @@ public class UI extends Application {
 								&& (shifts.get(day).get(hour).get(i).toString().equals(_currentEmployee.getName()))) {
 							scheduledEmployee.setTextFill(Color.RED);
 						}
-						schedulePane.add(scheduledEmployee, day + 1, hourRow + i + 1); // +1
-																						// to
-																						// account
-																						// for
-																						// day
-																						// row
+						//+1 to account for day row
+						schedulePane.add(scheduledEmployee, day + 1, hourRow + i + 1);
 					}
 				}
 			}
@@ -725,6 +711,7 @@ public class UI extends Application {
 		return schedulePane;
 	}
 
+	//gets the size of the longest shift for any given hour across all days
 	private static int getMaxSize(int hour, Week week) {
 		int max = 0;
 		for (int day = 0; day < 7; day++) {
@@ -735,6 +722,7 @@ public class UI extends Application {
 		return max;
 	}
 
+	//gets earliest scheduled hour in the week
 	private static int getEarliestHour(Week week) {
 		int min = 10000;
 		for (int day = 0; day < 7; day++) {
@@ -749,6 +737,7 @@ public class UI extends Application {
 		return min;
 	}
 
+	//gets latest scheduled hour in the week
 	private static int getLatestHour(Week week) {
 		int max = 0;
 		for (int day = 0; day < 7; day++) {
@@ -763,6 +752,7 @@ public class UI extends Application {
 		return max + 1;
 	}
 
+	//turn the week object into 3D array to make it easier to write out
 	private static ArrayList<ArrayList<ArrayList<Employee>>> shiftsAsArray(Week week) {
 		ArrayList<ArrayList<ArrayList<Employee>>> shifts = new ArrayList<ArrayList<ArrayList<Employee>>>();
 		for (int day = 0; day < 7; day++) {
@@ -826,6 +816,7 @@ public class UI extends Application {
 		alert.showAndWait();
 	}
 	
+	//called whenever someone inputs an invalid onyen
 	public void createNewEmployeeCSV(String onyen){
 		Stage dialogueBox = new Stage();
 		Group root = new Group();
@@ -863,6 +854,7 @@ public class UI extends Application {
 		vbox.getChildren().addAll(hbox1, hbox2);
 		root.getChildren().add(vbox);
 		dialogueBox.initModality(Modality.APPLICATION_MODAL);
+		dialogueBox.setResizable(false);
 		dialogueBox.setTitle("Invalid onyen");
 		dialogueBox.setScene(scene);
 		dialogueBox.sizeToScene();
@@ -877,12 +869,12 @@ public class UI extends Application {
 			// display a null employee because we dont have the onyen yet
 			this.displayAvailable(null);
 			// can close the password stage
-			this._passwordStage.close();
+			_passwordStage.close();
 		} else {
 			// pull failed...highly likely wrong username and password
 			this.displayMessage("Unable to pull files from github");
 			// renable the submit button
-			this._passwordSubmitButton.setDisable(false);
+			_passwordSubmitButton.setDisable(false);
 		}
 	}
 
@@ -898,13 +890,13 @@ public class UI extends Application {
 	public void saveButtonPressed(ActionEvent e) {
 		// need to send to controller to save the current modified Employee
 		// object
-		if (this._currentEmployee != null) {
-			this._controller.uiRequestSaveAvailability(this._currentEmployee);
+		if (_currentEmployee != null) {
+			_controller.uiRequestSaveAvailability(_currentEmployee);
 		}
 	}
 
 	public void requestScheduleButtonPressed(ActionEvent e) {
 		// ask the controller for the schedule
-		this._controller.uiRequestSchedule();
+		_controller.uiRequestSchedule();
 	}
 }

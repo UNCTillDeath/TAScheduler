@@ -68,7 +68,7 @@ public class Storage_v2 {
     }
 
     public String get_schedule_json_filename(){
-        return this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER + "/testData/schedule.ser";
+        return this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER + "/testData/schedule.json";
     }
 
     public String get_path_to_onyen_csv_directory(){

@@ -17,5 +17,9 @@ public class JsonWeek {
     }
     
   }
+  
+  public JsonShift[][] getShifts(){
+	  return shifts;
+  }
 
 }

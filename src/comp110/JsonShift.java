@@ -15,5 +15,17 @@ public class JsonShift {
       i++;
     }
   }
+  
+  public int getDay(){
+	  return day;
+  }
+  
+  public int getHour(){
+	  return hour;
+  }
+  
+  public String[] getScheduled(){
+	  return onyens;
+  }
 
 }

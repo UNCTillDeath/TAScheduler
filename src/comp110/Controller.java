@@ -53,35 +53,7 @@ public class Controller implements Storage_v2.Storage_v2Listener {
 		 * and returning the Schedule it creates.  That function is not
 		 * yet done.  so change this up when it is complete
 		 **************************************************/
-		this._schedule = null; //_parser.parseSchedule(_storage.getFilePathToSchedule());
-		FileInputStream fileIn = null;
-		ObjectInputStream in = null;
-		try {
-			// open the filestreams and read the object
-			String filename = _storage.get_schedule_json_filename();
-			fileIn = new FileInputStream(filename);
-			in = new ObjectInputStream(fileIn);
-			this._schedule = (Schedule) in.readObject();
-		} catch (Exception e) {
-			// probably count open schedule for some reason
-			// tell the ui to display an appropriate message
-			this._schedule = null;
-			e.printStackTrace();
-			_ui.displayMessage("Unable to load Schedule file");
-		} finally{
-			// close the file streams
-			// putting it in finally ensures even on exception it gets done
-			try{
-				if (in != null){
-					in.close();
-				}
-			} catch (Exception e){}
-			try{
-				if (fileIn != null){
-					fileIn.close();
-				}
-			} catch (Exception e){}
-		}
+		this._schedule = _parser.parseSchedule(_storage.get_schedule_json_filename());
 		
 		// tell the ui to show the schedule...this can/will be null if there was an exception
 		// ui needs to be ready to handle null schedule

@@ -93,6 +93,7 @@ public class Parser {
 			while (reader.available() > 0) {
 				json += (char) reader.read();
 			}
+			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

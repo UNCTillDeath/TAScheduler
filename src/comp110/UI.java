@@ -84,7 +84,13 @@ public class UI extends Application {
 		_passwordStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
-				event.consume();
+				_controller.cleanup();
+				try {
+					// give time for cleanup to complete
+					Thread.sleep(2000);
+				} catch (Exception e) {
+					/* dont care about an exception here */}
+				System.exit(0);
 			}
 		});
 		VBox vbox = new VBox();
@@ -185,17 +191,16 @@ public class UI extends Application {
 
 		// create button to show the swap stage stuff
 		_showSwapAvailabilityButton = new Button("Show Swaps");
-		if (e == null) { // only do this first time we paint the scene
-			_showSwapAvailabilityButton.setDisable(true);
-		}
+		_showSwapAvailabilityButton.setDisable(true);
+
 		_showSwapAvailabilityButton.setOnAction(this::buttonPressShowPotentialSwaps);
 		topBar.getChildren().add(_showSwapAvailabilityButton);
 
 		// create button to do the swap stage stuff
 		_performSwapButton = new Button("Swap");
-		if (e == null) {
-			_performSwapButton.setDisable(true);
-		}
+
+		_performSwapButton.setDisable(true);
+
 		_performSwapButton.setOnAction(this::buttonPressSwap);
 		topBar.getChildren().add(_performSwapButton);
 
@@ -539,22 +544,26 @@ public class UI extends Application {
 		} else {
 			// ask controller to load it
 			this._controller.uiRequestEmployeeAvailability(_onyenField.getText());
-			// disable the swap buttons
-			this._showSwapAvailabilityButton.setDisable(false);
-			this._performSwapButton.setDisable(false);
 		}
 	}
 
 	private void renderScheduleStage(Schedule schedule) {
+		
 
-		_schedule = schedule;
+		if (_schedule == null){
+			//only want to do this first time we get the schedule, otherwise UI has most up to date
+			//version of schedule and controller version is out of date
+			_schedule = schedule;
+
+		}
 		Group root = new Group();
 		GridPane schedulePane = writeSchedule(_schedule);
 		ScrollPane scroll = new ScrollPane();
 		scroll.setPrefSize(700, 500);
 		scroll.setContent(schedulePane);
-		//this handles resize of nodes if user resizes stage
-		scroll.prefHeightProperty().addListener((obs, oldVal, newVal) -> _scheduleStage.setHeight(newVal.doubleValue()));
+		// this handles resize of nodes if user resizes stage
+		scroll.prefHeightProperty()
+				.addListener((obs, oldVal, newVal) -> _scheduleStage.setHeight(newVal.doubleValue()));
 		scroll.prefWidthProperty().addListener((obs, oldVal, newVal) -> _scheduleStage.setWidth(newVal.doubleValue()));
 		Scene scene = new Scene(scroll);
 		_scheduleStage.setScene(scene);
@@ -563,14 +572,14 @@ public class UI extends Application {
 
 	}
 
-	private void renderSwapStage(Schedule schedule) {
+	private void renderSwapStage() {
 		Group root = new Group();
 		Scene scene = new Scene(root);
 		BorderPane rootPane = new BorderPane();
 		root.getChildren().add(rootPane);
 		_swapStage.setScene(scene);
 		javafx.collections.ObservableList<String> scheduledShifts = FXCollections
-				.observableArrayList(this.getScheduledShifts(schedule));
+				.observableArrayList(this.getScheduledShifts(_schedule));
 		ListView<String> scheduledShiftsListView = new ListView<String>(scheduledShifts);
 		HBox listBox = new HBox();
 		listBox.getChildren().add(scheduledShiftsListView);
@@ -584,7 +593,7 @@ public class UI extends Application {
 				// we sort the list of potential swaps by likelihood it will be
 				// compatible
 				javafx.collections.ObservableList<String> availableToSwap = FXCollections
-						.observableArrayList(getOrderedPotentialSwaps(schedule, Week.dayInt(newValue.split(" ")[0]),
+						.observableArrayList(getOrderedPotentialSwaps(_schedule, Week.dayInt(newValue.split(" ")[0]),
 								Integer.parseInt(newValue.split(" ")[1])));
 				availableSwapsListView.setItems(availableToSwap);
 			}
@@ -792,13 +801,17 @@ public class UI extends Application {
 
 	public void displaySchedule(Schedule schedule) {
 		_scheduleStage = new Stage();
+		//once we have the schedule we can enable the other buttons
+		//TODO perhaps changes this so that schedule is available from the start
+		this._showSwapAvailabilityButton.setDisable(false);
+		this._performSwapButton.setDisable(false);
 		renderScheduleStage(schedule);
 		_scheduleStage.show();
 	}
 
-	public void displayPossibleSwaps(Schedule schedule) {
+	public void displayPossibleSwaps() {
 		_swapStage = new Stage();
-		renderSwapStage(schedule);
+		renderSwapStage();
 		_swapStage.show();
 	}
 

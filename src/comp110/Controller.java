@@ -75,54 +75,8 @@ public class Controller implements Storage_v2.Storage_v2Listener {
 	}
 
 	public void uiRequestSwaps() {
-		// load the schedule and sent it to ui
-		/*************************************************
-		 * should be calling the parseSchedule function on the parse
-		 * and returning the Schedule it creates.  That function is not
-		 * yet done.  so change this up when it is complete
-		 **************************************************/
-		if (this._schedule != null){
-			// schedule already loaded so just return it
-			Platform.runLater(() -> _ui.displayPossibleSwaps(this._schedule));
-			return;
-		}
-		
-		// not yet loaded so do so
-		this._schedule = null; //_parser.parseSchedule(_storage.getFilePathToSchedule());
-		FileInputStream fileIn = null;
-		ObjectInputStream in = null;
-		try {
-			// open the filestreams and read the object
-			fileIn = new FileInputStream(_storage.get_schedule_json_filename());
-			in = new ObjectInputStream(fileIn);
-			this._schedule = (Schedule) in.readObject();
-		} catch (Exception e) {
-			// probably count open schedule for some reason
-			// tell the ui to display an appropriate message
-			e.printStackTrace();
-			_ui.displayMessage("Unable to load Schedule file");
-		} finally{
-			// close the file streams
-			// putting it in finally ensures even on exception it gets done
-			try{
-				if (in != null){
-					in.close();
-				}
-			} catch (Exception e){}
-			try{
-				if (fileIn != null){
-					fileIn.close();
-				}
-			} catch (Exception e){}
-		}
-		if (this._schedule == null){
-			// error loading schedule
-			this._ui.displayMessage("Unable to load schedule");
-		}
-		else {
-			// tell ui to do the swaps
-			Platform.runLater(() -> _ui.displayPossibleSwaps(this._schedule));
-		}
+			Platform.runLater(() -> _ui.displayPossibleSwaps());
+
 	}
 
 	public void uiRequestSaveAvailability(Employee employee) {

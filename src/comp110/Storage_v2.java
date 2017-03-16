@@ -5,9 +5,6 @@ import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.dircache.DirCache;
-import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import java.io.File;
 import java.io.IOException;
@@ -29,8 +26,6 @@ public class Storage_v2 {
     private static final String DEFAULT_GITHUB_USERNAME = "";
     private static final String DEFAULT_GITHUB_PASSWORD = "";
     private static final String DEFAULT_COMMIT_MESSAGE = "Updated TA Availability by TAScheduler - Android";
-    private static final boolean DEFAULT_ECHO_TO_CONSOLE = false;
-    private static final String DEFAULT_CONFIG_FILE = "/storage_config.ini";
 
 
     // variables
@@ -210,7 +205,7 @@ public class Storage_v2 {
 
     private boolean repo_add(Git git){
         try{
-            DirCache cache = git.add().addFilepattern(".").call();
+            git.add().addFilepattern(".").call();
             return true;
         } catch (GitAPIException e){
             return false;
@@ -219,7 +214,7 @@ public class Storage_v2 {
 
     private boolean repo_commit(Git git, String commit_message){
         try{
-            RevCommit rc = git.commit().setMessage(commit_message).call();
+            git.commit().setMessage(commit_message).call();
             return true;
         } catch (GitAPIException e){
             return false;
@@ -228,7 +223,7 @@ public class Storage_v2 {
 
     private boolean repo_push(Git git){
         try{
-            Iterable<PushResult> push_results = git.push().setCredentialsProvider(
+            git.push().setCredentialsProvider(
                     new UsernamePasswordCredentialsProvider(this.m_username, this.m_password)).call();
             return true;
         } catch (GitAPIException e){

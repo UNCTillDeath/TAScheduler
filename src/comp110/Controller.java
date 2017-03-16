@@ -1,11 +1,7 @@
 package comp110;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 
 public class Controller implements Storage_v2.Storage_v2Listener {
 

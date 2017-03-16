@@ -1,16 +1,13 @@
 package comp110;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.FileWriter;
-import java.util.List;
+
 import java.util.Scanner;
 
 import com.google.gson.Gson;
@@ -37,6 +34,11 @@ public class Parser {
 		} catch (Exception e) {
 			System.err.println("Error parsing: " + name);
 			e.printStackTrace();
+			try {
+				csvReader.close();
+			} catch (IOException ex){
+				// dont care
+			}
 			return null;
 		}
 
@@ -57,6 +59,11 @@ public class Parser {
 				// TODO Auto-generated catch block
 				System.err.println("IO Error: " + name);
 				e1.printStackTrace();
+				try {
+					csvReader.close();
+				} catch (IOException ex){
+					// dont care
+				}
 				return null;
 			}
 			for (int day = 0; day < 7; day++) {
@@ -66,6 +73,11 @@ public class Parser {
 				} catch (NumberFormatException e) {
 					System.err.println("Error:" + name);
 					e.printStackTrace();
+					try {
+						csvReader.close();
+					} catch (IOException ex){
+						// dont care
+					}
 					return null;
 				}
 			}
@@ -230,6 +242,7 @@ public class Parser {
 				}
 			}
 			staff.add(new Employee(name, onyen, capacity, gender.equals("M") ? false : true, level, availability));
+			csvReader.close();
 		}
 		return staff;
 	}

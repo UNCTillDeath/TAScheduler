@@ -53,7 +53,7 @@ public class Controller implements Storage_v2.Storage_v2Listener {
 		 * and returning the Schedule it creates.  That function is not
 		 * yet done.  so change this up when it is complete
 		 **************************************************/
-		this._schedule = _parser.parseSchedule(_storage.get_schedule_json_filename());
+		this._schedule = _parser.parseSchedule(_storage.get_schedule_json_filename(), _storage.get_path_to_onyen_csv_directory());
 		
 		// tell the ui to show the schedule...this can/will be null if there was an exception
 		// ui needs to be ready to handle null schedule

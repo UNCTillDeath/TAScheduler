@@ -79,7 +79,7 @@ public class Parser {
 		return new Employee(name, onyen, capacity, gender.equals("M") ? false : true, level, availability);
 	}
 
-	public Schedule parseSchedule(String jsonFile) {
+	public Schedule parseSchedule(String jsonFile, String staff_dir) {
 
 		Gson gson = new Gson();
 		BufferedInputStream reader = null;
@@ -103,7 +103,7 @@ public class Parser {
 		//first we will build the staff object
 		Staff staff = null;
 		try {
-			staff = parseStaff("data/spring-17/staff/");
+			staff = parseStaff(staff_dir);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -180,7 +180,7 @@ public class Parser {
 
 	public static void main(String[] args) {
 		Parser parser = new Parser();
-		parser.parseSchedule("testData/schedule.json");
+		parser.parseSchedule("testData/schedule.json", "data/spring-17/staff/");
 		// Employee emp =
 		// parser.parseEmployee("/home/keith/git/TAScheduler/data/spring-17/staff/aatieh.csv");
 		//

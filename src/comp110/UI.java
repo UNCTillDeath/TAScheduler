@@ -546,17 +546,18 @@ public class UI extends Application {
 	}
 
 	private void renderScheduleStage(Schedule schedule) {
-		// gridpane wrapped in scrollpane, should perhaps make overall stage
-		// smaller
+
 		_schedule = schedule;
 		Group root = new Group();
-		Scene scene = new Scene(root);
-		_scheduleStage.setScene(scene);
 		GridPane schedulePane = writeSchedule(_schedule);
 		ScrollPane scroll = new ScrollPane();
-		scroll.setPrefSize(700, 800);
+		scroll.setPrefSize(700, 500);
 		scroll.setContent(schedulePane);
-		root.getChildren().add(scroll);
+		//this handles resize of nodes if user resizes stage
+		scroll.prefHeightProperty().addListener((obs, oldVal, newVal) -> _scheduleStage.setHeight(newVal.doubleValue()));
+		scroll.prefWidthProperty().addListener((obs, oldVal, newVal) -> _scheduleStage.setWidth(newVal.doubleValue()));
+		Scene scene = new Scene(scroll);
+		_scheduleStage.setScene(scene);
 		_scheduleStage.sizeToScene();
 		_scheduleStage.setTitle("Current Schedule");
 

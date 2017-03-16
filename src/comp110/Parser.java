@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileWriter;
 import java.util.List;
+import java.util.Scanner;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -82,22 +83,19 @@ public class Parser {
 	public Schedule parseSchedule(String jsonFile, String staff_dir) {
 
 		Gson gson = new Gson();
-		BufferedInputStream reader = null;
-		try {
-			//we need to read in the raw bytes so we can specify size of buffer, the jsons are large
-			reader = new BufferedInputStream(new FileInputStream(new File(jsonFile)), 65536);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
 		String json = "";
-		try {
-			while (reader.available() > 0) {
-				json += (char) reader.read();
-			}
-			reader.close();
-		} catch (IOException e) {
+
+		Scanner scanner = null;
+		try{
+			File file = new File(jsonFile);
+			scanner = new Scanner(file);
+			scanner.useDelimiter("\\Z");
+			json = scanner.next(); 
+			scanner.close();
+		}catch (FileNotFoundException e){
 			e.printStackTrace();
 		}
+
 		JsonWeek jsonweek = gson.fromJson(json, JsonWeek.class);
 		//now we have the json we need to reconstruct the schedule object
 		//first we will build the staff object

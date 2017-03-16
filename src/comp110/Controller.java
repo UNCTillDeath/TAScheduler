@@ -98,4 +98,10 @@ public class Controller implements Storage_v2.Storage_v2Listener {
 			this._ui.displayMessage("Unable to save employee object: " + e.getMessage());
 		}	
 	}
+	
+	public void uiRequestChangeSchedule(Schedule schedule){
+		_schedule = schedule; //not strictly needed I don't think but nice to keep things in sync
+		_parser.writeScheduleToJson(schedule, _storage.get_schedule_json_filename());
+		_storage.save_files();
+	}
 }

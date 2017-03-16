@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 
 import java.io.PrintWriter;
 
@@ -243,5 +244,18 @@ public class Parser {
 		}
 		// not able to find employee
 		return null;
+	}
+
+	public void writeScheduleToJson(Schedule schedule, String path) {
+	    Gson gson = new Gson();
+	    try {
+	      JsonWeek jsonWeek = schedule.getWeek().toJsonWeek();
+	      BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(new File(path)),65536);
+	      String json = gson.toJson(jsonWeek);
+	      writer.write(json.getBytes());
+	      writer.close();
+	    } catch (JsonIOException | IOException e) {
+	      e.printStackTrace();
+	    }
 	}
 }

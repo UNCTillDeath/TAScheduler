@@ -84,12 +84,7 @@ public class UI extends Application {
 		_passwordStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
-				_controller.cleanup();
-				try {
-					// give time for cleanup to complete
-					Thread.sleep(2000);
-				} catch (Exception e) {
-					/* dont care about an exception here */}
+				//if they close without entering password kill the program
 				System.exit(0);
 			}
 		});
@@ -474,23 +469,13 @@ public class UI extends Application {
 
 	private void performSwap(ActionEvent event) {
 		// remove employees
-		// System.out.println(_swapEmployee1.getName());
-		// System.out.println(_swapEmployee2.getName());
-		for (Employee e : _schedule.getWeek().getShift(_swapDay1, _swapHour1)) {
-			System.out.println(e.getName());
-		}
-		/*
-		 * TODO This currently does not work because for testing purposes we are
-		 * using a serialized schedule object where employees are scheduled as
-		 * ChumkEmployees and therefore .equals() is failing (trying to compare
-		 * Employee to ChunkEmployee, schedule is generated from FXAlgo). This
-		 * should be fixed and needs to be retested once we get the JSON going.
-		 */
-		System.out.println(_schedule.getWeek().getShift(_swapDay1, _swapHour1).remove(_swapEmployee1));
-		System.out.println(_schedule.getWeek().getShift(_swapDay2, _swapHour2).remove(_swapEmployee2));
+		_schedule.getWeek().getShift(_swapDay1, _swapHour1).remove(_swapEmployee1);
+		_schedule.getWeek().getShift(_swapDay2, _swapHour2).remove(_swapEmployee2);
 		// add employees
 		_schedule.getWeek().getShift(_swapDay1, _swapHour1).add(_swapEmployee2);
 		_schedule.getWeek().getShift(_swapDay2, _swapHour2).add(_swapEmployee1);
+		//tell controller to push changes
+		_controller.uiRequestChangeSchedule(_schedule);
 	}
 
 	// only return a list of days that have scheduled shifts in them

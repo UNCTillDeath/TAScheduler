@@ -193,13 +193,13 @@ public class UI extends Application {
 
 		// create button to do the swap stage stuff
 		_performSwapButton = new Button("Swap");
+		_performSwapButton.setPrefWidth(54);
 
 		_performSwapButton.setDisable(true);
 
 		_performSwapButton.setOnAction(this::buttonPressSwap);
-		topBar.getChildren().add(_performSwapButton);
 
-		// middle bar with employee demographic info
+		// middle bar with employee demographic info and swap button
 		HBox middleBar = new HBox();
 		topBox.getChildren().add(middleBar);
 
@@ -260,7 +260,8 @@ public class UI extends Application {
 			}
 		});
 
-		middleBar.getChildren().addAll(nameField, genderDropdown, capacityDropdown, levelDropdown);
+		middleBar.getChildren().addAll(nameField, genderDropdown, capacityDropdown, levelDropdown, _performSwapButton);
+
 
 		// this grid contains the checkboxes to mark availability
 		_grid = new GridPane();

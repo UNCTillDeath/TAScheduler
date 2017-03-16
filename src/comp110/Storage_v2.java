@@ -84,7 +84,7 @@ public class Storage_v2 {
                 // let just see if the folder exists
                 File directory = new File(Storage_v2.this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER);
                 if (directory.exists() == true){
-                    // local repo directory exists so should be able to just do a pull
+/*                    // local repo directory exists so should be able to just do a pull
                 	Git git = null;
                     try{
                     	git = Git.open(new File(Storage_v2.this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER));
@@ -101,9 +101,12 @@ public class Storage_v2 {
                     } catch (IOException e){
                     	git.getRepository().close();
                         Storage_v2.this.m_listener.storage_get_files_complete(false, "Local files exists but unable to create git object");
-                    }
+                    }*/
+                	
+                	// just delete whatever was hanging around
+                	Storage_v2.this.delete_directory(directory);
                 }
-                else{
+//                else{
                     // local repo doesnt exists so need to clone
                     if (Storage_v2.this.repo_clone(Storage_v2.this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER) == true){
                         // clone successful
@@ -114,7 +117,7 @@ public class Storage_v2 {
                         // clone not successful
                         Storage_v2.this.m_listener.storage_get_files_complete(false, "Unable to clone repo from github");
                     }
-                }
+//                }
             }
         }).start();
     }

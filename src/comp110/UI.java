@@ -37,8 +37,13 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -84,7 +89,7 @@ public class UI extends Application {
 		_passwordStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
-				//if they close without entering password kill the program
+				// if they close without entering password kill the program
 				System.exit(0);
 			}
 		});
@@ -262,7 +267,6 @@ public class UI extends Application {
 
 		middleBar.getChildren().addAll(nameField, genderDropdown, capacityDropdown, levelDropdown, _performSwapButton);
 
-
 		// this grid contains the checkboxes to mark availability
 		_grid = new GridPane();
 		_grid.setGridLinesVisible(true);
@@ -281,11 +285,10 @@ public class UI extends Application {
 				if (day == 0) {
 					// if we are at hour column write out hour labels
 					int time = (hour + 9) % 12;
-					Label timeLabel = new Label(
-							(time % 12 == 0 ? 12 : time) + " -- " + ((time + 1) % 12 == 0 ? 12 : time + 1));
-					timeLabel.setMaxWidth(Double.MAX_VALUE);
-					timeLabel.setAlignment(Pos.CENTER);
-					box.getChildren().add(timeLabel);
+					TextFlow timeLabel = new TextFlow(
+							new Text((time % 12 == 0 ? 12 : time) + " -- " + ((time + 1) % 12 == 0 ? 12 : time + 1)));
+					timeLabel.setTextAlignment(TextAlignment.CENTER);
+					_grid.add(timeLabel, day, hour + 1);
 
 				} else {
 					TimedCheckBox check = new TimedCheckBox(day - 1, hour + 9);
@@ -302,8 +305,9 @@ public class UI extends Application {
 					box.setAlignment(Pos.CENTER);
 					box.setMinHeight(30);
 					box.setMinWidth(60);
+					_grid.add(box, day, hour + 1); // +1 to account for header
+													// row
 				}
-				_grid.add(box, day, hour + 1); // +1 to account for header row
 			}
 		}
 		rootPane.setCenter(_grid);
@@ -475,7 +479,7 @@ public class UI extends Application {
 		// add employees
 		_schedule.getWeek().getShift(_swapDay1, _swapHour1).add(_swapEmployee2);
 		_schedule.getWeek().getShift(_swapDay2, _swapHour2).add(_swapEmployee1);
-		//tell controller to push changes
+		// tell controller to push changes
 		_controller.uiRequestChangeSchedule(_schedule);
 	}
 
@@ -534,11 +538,11 @@ public class UI extends Application {
 	}
 
 	private void renderScheduleStage(Schedule schedule) {
-		
 
-		if (_schedule == null){
-			//only want to do this first time we get the schedule, otherwise UI has most up to date
-			//version of schedule and controller version is out of date
+		if (_schedule == null) {
+			// only want to do this first time we get the schedule, otherwise UI
+			// has most up to date
+			// version of schedule and controller version is out of date
 			_schedule = schedule;
 
 		}
@@ -787,8 +791,9 @@ public class UI extends Application {
 
 	public void displaySchedule(Schedule schedule) {
 		_scheduleStage = new Stage();
-		//once we have the schedule we can enable the other buttons
-		//TODO perhaps changes this so that schedule is available from the start
+		// once we have the schedule we can enable the other buttons
+		// TODO perhaps changes this so that schedule is available from the
+		// start
 		this._showSwapAvailabilityButton.setDisable(false);
 		this._performSwapButton.setDisable(false);
 		renderScheduleStage(schedule);

@@ -520,7 +520,7 @@ public class UI extends Application {
 			dialogueBox.setScene(scene);
 			dialogueBox.sizeToScene();
 			dialogueBox.showAndWait();
-			dialogueBox.setOnCloseRequest((event1) -> event.consume());
+			dialogueBox.setOnCloseRequest((event1) -> event1.consume());
 		}
 		//now check and see if we should proceed
 		if (!_continueToSwap){

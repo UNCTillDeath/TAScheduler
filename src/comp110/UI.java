@@ -65,6 +65,7 @@ public class UI extends Application {
 	private int _swapHour2;
 	private Employee _swapEmployee1;
 	private Employee _swapEmployee2;
+	private boolean _scheduleStageIsOpen;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -137,6 +138,7 @@ public class UI extends Application {
 			} catch (Exception e) {
 				/* dont care about an exception here */}
 		});
+		_scheduleStageIsOpen = false;
 	}
 
 	private void loginToGithub(ActionEvent event) {
@@ -472,6 +474,11 @@ public class UI extends Application {
 		// add employees
 		_schedule.getWeek().getShift(_swapDay1, _swapHour1).add(_swapEmployee2);
 		_schedule.getWeek().getShift(_swapDay2, _swapHour2).add(_swapEmployee1);
+		
+		//if schedule is open we need to refresh the view
+		if (_scheduleStageIsOpen){
+			this.renderScheduleStage(_schedule);
+		}
 		// tell controller to push changes
 		_controller.uiRequestChangeSchedule(_schedule);
 	}
@@ -531,7 +538,7 @@ public class UI extends Application {
 	}
 
 	private void renderScheduleStage(Schedule schedule) {
-
+		_scheduleStageIsOpen = true;
 		if (_schedule == null) {
 			// only want to do this first time we get the schedule, otherwise UI
 			// has most up to date
@@ -791,6 +798,13 @@ public class UI extends Application {
 		this._performSwapButton.setDisable(false);
 		renderScheduleStage(schedule);
 		_scheduleStage.show();
+		_scheduleStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent event) {
+				_scheduleStageIsOpen = false;
+				_scheduleStage.close();
+			}
+		});
 	}
 
 	public void displayPossibleSwaps() {

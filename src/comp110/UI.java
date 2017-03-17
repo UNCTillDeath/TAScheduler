@@ -66,6 +66,7 @@ public class UI extends Application {
 	private Employee _swapEmployee1;
 	private Employee _swapEmployee2;
 	private boolean _scheduleStageIsOpen;
+	boolean _continueToSwap;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -468,6 +469,63 @@ public class UI extends Application {
 	}
 
 	private void performSwap(ActionEvent event) {
+		Employee unavailableEmployee = null;
+		if (!_swapEmployee1.isAvailable(_swapDay2, _swapHour2)){
+			unavailableEmployee = _swapEmployee1;
+		} else if (!_swapEmployee2.isAvailable(_swapDay1, _swapHour1)){
+			unavailableEmployee = _swapEmployee2;
+		}
+		//show a warning that one of the employees is unavailable for the shift
+		//they are swapping into
+		_continueToSwap = true;
+		if (unavailableEmployee != null){
+			Stage dialogueBox = new Stage();
+			Group root = new Group();
+			Scene scene = new Scene(root);
+
+			VBox vbox = new VBox();
+			vbox.setPadding(new Insets(10, 0, 0, 10));
+			vbox.setSpacing(10);
+
+			HBox hbox1 = new HBox();
+			hbox1.setSpacing(10);
+			hbox1.setAlignment(Pos.CENTER_LEFT);
+
+			Label text = new Label(unavailableEmployee.getName() + " is listed as unavailable on their csv for the time you are trying to swap.\nAre you sure you want to continue?");
+			hbox1.getChildren().add(text);
+
+			HBox hbox2 = new HBox();
+			hbox2.setSpacing(10);
+			hbox2.setAlignment(Pos.CENTER);
+
+			Button yes = new Button("Yes");
+			yes.defaultButtonProperty().bind(yes.focusedProperty());
+			yes.setOnAction((event1) -> {
+				//if they are ok with this just close the box and continue
+				dialogueBox.close();
+			});
+			Button no = new Button("No");
+			no.setOnAction((event1) -> {
+				//if not set the flag so we don't swap
+				_continueToSwap = false;
+				dialogueBox.close();
+			});
+			hbox2.getChildren().addAll(yes, no);
+
+			vbox.getChildren().addAll(hbox1, hbox2);
+			root.getChildren().add(vbox);
+			dialogueBox.initModality(Modality.APPLICATION_MODAL);
+			dialogueBox.setResizable(false);
+			dialogueBox.setTitle("Invalid onyen");
+			dialogueBox.setScene(scene);
+			dialogueBox.sizeToScene();
+			dialogueBox.showAndWait();
+			dialogueBox.setOnCloseRequest((event1) -> event.consume());
+		}
+		//now check and see if we should proceed
+		if (!_continueToSwap){
+			return;
+		}
 		// remove employees
 		_schedule.getWeek().getShift(_swapDay1, _swapHour1).remove(_swapEmployee1);
 		_schedule.getWeek().getShift(_swapDay2, _swapHour2).remove(_swapEmployee2);

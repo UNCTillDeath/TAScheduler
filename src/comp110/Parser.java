@@ -32,13 +32,7 @@ public class Parser {
 			capacity = Integer.parseInt(csvReader.readLine().split(",")[1]);
 			level = Integer.parseInt(csvReader.readLine().split(",")[1]);
 		} catch (Exception e) {
-			System.err.println("Error parsing: " + name);
-			e.printStackTrace();
-			try {
-				csvReader.close();
-			} catch (IOException ex){
-				// dont care
-			}
+			//Employee must not exist, return null and UI will handle
 			return null;
 		}
 

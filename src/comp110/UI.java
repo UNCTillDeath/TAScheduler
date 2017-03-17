@@ -863,6 +863,7 @@ public class UI extends Application {
 		hbox2.setAlignment(Pos.CENTER);
 
 		Button yes = new Button("Yes");
+		yes.defaultButtonProperty().bind(yes.focusedProperty());
 		yes.setOnAction((event) -> {
 			_currentEmployee = new Employee("", _onyenField.getText(), 0, false, 0, new int[7][24]);
 			this.renderAvailabilityStage(_currentEmployee);

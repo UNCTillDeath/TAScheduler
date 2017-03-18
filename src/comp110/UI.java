@@ -489,10 +489,19 @@ public class UI extends Application {
 
 			HBox hbox1 = new HBox();
 			hbox1.setSpacing(10);
-			hbox1.setAlignment(Pos.CENTER_LEFT);
-
-			Label text = new Label(unavailableEmployee.getName() + " is listed as unavailable on their csv for the time you are trying to swap.\nAre you sure you want to continue?");
-			hbox1.getChildren().add(text);
+			hbox1.setAlignment(Pos.CENTER);
+			
+			BorderPane pane = new BorderPane();
+			
+			Label text = new Label(unavailableEmployee.getName() + " is listed as unavailable on their csv for the time you are trying to swap.\n");
+			Label text2 = new Label("Are you sure you want to continue?");
+			text.setTextAlignment(TextAlignment.CENTER);
+			text2.setTextAlignment(TextAlignment.CENTER);
+			pane.setTop(text);
+			pane.setBottom(text2);
+			BorderPane.setAlignment(text, Pos.CENTER);
+			BorderPane.setAlignment(text2, Pos.CENTER);
+			hbox1.getChildren().add(pane);
 
 			HBox hbox2 = new HBox();
 			hbox2.setSpacing(10);
@@ -516,11 +525,14 @@ public class UI extends Application {
 			root.getChildren().add(vbox);
 			dialogueBox.initModality(Modality.APPLICATION_MODAL);
 			dialogueBox.setResizable(false);
-			dialogueBox.setTitle("Invalid onyen");
+			dialogueBox.setTitle("Unavailable Employee");
 			dialogueBox.setScene(scene);
 			dialogueBox.sizeToScene();
 			dialogueBox.showAndWait();
-			dialogueBox.setOnCloseRequest((event1) -> event1.consume());
+			dialogueBox.setOnCloseRequest((event1) -> {
+				event1.consume();
+				_continueToSwap = false;	
+			});
 		}
 		//now check and see if we should proceed
 		if (!_continueToSwap){

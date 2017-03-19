@@ -32,6 +32,7 @@ public class Parser {
 			capacity = Integer.parseInt(csvReader.readLine().split(",")[1]);
 			level = Integer.parseInt(csvReader.readLine().split(",")[1]);
 		} catch (Exception e) {
+			System.err.println("Error parsing employee info. Please make sure all fields are completed");
 			//Employee must not exist, return null and UI will handle
 			return null;
 		}
@@ -182,9 +183,11 @@ public class Parser {
 		fw.close();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException{
 		Parser parser = new Parser();
-		parser.parseSchedule("testData/schedule.json", "data/spring-17/staff/");
+		Employee emp = parser.parseEmployee("/home/keith/git/TAScheduler/src/test.csv");
+		System.out.println(emp.toString());
+
 		// Employee emp =
 		// parser.parseEmployee("/home/keith/git/TAScheduler/data/spring-17/staff/aatieh.csv");
 		//
@@ -198,45 +201,8 @@ public class Parser {
 	private Staff parseStaff(String dir) throws IOException {
 		Staff staff = new Staff();
 		File csvDirectory = new File(dir);
-		BufferedReader csvReader = null;
-		int counter = 0;
 		for (File csv : csvDirectory.listFiles()) {
-			String onyen = csv.getName().substring(0, csv.getName().length() - 4);
-			String name = "";
-			String gender = "";
-			int capacity = 0;
-			int level = 0;
-			try {
-				csvReader = new BufferedReader(new FileReader(csv));
-				// parsing employee info
-				name = csvReader.readLine().split(",")[1]; // ugly
-				gender = csvReader.readLine().split(",")[1];
-				capacity = Integer.parseInt(csvReader.readLine().split(",")[1]);
-				level = Integer.parseInt(csvReader.readLine().split(",")[1]);
-				counter++;
-			} catch (Exception e) {
-				System.err.println("Error parsing: " + name + counter);
-				e.printStackTrace();
-			}
-
-			csvReader.readLine(); // throw away header line with days
-
-			// read in schedule
-			int[][] availability = new int[7][24];
-			for (int hour = 0; hour < 24; hour++) {
-				String scheduleLine = csvReader.readLine();
-				for (int day = 0; day < 7; day++) {
-					// Offset by 1 accounts for label in CSV
-					try {
-						availability[day][hour] = Integer.parseInt(scheduleLine.split(",")[day + 1]);
-					} catch (NumberFormatException e) {
-						System.err.println("Error:" + name);
-						e.printStackTrace();
-					}
-				}
-			}
-			staff.add(new Employee(name, onyen, capacity, gender.equals("M") ? false : true, level, availability));
-			csvReader.close();
+			staff.add(parseEmployee(csv.getAbsolutePath()));
 		}
 		return staff;
 	}

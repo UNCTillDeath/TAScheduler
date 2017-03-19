@@ -1,3 +1,5 @@
 /bin/
 /nbproject/private/
 *.class
+/.settings/
+/.vscode/

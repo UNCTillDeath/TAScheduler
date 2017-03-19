@@ -27,7 +27,9 @@ public class Parser {
 		try {
 			csvReader = new BufferedReader(new FileReader(csv));
 			// parsing employee info
-			name = csvReader.readLine().split(",")[1]; // ugly
+			String[] s = csvReader.readLine().split(",");
+			name = (s.length >= 2) ? s[1] : ""; //not as ugly
+			//name = csvReader.readLine().split(",")[1]; ugly
 			gender = csvReader.readLine().split(",")[1];
 			capacity = Integer.parseInt(csvReader.readLine().split(",")[1]);
 			level = Integer.parseInt(csvReader.readLine().split(",")[1]);

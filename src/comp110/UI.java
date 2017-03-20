@@ -27,6 +27,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -76,6 +77,7 @@ public class UI extends Application {
 		// create the dialog to collect github username/password
 		// and show it as the first thing
 		_passwordStage = new Stage();
+		_passwordStage.getIcons().add(new Image("file:karen.png"));
 		Group passwordGroup = new Group();
 		Scene passwordScene = new Scene(passwordGroup);
 		_passwordStage.setScene(passwordScene);
@@ -123,6 +125,7 @@ public class UI extends Application {
 		_passwordStage.sizeToScene();
 		_passwordStage.setResizable(false);
 		_availabilityStage = primaryStage;
+    _availabilityStage.getIcons().add(new Image("file:karen.png"));
 		// load a blank stage behind password box so it looks pretty
 		this.displayAvailable(null);
 		// password stage should be modal
@@ -336,6 +339,7 @@ public class UI extends Application {
 
 	private void renderPerformSwapStage() {
 		Stage performSwapStage = new Stage();
+		performSwapStage.getIcons().add(new Image("file:karen.png"));
 		Group root = new Group();
 		BorderPane rootPane = new BorderPane();
 		root.getChildren().add(rootPane);
@@ -480,6 +484,7 @@ public class UI extends Application {
 		_continueToSwap = true;
 		if (unavailableEmployee != null){
 			Stage dialogueBox = new Stage();
+		  dialogueBox.getIcons().add(new Image("file:karen.png"));
 			Group root = new Group();
 			Scene scene = new Scene(root);
 
@@ -861,6 +866,7 @@ public class UI extends Application {
 
 	public void displaySchedule(Schedule schedule) {
 		_scheduleStage = new Stage();
+    _scheduleStage.getIcons().add(new Image("file:karen.png"));
 		// once we have the schedule we can enable the other buttons
 		// TODO perhaps changes this so that schedule is available from the
 		// start
@@ -879,6 +885,7 @@ public class UI extends Application {
 
 	public void displayPossibleSwaps() {
 		_swapStage = new Stage();
+    _swapStage.getIcons().add(new Image("file:karen.png"));
 		renderSwapStage();
 		_swapStage.show();
 	}
@@ -914,6 +921,7 @@ public class UI extends Application {
 	// called whenever someone inputs an invalid onyen
 	public void createNewEmployeeCSV(String onyen) {
 		Stage dialogueBox = new Stage();
+    dialogueBox.getIcons().add(new Image("file:karen.png"));
 		Group root = new Group();
 		Scene scene = new Scene(root);
 

@@ -108,8 +108,11 @@ public class Storage_v2Test {
 	        	result[0] = success;
 	        }
 		}, ".");
-		storage.set_username("djsteffey");
-		storage.set_password("snoogans1278");
+		
+		// TODO
+		storage.set_username("need to input your github username here to test");
+		storage.set_password("need to input your github password here to test");
+
 		storage.get_files();
 		
 		// give 10 seconds to complete

@@ -489,6 +489,7 @@ public class UI extends Application {
 		BorderPane pane = new BorderPane();
 		
 		ComboBox<String> addDrop = new ComboBox<String>();
+		addDrop.getSelectionModel().selectFirst();
 		addDrop.setPrefWidth(744);
 		addDrop.setItems(FXCollections.observableArrayList("Add", "Drop"));
 		addDrop.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {

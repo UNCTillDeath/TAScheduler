@@ -13,6 +13,7 @@ import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -26,7 +27,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
@@ -68,6 +72,10 @@ public class UI extends Application {
 	private Employee _swapEmployee2;
 	private boolean _scheduleStageIsOpen;
 	boolean _continueToSwap;
+	private String _addOrDrop;
+	private int _addOrDropDay;
+	private int _addOrDropHour;
+	private Employee _employeeToAddOrDrop;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -341,8 +349,13 @@ public class UI extends Application {
 		Stage performSwapStage = new Stage();
 		performSwapStage.getIcons().add(new Image("file:karen.png"));
 		Group root = new Group();
-		BorderPane rootPane = new BorderPane();
-		root.getChildren().add(rootPane);
+		TabPane rootTabPane = new TabPane();
+		rootTabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
+		BorderPane rootSwapPane = new BorderPane();
+		Tab t1 = new Tab("Swap", rootSwapPane);
+		Tab t2 = new Tab("Add/Drop", this.getAddDropPane());
+		rootTabPane.getTabs().addAll(t1, t2);
+		root.getChildren().add(rootTabPane);
 		Scene scene = new Scene(root);
 		performSwapStage.setScene(scene);
 		Button saveButton = new Button("Swap!");
@@ -455,7 +468,7 @@ public class UI extends Application {
 		// TODO figure out how to not hardcode this and just make it fill stage
 		saveButton.setPrefWidth(744);
 		saveButton.setOnAction(this::performSwap);
-		rootPane.setBottom(saveButton);
+		rootSwapPane.setBottom(saveButton);
 
 		dayListView1.setPrefHeight(250);
 		dayListView2.setPrefHeight(250);
@@ -464,27 +477,112 @@ public class UI extends Application {
 		personListView1.setPrefHeight(250);
 		personListView2.setPrefHeight(250);
 
-		rootPane.setTop(topBox);
-		rootPane.setCenter(bottomBox);
+		rootSwapPane.setTop(topBox);
+		rootSwapPane.setCenter(bottomBox);
 		performSwapStage.sizeToScene();
 		performSwapStage.setResizable(false);
 		performSwapStage.setTitle("Perform Swap");
 		performSwapStage.show();
 	}
+	
+	private BorderPane getAddDropPane(){
+		BorderPane pane = new BorderPane();
+		
+		ComboBox<String> addDrop = new ComboBox<String>();
+		addDrop.setPrefWidth(744);
+		addDrop.setItems(FXCollections.observableArrayList("Add", "Drop"));
+		addDrop.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				_addOrDrop = newValue;
+			}
+		});
+		pane.setTop(addDrop);
+		
+		
+		javafx.collections.ObservableList<String> dayList = FXCollections.observableArrayList(getDaysList());
+		ListView<String> dayListView = new ListView<String>(dayList);
+		pane.setLeft(dayListView);
+		ListView<String> hourListView = new ListView<String>();
+		pane.setCenter(hourListView);
+		dayListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				_addOrDropDay = Week.dayInt(newValue);
+				javafx.collections.ObservableList<String> hours = FXCollections
+						.observableArrayList(getHoursList(newValue));
+				hourListView.setItems(hours);
+			}
+		});
+
+		ListView<Label> personListView = new ListView<Label>();
+		pane.setRight(personListView);
+		hourListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				_addOrDropHour = Integer.parseInt(newValue.split(" ")[0]);
+				if (_addOrDropHour < 9) {
+					_addOrDropHour += 12;
+				}
+				List<Label> scheduledEmployees = new ArrayList<Label>();
+				for (Employee e : _schedule.getWeek().getShift(_addOrDropDay, _addOrDropHour)) {
+					Label toAdd = new Label(e.getName());
+					if (toAdd.getText().equals(_currentEmployee.getName())) {
+						toAdd.setTextFill(Color.RED);
+					}
+					scheduledEmployees.add(toAdd);
+				}
+				javafx.collections.ObservableList<Label> people = FXCollections.observableArrayList(scheduledEmployees);
+				personListView.setItems(people);
+			}
+		});
+		personListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Label>() {
+			@Override
+			public void changed(ObservableValue<? extends Label> observable, Label oldValue, Label newValue) {
+				_employeeToAddOrDrop = _schedule.getStaff().getEmployeeByName(newValue.getText());
+			}
+		});
+		
+		Button addDropButton = new Button("Save");
+		addDropButton.setPrefWidth(744);
+		addDropButton.setOnAction(this::addDropButtonPress);	
+		pane.setBottom(addDropButton);
+		return pane;
+	}
+	
+	private void addDropButtonPress(ActionEvent event) {
+		
+		if (_addOrDrop.equals("Add")){
+			_schedule.getWeek().getShift(_addOrDropDay, _addOrDropHour).add(_employeeToAddOrDrop);
+		} else { //must be a drop
+			_schedule.getWeek().getShift(_addOrDropDay, _addOrDropHour).remove(_employeeToAddOrDrop);
+
+		}
+		//if schedule is open we need to refresh the view
+		if (_scheduleStageIsOpen){
+			this.renderScheduleStage(_schedule);
+		}
+		// tell controller to push changes
+		_controller.uiRequestChangeSchedule(_schedule);
+	}
 
 	private void performSwap(ActionEvent event) {
-		Employee unavailableEmployee = null;
+		String unavailableEmployee = "";
 		if (!_swapEmployee1.isAvailable(_swapDay2, _swapHour2)){
-			unavailableEmployee = _swapEmployee1;
+			unavailableEmployee = _swapEmployee1.getName();
 		} else if (!_swapEmployee2.isAvailable(_swapDay1, _swapHour1)){
-			unavailableEmployee = _swapEmployee2;
+			if (unavailableEmployee.equals("")){
+				unavailableEmployee = _swapEmployee2.getName();
+			} else {
+				unavailableEmployee += " and " + _swapEmployee2.getName();
+			}
 		}
 		//show a warning that one of the employees is unavailable for the shift
 		//they are swapping into
 		_continueToSwap = true;
 		if (unavailableEmployee != null){
 			Stage dialogueBox = new Stage();
-		  dialogueBox.getIcons().add(new Image("file:karen.png"));
+		    dialogueBox.getIcons().add(new Image("file:karen.png"));
 			Group root = new Group();
 			Scene scene = new Scene(root);
 
@@ -498,7 +596,7 @@ public class UI extends Application {
 			
 			BorderPane pane = new BorderPane();
 			
-			Label text = new Label(unavailableEmployee.getName() + " is listed as unavailable on their csv for the time you are trying to swap.\n");
+			Label text = new Label(unavailableEmployee + " is listed as unavailable on their csv for the time you are trying to swap.\n");
 			Label text2 = new Label("Are you sure you want to continue?");
 			text.setTextAlignment(TextAlignment.CENTER);
 			text2.setTextAlignment(TextAlignment.CENTER);

@@ -187,7 +187,7 @@ public class Parser {
 
 	public static void main(String[] args) throws IOException{
 		Parser parser = new Parser();
-		Employee emp = parser.parseEmployee("/home/keith/git/TAScheduler/src/test.csv");
+		Employee emp = parser.parseEmployee("src/test.csv");
 		System.out.println(emp.toString());
 
 		// Employee emp =

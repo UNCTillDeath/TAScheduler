@@ -75,7 +75,7 @@ public class Controller implements Storage_v2.Storage_v2Listener {
 
 	}
 
-	public void uiRequestSaveAvailability(Employee employee) {
+	public void uiRequestSaveAvailability(Employee employee, String commit_message) {
 		// need to tell parser to save this employee object and what filename to save it as
 		if (employee == null){
 			// unable to save
@@ -88,7 +88,7 @@ public class Controller implements Storage_v2.Storage_v2Listener {
 			// have the parser write out the file
 			this._parser.writeFile(employee, filename);
 			// have storage push to the repo
-			this._storage.save_files();
+			this._storage.save_files(commit_message);
 		} catch (IOException e){
 			// unable to save
 			this._ui.displayMessage("Unable to save employee object: " + e.getMessage());

@@ -117,7 +117,7 @@ public class Storage_v2 {
         }).start();
     }
 
-    public void save_files(){
+    public void save_files(String commit_message){
         // start a thread to do the actual work
         new Thread(new Runnable() {
             @Override
@@ -155,7 +155,8 @@ public class Storage_v2 {
                 }
 
                 // execute commit
-                if (Storage_v2.this.repo_commit(git, DEFAULT_COMMIT_MESSAGE) == false){
+                if (Storage_v2.this.repo_commit(git, 
+                		(commit_message.equals("")) ? DEFAULT_COMMIT_MESSAGE : commit_message) == false){
                     git.getRepository().close();
                     Storage_v2.this.m_listener.storage_save_files_complete(false, "Unable to commit file changes to local repo");
                     return;

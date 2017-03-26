@@ -95,9 +95,9 @@ public class Controller implements Storage_v2.Storage_v2Listener {
 		}	
 	}
 	
-	public void uiRequestChangeSchedule(Schedule schedule){
+	public void uiRequestChangeSchedule(Schedule schedule, String commit_message){
 		_schedule = schedule; //not strictly needed I don't think but nice to keep things in sync
 		_parser.writeScheduleToJson(schedule, _storage.get_schedule_json_filename());
-		_storage.save_files();
+		_storage.save_files(commit_message);
 	}
 }

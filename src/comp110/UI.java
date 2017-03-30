@@ -564,7 +564,8 @@ public class UI extends Application {
 			this.renderScheduleStage(_schedule);
 		}
 		// tell controller to push changes
-		_controller.uiRequestChangeSchedule(_schedule);
+		//TODO add commit message
+		_controller.uiRequestChangeSchedule(_schedule, "TODO");
 	}
 
 	private void performSwap(ActionEvent event) {
@@ -654,7 +655,7 @@ public class UI extends Application {
 			this.renderScheduleStage(_schedule);
 		}
 		// tell controller to push changes
-		_controller.uiRequestChangeSchedule(_schedule);
+		_controller.uiRequestChangeSchedule(_schedule, "SWAPPED: " + _swapEmployee1.getName() + " " + Week.dayString(_swapDay1) + " " + _swapHour1 + " with " + _swapEmployee2.getName() + " " + Week.dayString(_swapDay2) + " " + _swapHour2);
 	}
 
 	// only return a list of days that have scheduled shifts in them
@@ -1094,7 +1095,7 @@ public class UI extends Application {
 		// need to send to controller to save the current modified Employee
 		// object
 		if (_currentEmployee != null) {
-			_controller.uiRequestSaveAvailability(_currentEmployee);
+			_controller.uiRequestSaveAvailability(_currentEmployee, "AVAILABILITY CHANGE: " + _currentEmployee.getName());
 		}
 	}
 

@@ -528,7 +528,7 @@ public class UI extends Application {
 				List<Label> scheduledEmployees = new ArrayList<Label>();
 				for (Employee e : _schedule.getWeek().getShift(_addOrDropDay, _addOrDropHour)) {
 					Label toAdd = new Label(e.getName());
-					if (toAdd.getText().equals(_currentEmployee.getName())) {
+					if (_currentEmployee != null && toAdd.getText().equals(_currentEmployee.getName())) {
 						toAdd.setTextFill(Color.RED);
 					}
 					scheduledEmployees.add(toAdd);

@@ -130,7 +130,7 @@ public class Storage_v2Test {
 
 		// check for save
 		result[0] = false;
-		storage.save_files();
+		storage.save_files("Test save");
 		
 		// give 10 seconds to complete
 		try{

@@ -204,7 +204,7 @@ public class UI extends Application {
 
 		// create button to show the swap stage stuff
 		_showSwapAvailabilityButton = new Button("Show Swaps");
-		_showSwapAvailabilityButton.setDisable(true);
+		//_showSwapAvailabilityButton.setDisable(true);
 
 		_showSwapAvailabilityButton.setOnAction(this::buttonPressShowPotentialSwaps);
 		topBar.getChildren().add(_showSwapAvailabilityButton);
@@ -213,7 +213,7 @@ public class UI extends Application {
 		_performSwapButton = new Button("Swap");
 		_performSwapButton.setPrefWidth(54);
 
-		_performSwapButton.setDisable(true);
+		//_performSwapButton.setDisable(true);
 
 		_performSwapButton.setOnAction(this::buttonPressSwap);
 
@@ -931,7 +931,7 @@ public class UI extends Application {
 		for (int day = 0; day < schedule.getWeek().getShifts().length; day++) {
 			for (int hour = 0; hour < schedule.getWeek().getShifts()[day].length; hour++) {
 				for (Employee e : schedule.getWeek().getShift(day, hour)) {
-					if (e.getName().equals(_currentEmployee.getName())) {
+					if (_currentEmployee != null && e.getName().equals(_currentEmployee.getName())) {
 						scheduledShifts.add(Week.dayString(day) + " " + (hour % 12 == 0 ? 12 : hour % 12) + " -- "
 								+ ((hour + 1) % 12 == 0 ? 12 : (hour + 1) % 12));
 					}
@@ -942,9 +942,6 @@ public class UI extends Application {
 	}
 
 	private GridPane writeSchedule(Schedule schedule) {
-		// need to consider if current employee is null...meaning no onyen put
-		// in yet
-
 		GridPane schedulePane = new GridPane();
 		schedulePane.setAlignment(Pos.CENTER);
 		schedulePane.setGridLinesVisible(true);
@@ -1190,5 +1187,9 @@ public class UI extends Application {
 	public void requestScheduleButtonPressed(ActionEvent e) {
 		// ask the controller for the schedule
 		_controller.uiRequestSchedule();
+	}
+	
+	public void setSchedule(Schedule s){
+		_schedule = s;
 	}
 }

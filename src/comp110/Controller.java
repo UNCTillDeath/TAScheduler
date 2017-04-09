@@ -35,7 +35,9 @@ public class Controller implements Storage_v2.Storage_v2Listener {
 	
     public void storage_get_files_complete(boolean success, String message){
 		// let the ui know
-		Platform.runLater(() -> _ui.githubPullResult(success, message));    	
+		Platform.runLater(() -> _ui.githubPullResult(success, message));    
+		this._schedule = _parser.parseSchedule(_storage.get_schedule_json_filename(), _storage.get_path_to_onyen_csv_directory());
+		_ui.setSchedule(_schedule);
     }
     
     public void storage_save_files_complete(boolean success, String message){
@@ -44,12 +46,7 @@ public class Controller implements Storage_v2.Storage_v2Listener {
     }
 
 	public void uiRequestSchedule() {
-		/*************************************************
-		 * should be calling the parseSchedule function on the parse
-		 * and returning the Schedule it creates.  That function is not
-		 * yet done.  so change this up when it is complete
-		 **************************************************/
-		this._schedule = _parser.parseSchedule(_storage.get_schedule_json_filename(), _storage.get_path_to_onyen_csv_directory());
+		//this._schedule = _parser.parseSchedule(_storage.get_schedule_json_filename(), _storage.get_path_to_onyen_csv_directory());
 		
 		// tell the ui to show the schedule...this can/will be null if there was an exception
 		// ui needs to be ready to handle null schedule

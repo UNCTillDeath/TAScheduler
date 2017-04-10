@@ -807,7 +807,7 @@ public class UI extends Application {
 			_schedule = schedule;
 
 		}
-		Group root = new Group();
+
 		GridPane schedulePane = writeSchedule(_schedule);
 		ScrollPane scroll = new ScrollPane();
 		scroll.setPrefSize(700, 500);

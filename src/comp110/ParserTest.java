@@ -1,13 +1,12 @@
 package comp110;
 
 import static org.junit.Assert.*;
-import java.io.File;
 import org.junit.*;
 
 public class ParserTest{
     @Test
     public void parseEmployee_test(){
-        Parser p = new Parser();
+        Parser p = new Parser(null);
         Employee e = p.parseEmployee("src/test.csv");
         
         assertEquals(e.getName(), "Test"); 

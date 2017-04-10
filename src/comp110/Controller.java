@@ -14,7 +14,7 @@ public class Controller implements Storage_v2.Storage_v2Listener {
 
 		//initialize UI, storage, and parser
 		_storage = new Storage_v2(this, ".");
-		_parser = new Parser();
+		_parser = new Parser(ui);
 		_ui = ui;
 		this._schedule = null;
 	}
@@ -76,7 +76,7 @@ public class Controller implements Storage_v2.Storage_v2Listener {
 		// need to tell parser to save this employee object and what filename to save it as
 		if (employee == null){
 			// unable to save
-			this._ui.displayMessage("Unable to save employee object: employee is null");
+			_ui.displayMessage("Unable to save employee object: employee is null");
 			return;
 		}
 		
@@ -88,7 +88,7 @@ public class Controller implements Storage_v2.Storage_v2Listener {
 			this._storage.save_files(commit_message);
 		} catch (IOException e){
 			// unable to save
-			this._ui.displayMessage("Unable to save employee object: " + e.getMessage());
+			_ui.displayMessage("Unable to save employee object: " + e.getMessage());
 		}	
 	}
 	

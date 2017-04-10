@@ -16,6 +16,13 @@ import com.google.gson.JsonIOException;
 import java.io.PrintWriter;
 
 public class Parser {
+	
+	private UI m_ui;
+	
+	public Parser(UI ui){
+		this.m_ui = ui;
+	}
+	
 	public Employee parseEmployee(String file) {
 		File csv = new File(file);
 		BufferedReader csvReader = null;
@@ -186,7 +193,7 @@ public class Parser {
 	}
 
 	public static void main(String[] args) throws IOException{
-		Parser parser = new Parser();
+		Parser parser = new Parser(null);
 		Employee emp = parser.parseEmployee("src/test.csv");
 		System.out.println(emp.toString());
 
@@ -204,7 +211,13 @@ public class Parser {
 		Staff staff = new Staff();
 		File csvDirectory = new File(dir);
 		for (File csv : csvDirectory.listFiles()) {
-			staff.add(parseEmployee(csv.getAbsolutePath()));
+			Employee e = parseEmployee(csv.getAbsolutePath());
+			if (e == null){
+				if (this.m_ui != null){
+					this.m_ui.displayMessage("Error detected in csv.  Please close program and correct.  Program may be unstable");
+				}
+			}
+			staff.add(e);
 		}
 		return staff;
 	}

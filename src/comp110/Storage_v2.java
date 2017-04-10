@@ -180,10 +180,12 @@ public class Storage_v2 {
         // build the clone command
         CloneCommand cmd = Git.cloneRepository();
         cmd.setURI(DEFAULT_GITHUB_REPO);
-        cmd.setCredentialsProvider(new UsernamePasswordCredentialsProvider(this.m_username, this.m_password));
+        UsernamePasswordCredentialsProvider credentials =new UsernamePasswordCredentialsProvider(this.m_username, this.m_password); 
+        cmd.setCredentialsProvider(credentials);
         cmd.setDirectory(new File(directory));
 
         // execute the clone command
+        
         Git git = null;
         try{
             git = cmd.call();

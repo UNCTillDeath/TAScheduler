@@ -22,10 +22,10 @@ public class Storage_v2 {
 
     // constants
     private static final String DEFAULT_LOCAL_REPO_FOLDER = "/repo";
-    private static final String DEFAULT_GITHUB_REPO = "https://github.com/UNCTillDeath/TAScheduler.git";
+    private static final String DEFAULT_GITHUB_REPO = "https://github.com/comp110/KarenBot.git";
     private static final String DEFAULT_GITHUB_USERNAME = "";
     private static final String DEFAULT_GITHUB_PASSWORD = "";
-    private static final String DEFAULT_COMMIT_MESSAGE = "Updated TA Availability by TAScheduler - Android";
+    private static final String DEFAULT_COMMIT_MESSAGE = "Updated TA Availability by TAScheduler";
 
 
     // variables
@@ -63,7 +63,7 @@ public class Storage_v2 {
     }
 
     public String get_schedule_json_filename(){
-        return this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER + "/testData/schedule.json";
+        return this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER + "/data/schedule.json";
     }
 
     public String get_path_to_onyen_csv_directory(){

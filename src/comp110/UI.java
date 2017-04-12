@@ -1400,6 +1400,7 @@ public class UI extends Application {
 	
 	public void scheduleChange(MouseEvent e){
 		schedulePane.getChildren().clear();
+		if(list.getSelectionModel().getSelectedItem() == null) return;
 		switch(list.getSelectionModel().getSelectedItem().getId()){
 	 	case "week":
         	schedulePane = writeSchedule(_schedule);

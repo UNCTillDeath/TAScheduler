@@ -1,100 +1,106 @@
 package comp110;
 
-import java.io.IOException;
 import javafx.application.Platform;
 
-public class Controller implements Storage_v2.Storage_v2Listener {
+public class Controller implements Storage.StorageListener {
 
-	private UI _ui;
-	private Storage_v2 _storage;
-	private Parser _parser;
-	private Schedule _schedule; 
+	// variables
+	private UI m_ui;
+	private Storage m_storage;
+	private Parser m_parser;
 
+	// functions
 	public Controller(UI ui) {
-
-		//initialize UI, storage, and parser
-		_storage = new Storage_v2(this, ".");
-		_parser = new Parser(ui);
-		_ui = ui;
-		this._schedule = null;
+		this.m_storage = new Storage(this, ".");
+		this.m_parser = new Parser();
+		this.m_ui = ui;
 	}
 
 	public void cleanup() {
-		_storage.delete_storage();
+		this.m_storage.delete_storage();
 	}
 	
 	public void uiUsernamePasswordCallback(Credentials credentials) {
 		// save username and password for github
-		_storage.set_username(credentials.getUsername());
-		_storage.set_password(credentials.getPassword());
+		this.m_storage.set_username(credentials.getUsername());
+		this.m_storage.set_password(credentials.getPassword());
 
 		// pull files from github
-		_storage.get_files();
+		this.m_storage.get_files();
 	}
-
 	
     public void storage_get_files_complete(boolean success, String message){
-		// let the ui know
-		Platform.runLater(() -> _ui.githubPullResult(success, message));    
-		this._schedule = _parser.parseSchedule(_storage.get_schedule_json_filename(), _storage.get_path_to_onyen_csv_directory());
-		_ui.setSchedule(_schedule);
+		// let the ui know of success or failure
+		Platform.runLater(() -> this.m_ui.githubPullResult(success, message));
+		
+		// go ahead and give them the schedule immediately for use
+		try{
+			Schedule schedule = this.m_parser.parseSchedule(this.m_storage.get_schedule_json_filename(), this.m_storage.get_path_to_onyen_csv_directory());
+			this.m_ui.setSchedule(schedule);
+		} catch (Exception e){
+			// tell the ui things suck
+			this.m_ui.setSchedule(null);
+			Platform.runLater(() -> this.m_ui.displayMessage("Controller::storage_get_files_complete(): " + e.toString()));
+		}
     }
     
     public void storage_save_files_complete(boolean success, String message){
 		// let the ui know
-		Platform.runLater(() -> _ui.githubPushResult(success, message));    	
+		Platform.runLater(() -> this.m_ui.githubPushResult(success, message));    	
     }
 
 	public void uiRequestSchedule() {
-		//this._schedule = _parser.parseSchedule(_storage.get_schedule_json_filename(), _storage.get_path_to_onyen_csv_directory());
-		
 		// tell the ui to show the schedule...this can/will be null if there was an exception
 		// ui needs to be ready to handle null schedule
-		Platform.runLater(() -> _ui.displaySchedule(this._schedule));
+		try{
+			Schedule schedule = this.m_parser.parseSchedule(this.m_storage.get_schedule_json_filename(), this.m_storage.get_path_to_onyen_csv_directory());
+			this.m_ui.setSchedule(schedule);
+			Platform.runLater(() -> this.m_ui.displaySchedule(schedule));
+		} catch (Exception e){
+			Platform.runLater(() -> this.m_ui.displayMessage("Controller::uiRequestSchedule(): " + e.toString()));
+		}
 	}
 
 	public void uiRequestEmployeeAvailability(String onyen) {
 		// parse the employee
-		Employee employee = _parser.parseEmployee(_storage.get_availability_csv_filename_from_onyen(onyen));
-		
-		if (employee == null){
-			_ui.createNewEmployeeCSV(onyen);
-			//_ui.displayMessage("Unable to pull availability for " + onyen);
-		}
-		else {
+		try{
+			Employee employee = this.m_parser.parseEmployee(this.m_storage.get_availability_csv_filename_from_onyen(onyen));
 			//display available object on ui
-			Platform.runLater(() -> _ui.displayAvailable(employee));	
+			Platform.runLater(() -> this.m_ui.displayAvailable(employee));	
+		} catch (Exception e){
+			this.m_ui.createNewEmployeeCSV(onyen);
 		}
 	}
 
 	public void uiRequestSwaps() {
-			Platform.runLater(() -> _ui.displayPossibleSwaps());
-
+		Platform.runLater(() -> this.m_ui.displayPossibleSwaps());
 	}
 
 	public void uiRequestSaveAvailability(Employee employee, String commit_message) {
 		// need to tell parser to save this employee object and what filename to save it as
 		if (employee == null){
 			// unable to save
-			_ui.displayMessage("Unable to save employee object: employee is null");
+			this.m_ui.displayMessage("Controller::uiRequestSaveAvailability(): Employee is null");
 			return;
 		}
 		
-		String filename = this._storage.get_availability_csv_filename_from_onyen(employee.getOnyen());
+		String filename = this.m_storage.get_availability_csv_filename_from_onyen(employee.getOnyen());
 		try{
 			// have the parser write out the file
-			this._parser.writeFile(employee, filename);
+			this.m_parser.writeFile(employee, filename);
 			// have storage push to the repo
-			this._storage.save_files(commit_message);
-		} catch (IOException e){
-			// unable to save
-			_ui.displayMessage("Unable to save employee object: " + e.getMessage());
-		}	
+			this.m_storage.save_files(commit_message);
+		} catch (Exception e){
+			this.m_ui.displayMessage("Controller::uiRequestSaveAvailability(): " + e.toString());
+		}
 	}
 	
 	public void uiRequestChangeSchedule(Schedule schedule, String commit_message){
-		_schedule = schedule; //not strictly needed I don't think but nice to keep things in sync
-		_parser.writeScheduleToJson(schedule, _storage.get_schedule_json_filename());
-		_storage.save_files(commit_message);
+		try{
+		this.m_parser.writeScheduleToJson(schedule, this.m_storage.get_schedule_json_filename());
+		this.m_storage.save_files(commit_message);
+		} catch (Exception e){
+			this.m_ui.displayMessage("Controller::uiRequestChangeSchedule(): " + e.toString());
+		}
 	}
 }

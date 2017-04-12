@@ -13,29 +13,30 @@ import java.io.IOException;
  * Created by djsteffey on 3/6/2017.
  */
 
-public class Storage_v2 {
+public class Storage {
     // interface / inner class
-    public interface Storage_v2Listener{
+    public interface StorageListener{
         void storage_get_files_complete(boolean success, String message);
         void storage_save_files_complete(boolean success, String message);
     }
 
     // constants
     private static final String DEFAULT_LOCAL_REPO_FOLDER = "/repo";
-    private static final String DEFAULT_GITHUB_REPO = "https://github.com/comp110/KarenBot.git";
+    // private static final String DEFAULT_GITHUB_REPO = "https://github.com/comp110/KarenBot.git";
+    private static final String DEFAULT_GITHUB_REPO = "https://github.com/UNCTillDeath/TAScheduler";
     private static final String DEFAULT_GITHUB_USERNAME = "";
     private static final String DEFAULT_GITHUB_PASSWORD = "";
     private static final String DEFAULT_COMMIT_MESSAGE = "Updated TA Availability by TAScheduler";
 
 
     // variables
-    private Storage_v2Listener m_listener;
+    private StorageListener m_listener;
     private String m_application_directory;
     private String m_username;
     private String m_password;
 
     // functions
-    public Storage_v2(Storage_v2Listener listener, String application_directory){
+    public Storage(StorageListener listener, String application_directory){
         this.m_listener = listener;
         this.m_application_directory = application_directory;
         this.m_username = DEFAULT_GITHUB_USERNAME;
@@ -77,7 +78,7 @@ public class Storage_v2 {
             public void run() {
                 // first do we need to just pull or do a full clone?
                 // let just see if the folder exists
-                File directory = new File(Storage_v2.this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER);
+                File directory = new File(Storage.this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER);
                 if (directory.exists() == true){
 /*                    // local repo directory exists so should be able to just do a pull
                 	Git git = null;
@@ -99,18 +100,18 @@ public class Storage_v2 {
                     }*/
                 	
                 	// just delete whatever was hanging around
-                	Storage_v2.this.delete_directory(directory);
+                	Storage.this.delete_directory(directory);
                 }
 //                else{
                     // local repo doesnt exists so need to clone
-                    if (Storage_v2.this.repo_clone(Storage_v2.this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER) == true){
+                    if (Storage.this.repo_clone(Storage.this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER) == true){
                         // clone successful
-                        Storage_v2.this.m_listener.storage_get_files_complete(true, "");
+                        Storage.this.m_listener.storage_get_files_complete(true, "");
                     }
                     else
                     {
                         // clone not successful
-                        Storage_v2.this.m_listener.storage_get_files_complete(false, "Unable to clone repo from github");
+                        Storage.this.m_listener.storage_get_files_complete(false, "Unable to clone repo from github");
                     }
 //                }
             }
@@ -124,54 +125,54 @@ public class Storage_v2 {
             public void run() {
                 // create a git object from the local repo
                 // let just see if the folder exists
-                File directory = new File(Storage_v2.this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER);
+                File directory = new File(Storage.this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER);
                 if (directory.exists() == false){
                     // no local to push
-                    Storage_v2.this.m_listener.storage_save_files_complete(false, "No local repo to push to github");
+                    Storage.this.m_listener.storage_save_files_complete(false, "No local repo to push to github");
                     return;
                 }
 
                 // create the git object
                 Git git = null;
                 try {
-                    git = Git.open(new File(Storage_v2.this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER));
+                    git = Git.open(new File(Storage.this.m_application_directory + DEFAULT_LOCAL_REPO_FOLDER));
                 } catch (IOException e){
-                    Storage_v2.this.m_listener.storage_save_files_complete(false, "Unable to create git object from local repo");
+                    Storage.this.m_listener.storage_save_files_complete(false, "Unable to create git object from local repo");
                     return;
                 }
                 
                 // pull again to detect any changes first
-                if (Storage_v2.this.repo_pull(git) == false){
+                if (Storage.this.repo_pull(git) == false){
                     git.getRepository().close();
-                    Storage_v2.this.m_listener.storage_save_files_complete(false, "Unable to execute pre-push pull from github");
+                    Storage.this.m_listener.storage_save_files_complete(false, "Unable to execute pre-push pull from github");
                     return;
                 }
 
                 // execute add
-                if (Storage_v2.this.repo_add(git) == false){
+                if (Storage.this.repo_add(git) == false){
                     git.getRepository().close();
-                    Storage_v2.this.m_listener.storage_save_files_complete(false, "Unable to add file changes to local repo");
+                    Storage.this.m_listener.storage_save_files_complete(false, "Unable to add file changes to local repo");
                     return;
                 }
 
                 // execute commit
-                if (Storage_v2.this.repo_commit(git, 
+                if (Storage.this.repo_commit(git, 
                 		(commit_message.equals("")) ? DEFAULT_COMMIT_MESSAGE : commit_message) == false){
                     git.getRepository().close();
-                    Storage_v2.this.m_listener.storage_save_files_complete(false, "Unable to commit file changes to local repo");
+                    Storage.this.m_listener.storage_save_files_complete(false, "Unable to commit file changes to local repo");
                     return;
                 }
 
                 // push
-                if (Storage_v2.this.repo_push(git) == false){
+                if (Storage.this.repo_push(git) == false){
                     git.getRepository().close();
-                    Storage_v2.this.m_listener.storage_save_files_complete(false, "Unable to push local repo to github");
+                    Storage.this.m_listener.storage_save_files_complete(false, "Unable to push local repo to github");
                     return;
                 }
 
                 // success
                 git.getRepository().close();
-                Storage_v2.this.m_listener.storage_save_files_complete(true, "");
+                Storage.this.m_listener.storage_save_files_complete(true, "");
             }
         }).start();
     }
@@ -189,7 +190,8 @@ public class Storage_v2 {
         Git git = null;
         try{
             git = cmd.call();
-        } catch(GitAPIException e){
+        } catch(Exception e){
+        	e.printStackTrace();
             return false;
         }
         git.getRepository().close();

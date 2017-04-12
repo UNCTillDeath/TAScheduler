@@ -4,11 +4,11 @@ import static org.junit.Assert.*;
 import java.io.File;
 import org.junit.*;
 
-public class Storage_v2Test {
+public class StorageTest {
 
 	@Test
 	public void test_set_get_username() {
-		Storage_v2 storage = new Storage_v2(new Storage_v2.Storage_v2Listener(){
+		Storage storage = new Storage(new Storage.StorageListener(){
 			@Override
 			public void storage_get_files_complete(boolean success, String message){
 				
@@ -26,7 +26,7 @@ public class Storage_v2Test {
 
 	@Test
 	public void test_set_get_password() {
-		Storage_v2 storage = new Storage_v2(new Storage_v2.Storage_v2Listener(){
+		Storage storage = new Storage(new Storage.StorageListener(){
 			@Override
 			public void storage_get_files_complete(boolean success, String message){
 				
@@ -44,7 +44,7 @@ public class Storage_v2Test {
 
 	@Test
 	public void test_get_availability_csv_filename_from_onyen() {
-		Storage_v2 storage = new Storage_v2(new Storage_v2.Storage_v2Listener(){
+		Storage storage = new Storage(new Storage.StorageListener(){
 			@Override
 			public void storage_get_files_complete(boolean success, String message){
 				
@@ -62,7 +62,7 @@ public class Storage_v2Test {
 
 	@Test
 	public void test_get_schedule_json_filename() {
-		Storage_v2 storage = new Storage_v2(new Storage_v2.Storage_v2Listener(){
+		Storage storage = new Storage(new Storage.StorageListener(){
 			@Override
 			public void storage_get_files_complete(boolean success, String message){
 				
@@ -79,7 +79,7 @@ public class Storage_v2Test {
 
 	@Test
 	public void test_get_path_to_onyen_csv_directory() {
-		Storage_v2 storage = new Storage_v2(new Storage_v2.Storage_v2Listener(){
+		Storage storage = new Storage(new Storage.StorageListener(){
 			@Override
 			public void storage_get_files_complete(boolean success, String message){
 				
@@ -98,7 +98,7 @@ public class Storage_v2Test {
 	public void test_get_save_delete_files() {
 		final boolean[] result = new boolean[1];
 		
-		Storage_v2 storage = new Storage_v2(new Storage_v2.Storage_v2Listener(){
+		Storage storage = new Storage(new Storage.StorageListener(){
 			@Override
 			public void storage_get_files_complete(boolean success, String message){
 				result[0] = success;

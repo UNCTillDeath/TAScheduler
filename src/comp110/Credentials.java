@@ -2,20 +2,22 @@ package comp110;
 
 public class Credentials {
 
-	private String username;
-	private String password;
+	// variables
+	private String m_username;
+	private String m_password;
 	
+	
+	// functions
 	public Credentials(String user, String pass) {
-		username = user;
-		password = pass;
+		this.m_username = user;
+		this.m_password = pass;
 	}
 	
 	public String getUsername() {
-		return username;
+		return this.m_username;
 	}
 	
 	public String getPassword() {
-		return password;
+		return this.m_password;
 	}
-	
 }

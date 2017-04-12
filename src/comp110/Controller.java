@@ -3,24 +3,24 @@ package comp110;
 import java.io.IOException;
 import javafx.application.Platform;
 
-public class Controller implements Storage_v2.Storage_v2Listener {
+public class Controller implements Storage.StorageListener {
 
 	private UI _ui;
-	private Storage_v2 _storage;
+	private Storage _storage;
 	private Parser _parser;
 	private Schedule _schedule; 
 
 	public Controller(UI ui) {
 
 		//initialize UI, storage, and parser
-		_storage = new Storage_v2(this, ".");
+		this._storage = new Storage(this, ".");
 		_parser = new Parser(ui);
 		_ui = ui;
 		this._schedule = null;
 	}
 
 	public void cleanup() {
-		_storage.delete_storage();
+		this._storage.delete_storage();
 	}
 	
 	public void uiUsernamePasswordCallback(Credentials credentials) {

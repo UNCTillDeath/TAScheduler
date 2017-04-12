@@ -58,6 +58,7 @@ public class UI extends Application {
 	private Stage _passwordStage;
 	private Stage _availabilityStage;
 	private Stage _scheduleStage;
+	private Stage mainStage;
 	private Stage _swapStage;
 	private JFXTabPane tabPane;
 	private Tab availabilityTab;
@@ -174,7 +175,7 @@ public class UI extends Application {
 		_passwordStage.showAndWait();
 
 		// code to call on exit of the application
-		_availabilityStage.setOnCloseRequest(event -> {
+		mainStage.setOnCloseRequest(event -> {
 			// call the controller cleanup
 			_controller.cleanup();
 			try {
@@ -200,7 +201,7 @@ public class UI extends Application {
 		
 		
 		//Set up Stage
-		Stage mainStage = new Stage();
+		this.mainStage = new Stage();
 		mainStage.getIcons().add(new Image(getClass().getResource("karen.png").toString()));
 		mainStage.setTitle("TA Scheduler: COMP 110");
 		

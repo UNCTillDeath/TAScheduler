@@ -249,8 +249,9 @@ public class UI extends Application {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				if (_currentEmployee != null){
 					_currentEmployee.setIsFemale(newValue.equals("Female") ? true : false);
+					_saveAvailabilityButton.setDisable(false);
 				}
-				_saveAvailabilityButton.setDisable(false);
+				
 			}
 		});
 
@@ -268,8 +269,9 @@ public class UI extends Application {
 			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
 				if (_currentEmployee != null){
 					_currentEmployee.setCapacity(newValue);
+					_saveAvailabilityButton.setDisable(false);
 				}
-				_saveAvailabilityButton.setDisable(false);
+				
 			}
 		});
 
@@ -286,8 +288,9 @@ public class UI extends Application {
 				// grab the level # and use it to update employee
 				if (_currentEmployee != null){
 					_currentEmployee.setLevel(Integer.parseInt(newValue.split(" ")[0]));
+					_saveAvailabilityButton.setDisable(false);
 				}
-				_saveAvailabilityButton.setDisable(false);
+				
 			}
 		});
 
@@ -1139,17 +1142,31 @@ public class UI extends Application {
 	}
 
 	public void displayMessage(String message) {
+		this.displayMessage(message, true);
+	}
+	
+	public void displayMessage(String message, boolean error){
 		// make sure it is always on main thread
 		Platform.runLater(() -> {
-			Alert alert = new Alert(Alert.AlertType.ERROR);
-			alert.setHeaderText("Error");
-			alert.setContentText(message);
-			alert.setResizable(true);
-			alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-			alert.showAndWait();
-			
+			if (error){
+				Alert alert = new Alert(Alert.AlertType.ERROR);
+				alert.setHeaderText("Error");
+				alert.setContentText(message);
+				alert.setResizable(true);
+				alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+				alert.showAndWait();
+			}
+			else{
+				Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				alert.setHeaderText("Info");
+				alert.setContentText(message);
+				alert.setResizable(true);
+				alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+				alert.showAndWait();				
+			}
 		});
 	}
+	
 
 	// called whenever someone inputs an invalid onyen
 	public void createNewEmployeeCSV(String onyen) {
@@ -1217,15 +1234,20 @@ public class UI extends Application {
 	public void githubPushResult(boolean success, String message) {
 		if (success == true) {
 			// save was successful
+			this.displayMessage("Save complete", false);
 		} else {
 			// push failed
 			this.displayMessage("Unable to push files to github. " + message);
+			// re-enable save button
+			this._saveAvailabilityButton.setDisable(false);	
 		}
 	}
 
 	public void saveButtonPressed(ActionEvent e) {
 		// need to send to controller to save the current modified Employee
 		// object
+		// disable the save button
+		this._saveAvailabilityButton.setDisable(true);
 		if (_currentEmployee != null) {
 			_controller.uiRequestSaveAvailability(_currentEmployee,
 					"AVAILABILITY CHANGE: " + _currentEmployee.getName());

@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="jsch-0.1.54.jar"/>
 	<classpathentry kind="lib" path="org.eclipse.jgit-3.0.0.201305281830-rc2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="C:/Users/Keith Whitley/Downloads/jfoenix.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

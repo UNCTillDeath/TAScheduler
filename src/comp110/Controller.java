@@ -30,6 +30,7 @@ public class Controller implements Storage_v2.Storage_v2Listener {
 
 		// pull files from github
 		_storage.get_files();
+		
 	}
 
 	
@@ -38,6 +39,7 @@ public class Controller implements Storage_v2.Storage_v2Listener {
 		Platform.runLater(() -> _ui.githubPullResult(success, message));    
 		this._schedule = _parser.parseSchedule(_storage.get_schedule_json_filename(), _storage.get_path_to_onyen_csv_directory());
 		_ui.setSchedule(_schedule);
+		
     }
     
     public void storage_save_files_complete(boolean success, String message){

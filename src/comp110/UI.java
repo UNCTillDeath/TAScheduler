@@ -10,6 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.jfoenix.*;
+import com.jfoenix.controls.*;
+
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -34,11 +37,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -54,17 +59,25 @@ public class UI extends Application {
 	private Stage _availabilityStage;
 	private Stage _scheduleStage;
 	private Stage _swapStage;
+	private JFXTabPane tabPane;
+	private Tab availabilityTab;
+	private Tab scheduleTab;
+	private Tab swapTab;
+	private int k;
 	private GridPane _grid;
 	private Controller _controller;
-	private TextField _usernameField;
-	private PasswordField _passwordField;
-	private Button _passwordSubmitButton;
-	private Button _saveAvailabilityButton;
-	private TextField _onyenField;
+	private JFXTextField _usernameField;
+	private JFXPasswordField _passwordField;
+	private JFXButton _passwordSubmitButton;
+	private JFXButton _saveAvailabilityButton;
+	private JFXTextField _onyenField;
 	private Employee _currentEmployee;
-	private Button _showSwapAvailabilityButton;
-	private Button _performSwapButton;
+	private JFXButton _showSwapAvailabilityButton;
+	private JFXButton _performSwapButton;
 	private Schedule _schedule;
+	private JFXListView<Label> list;
+	private ScrollPane scroll;
+	private GridPane schedulePane;
 	private int _swapDay1;
 	private int _swapDay2;
 	private int _swapHour1;
@@ -80,20 +93,29 @@ public class UI extends Application {
 	private int _addHour;
 	private Employee _employeeToAddOrDrop;
 	private BorderPane _addOrDropPane;
-	private Button _addOrDropButton;
-	private ComboBox<String> _addOrDropComboBox;
+	private JFXButton _addOrDropButton;
+	private JFXComboBox<String> _addOrDropJFXComboBox;
+
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// create controller
 		_controller = new Controller(this);
+		this.list = new JFXListView<Label>();
 
 		// create the dialog to collect github username/password
 		// and show it as the first thing
 		_passwordStage = new Stage();
+		_passwordStage.setTitle("Login to Github");
 		_passwordStage.getIcons().add(new Image(getClass().getResource("karen.png").toString()));
 		Group passwordGroup = new Group();
-		Scene passwordScene = new Scene(passwordGroup);
+		StackPane wrapper = new StackPane();
+		wrapper.getStyleClass().add("back");
+		wrapper.getChildren().add(passwordGroup);
+		
+		Scene passwordScene = new Scene(wrapper);
+			
+		passwordScene.getStylesheets().add("comp110/style.css");
 		_passwordStage.setScene(passwordScene);
 		// prevent user from closing stage directly, we only want to close it
 		// programmatically after authentication
@@ -117,8 +139,10 @@ public class UI extends Application {
 		hbox3.setSpacing(10);
 		hbox3.setAlignment(Pos.CENTER);
 
-		_usernameField = new TextField();
-		_passwordField = new PasswordField();
+		_usernameField = new JFXTextField();
+		_usernameField.getStyleClass().add("whitelabel");
+		_passwordField = new JFXPasswordField();
+		_passwordField.getStyleClass().add("whitelabel");
 		// bind enter key to button press
 		_passwordField.setOnKeyPressed((event) -> {
 			if (event.getCode() == KeyCode.ENTER) {
@@ -126,8 +150,11 @@ public class UI extends Application {
 			}
 		});
 		Label usernameLabel = new Label("Username");
+		usernameLabel.getStyleClass().add("whitelabel");
 		Label passwordLabel = new Label("Password ");
-		_passwordSubmitButton = new Button("Login");
+		passwordLabel.getStyleClass().add("whitelabel");
+		_passwordSubmitButton = new JFXButton("Login");
+		_passwordSubmitButton.getStyleClass().add("button-raised");
 		// bind enter key to button press
 		_passwordSubmitButton.defaultButtonProperty().bind(_passwordSubmitButton.focusedProperty());
 		_passwordSubmitButton.setOnAction(this::loginToGithub);
@@ -141,7 +168,7 @@ public class UI extends Application {
 		_availabilityStage = primaryStage;
 		_availabilityStage.getIcons().add(new Image(getClass().getResource("karen.png").toString()));
 		// load a blank stage behind password box so it looks pretty
-		this.displayAvailable(null);
+		
 		// password stage should be modal
 		_passwordStage.initModality(Modality.APPLICATION_MODAL);
 		_passwordStage.showAndWait();
@@ -166,22 +193,71 @@ public class UI extends Application {
 
 		// disable the password submit button until pull is done
 		_passwordSubmitButton.setDisable(true);
+		
+		
+	}
+	public void setMainStage(){
+		
+		
+		//Set up Stage
+		Stage mainStage = new Stage();
+		mainStage.getIcons().add(new Image(getClass().getResource("karen.png").toString()));
+		mainStage.setTitle("TA Scheduler: COMP 110");
+		
+		//Set Main Group and Scene/
+		Group mainGroup = new Group();
+		Scene mainScene = new Scene(mainGroup);
+		mainScene.getStylesheets().add("comp110/style.css");
+		
+		//Set up schedulePane
+		
+		//Set up Main Tab Pane
+		JFXTabPane tabPane = new JFXTabPane();
+		tabPane.getStyleClass().add("back");
+		this.availabilityTab = new Tab();
+		availabilityTab.setText("Availability");
+		this.scheduleTab = new Tab();
+		scheduleTab.setText("Schedule");
+		this.swapTab = new Tab();
+		swapTab.setText("Show Swaps");
+		availabilityTab.getStyleClass().add("jfx-tab");
+		swapTab.getStyleClass().add("jfx-tab");
+		scheduleTab.getStyleClass().add("jfx-tab");
+		tabPane.getTabs().add(availabilityTab);
+		tabPane.getTabs().add(scheduleTab);
+		tabPane.getTabs().add(swapTab);
+		
+		//Render Availability Tab
+		availabilityTab.setContent(renderAvailabilityStage(null));
+		
+		mainGroup.getChildren().add(tabPane);
+		mainStage.setScene(mainScene);
+		mainStage.setTitle("COMP110 TA Availability");
+		mainStage.sizeToScene();
+		mainStage.setResizable(true);
+		mainStage.show();
+		
+		this.schedulePane = new GridPane();
+		this.scroll = new ScrollPane();
+		scroll.setId("scroll");
+		this.schedulePane = writeSchedule(_schedule);
+		renderSwapStage();	
 	}
 
-	private void renderAvailabilityStage(Employee e) {
-		Group availabilityRoot = new Group();
-		Scene availabilityScene = new Scene(availabilityRoot);
+	private BorderPane renderAvailabilityStage(Employee e) {
 		BorderPane rootPane = new BorderPane();
-		VBox topBox = new VBox();
+		rootPane.getStyleClass().add("back");
+		VBox topBox = new VBox(10);
+		topBox.setPadding(new Insets(10, 10, 10, 10));
 		topBox.setAlignment(Pos.CENTER);
 		rootPane.setTop(topBox);
 
-		HBox topBar = new HBox();
+		HBox topBar = new HBox(5);
 		// populate fields with employee
 		if (e != null) {
-			this._onyenField = new TextField(e.getOnyen());
+			this._onyenField = new JFXTextField(e.getOnyen());
 		} else {
-			_onyenField = new TextField("Enter onyen here");
+			_onyenField = new JFXTextField("Enter onyen here");
 			_onyenField.setOnKeyPressed((event) -> {
 				if (event.getCode() == KeyCode.ENTER) {
 					getAvailability(null);
@@ -193,35 +269,35 @@ public class UI extends Application {
 		topBox.getChildren().add(topBar);
 
 		// create button to get availability
-		Button getAvailabilityButton = new Button("Get Availability");
+		JFXButton getAvailabilityButton = new JFXButton("Get Availability");
 		topBar.getChildren().add(getAvailabilityButton);
 		getAvailabilityButton.setOnAction(this::getAvailability);
 
 		// create button to show current schedule
-		Button showScheduleButton = new Button("Show Current Schedule");
-		showScheduleButton.setOnAction(this::requestScheduleButtonPressed);
-		topBar.getChildren().add(showScheduleButton);
-
+		//JFXButton showScheduleButton = new JFXButton("Show Current Schedule");
+		//showScheduleButton.setOnAction(this::requestScheduleButtonPressed);
+		//topBar.getChildren().add(showScheduleButton);
+		 												
 		// create button to show the swap stage stuff
-		_showSwapAvailabilityButton = new Button("Show Swaps");
+		//_showSwapAvailabilityButton = new JFXButton("Show Swaps");
 		//_showSwapAvailabilityButton.setDisable(true);
 
-		_showSwapAvailabilityButton.setOnAction(this::buttonPressShowPotentialSwaps);
-		topBar.getChildren().add(_showSwapAvailabilityButton);
+		//_showSwapAvailabilityButton.setOnAction(this::buttonPressShowPotentialSwaps);
+		//topBar.getChildren().add(_showSwapAvailabilityButton);
 
 		// create button to do the swap stage stuff
-		_performSwapButton = new Button("Swap");
-		_performSwapButton.setPrefWidth(54);
+		//_performSwapButton = new JFXButton("Swap");
+		//_performSwapButton.setPrefWidth(54);
 
 		//_performSwapButton.setDisable(true);
 
-		_performSwapButton.setOnAction(this::buttonPressSwap);
+		//_performSwapButton.setOnAction(this::buttonPressSwap);
 
 		// middle bar with employee demographic info and swap button
-		HBox middleBar = new HBox();
+		HBox middleBar = new HBox(5);
 		topBox.getChildren().add(middleBar);
 
-		TextField nameField = new TextField();
+		JFXTextField nameField = new JFXTextField();
 		if (e != null) {
 			nameField.setText(e.getName());
 		} else {
@@ -232,7 +308,7 @@ public class UI extends Application {
 				e.setName(newValue);
 			}
 		});
-		ComboBox<String> genderDropdown = new ComboBox<String>();
+		JFXComboBox<String> genderDropdown = new JFXComboBox<String>();
 		if (e != null) {
 			genderDropdown.getSelectionModel().select(e.getIsFemale() ? "Female" : "Male");
 		}
@@ -245,7 +321,7 @@ public class UI extends Application {
 			}
 		});
 
-		ComboBox<Integer> capacityDropdown = new ComboBox<Integer>();
+		JFXComboBox<Integer> capacityDropdown = new JFXComboBox<Integer>();
 		for (int i = 1; i <= 10; i++) {
 			capacityDropdown.getItems().add(i);
 		}
@@ -262,7 +338,7 @@ public class UI extends Application {
 			}
 		});
 
-		ComboBox<String> levelDropdown = new ComboBox<String>();
+		JFXComboBox<String> levelDropdown = new JFXComboBox<String>();
 		levelDropdown.getItems().addAll("1 - In 401", "2 - In 410/411", "3 - In Major");
 		if (e != null) {
 			// have to -1 because it is pulling by index and list is zero
@@ -278,7 +354,7 @@ public class UI extends Application {
 			}
 		});
 
-		middleBar.getChildren().addAll(nameField, genderDropdown, capacityDropdown, levelDropdown, _performSwapButton);
+		middleBar.getChildren().addAll(nameField, genderDropdown, capacityDropdown, levelDropdown);
 
 		// this grid contains the checkboxes to mark availability
 		_grid = new GridPane();
@@ -298,13 +374,14 @@ public class UI extends Application {
 				if (day == 0) {
 					// if we are at hour column write out hour labels
 					int time = (hour + 9) % 12;
-					TextFlow timeLabel = new TextFlow(
-							new Text((time % 12 == 0 ? 12 : time) + " -- " + ((time + 1) % 12 == 0 ? 12 : time + 1)));
+					Label timeLabel = new Label(
+							(time % 12 == 0 ? 12 : time) + " -- " + ((time + 1) % 12 == 0 ? 12 : time + 1));
 					timeLabel.setTextAlignment(TextAlignment.CENTER);
 					_grid.add(timeLabel, day, hour + 1);
 
 				} else {
 					TimedCheckBox check = new TimedCheckBox(day - 1, hour + 9);
+					check.getStyleClass().add("jfx-check-box");
 					if (e != null) {
 						if (e.isAvailable(day - 1, hour + 9)) {
 							// map day and hour onto our space
@@ -323,22 +400,26 @@ public class UI extends Application {
 				}
 			}
 		}
+		_grid.setAlignment(Pos.CENTER);
+		_grid.idProperty().set("availgrid");
+		//_grid.setHgap(10); 
+		
+		
+		_grid.setPadding(new Insets(10, 10, 10, 10));
 		rootPane.setCenter(_grid);
 
 		// create the save button
-		HBox bottomBar = new HBox();
-		_saveAvailabilityButton = new Button("Save");
+		HBox bottomBar = new HBox(5);
+		bottomBar.setPadding(new Insets(10,10,10,10));
+		_saveAvailabilityButton = new JFXButton("Save");
 		_saveAvailabilityButton.setDisable(true);
 		_saveAvailabilityButton.setPrefWidth(465);
 		_saveAvailabilityButton.setOnAction(this::saveButtonPressed);
 		bottomBar.getChildren().add(_saveAvailabilityButton);
+		bottomBar.setAlignment(Pos.CENTER);
 		rootPane.setBottom(bottomBar);
-
-		availabilityRoot.getChildren().add(rootPane);
-		_availabilityStage.setScene(availabilityScene);
-		_availabilityStage.setTitle("COMP110 TA Availability");
-		_availabilityStage.sizeToScene();
-		_availabilityStage.setResizable(false);
+		
+		return rootPane;
 	}
 
 	private void buttonPressShowPotentialSwaps(ActionEvent event) {
@@ -363,6 +444,7 @@ public class UI extends Application {
 		rootTabPane.getTabs().addAll(t1, t2);
 		root.getChildren().add(rootTabPane);
 		Scene scene = new Scene(root);
+		scene.getStylesheets().add("comp110/style.css");
 		performSwapStage.setScene(scene);
 		Button saveButton = new Button("Swap!");
 		HBox topBox = new HBox();
@@ -494,36 +576,36 @@ public class UI extends Application {
 	private BorderPane getAddDropPane() {
 		_addOrDropPane = new BorderPane();
 
-		_addOrDropComboBox = new ComboBox<String>();
-		_addOrDropComboBox.getSelectionModel().selectFirst();
-		_addOrDropComboBox.setPrefWidth(744);
-		_addOrDropComboBox.setItems(FXCollections.observableArrayList("Drop", "Add"));
-		_addOrDropComboBox.getSelectionModel().selectFirst(); // set Drop as
+		_addOrDropJFXComboBox = new JFXComboBox<String>();
+		_addOrDropJFXComboBox.getSelectionModel().selectFirst();
+		_addOrDropJFXComboBox.setPrefWidth(744);
+		_addOrDropJFXComboBox.setItems(FXCollections.observableArrayList("Drop", "Add"));
+		_addOrDropJFXComboBox.getSelectionModel().selectFirst(); // set Drop as
 																// default
 		_addOrDrop = "Drop";
-		_addOrDropComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+		_addOrDropJFXComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				_addOrDrop = newValue;
 				if (_addOrDrop.equals("Add")) {
 					_addOrDropPane.getChildren().clear();
-					_addOrDropPane.setTop(_addOrDropComboBox);
+					_addOrDropPane.setTop(_addOrDropJFXComboBox);
 					_addOrDropPane.setBottom(_addOrDropButton);
 					setupForAdd();
 				} else {
 					_addOrDropPane.getChildren().clear();
-					_addOrDropPane.setTop(_addOrDropComboBox);
+					_addOrDropPane.setTop(_addOrDropJFXComboBox);
 					_addOrDropPane.setBottom(_addOrDropButton);
 					setupForDrop();
 
 				}
 			}
 		});
-		_addOrDropPane.setTop(_addOrDropComboBox);
+		_addOrDropPane.setTop(_addOrDropJFXComboBox);
 
 		this.setupForDrop(); // first time through we want to setup for drop
 
-		_addOrDropButton = new Button("Save");
+		_addOrDropButton = new JFXButton("Save");
 		_addOrDropButton.setPrefWidth(744);
 		_addOrDropButton.setOnAction(this::addDropButtonPress);
 		_addOrDropPane.setBottom(_addOrDropButton);
@@ -668,6 +750,7 @@ public class UI extends Application {
 			//dialogueBox.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("karen.png")));
 			Group root = new Group();
 			Scene scene = new Scene(root);
+			scene.getStylesheets().add("comp110/style.css");
 
 			VBox vbox = new VBox();
 			vbox.setPadding(new Insets(10, 0, 0, 10));
@@ -807,28 +890,61 @@ public class UI extends Application {
 			_schedule = schedule;
 
 		}
-
-		GridPane schedulePane = writeSchedule(_schedule);
-		ScrollPane scroll = new ScrollPane();
-		scroll.setPrefSize(700, 500);
+		BorderPane wrap = new BorderPane();
+		wrap.setId("wrapper");
+		wrap.setPrefSize(700, 500);
+		list.getItems().clear();
+		
+		if(_currentEmployee != null){
+			Label emp = new Label("Me (" + _currentEmployee.getName() + ")");
+			emp.setId("Employee");
+			list.getItems().add(emp);
+			
+		}
+		Label week = new Label("Week");
+		week.setId("week");
+		list.getItems().add(week);
+	
+		for(int i = 0 ; i < 6 ; i++){
+			Label day = new Label(Week.dayString(i));
+			day.setId(Week.dayString(i));
+			list.getItems().add(day);
+			
+		}
+		list.getStyleClass().add("mylistview");
+		list.setId("schedulelist");
+		
+		//schedulePane = writeSchedule(_schedule);
+		for(Label i : list.getItems()){
+			i.getStyleClass().add("schedule-labels");
+		}
+		
+		
+		
+		Group scheduleGroup = new Group();
+		
+		list.setOnMouseClicked(this::scheduleChange);
+		
+		scroll.setPrefSize(500, 500);
+		
+		
+		
 		scroll.setContent(schedulePane);
 		// this handles resize of nodes if user resizes stage
-		scroll.prefHeightProperty()
-				.addListener((obs, oldVal, newVal) -> _scheduleStage.setHeight(newVal.doubleValue()));
-		scroll.prefWidthProperty().addListener((obs, oldVal, newVal) -> _scheduleStage.setWidth(newVal.doubleValue()));
-		Scene scene = new Scene(scroll);
-		_scheduleStage.setScene(scene);
-		_scheduleStage.sizeToScene();
-		_scheduleStage.setTitle("Current Schedule");
-
+		wrap.setLeft(list);
+		wrap.setRight(scroll);
+		
+		scheduleGroup.getChildren().add(wrap);
+		scheduleTab.setContent(scheduleGroup);
+		
 	}
+
 
 	private void renderSwapStage() {
 		Group root = new Group();
-		Scene scene = new Scene(root);
 		BorderPane rootPane = new BorderPane();
 		root.getChildren().add(rootPane);
-		_swapStage.setScene(scene);
+		
 		javafx.collections.ObservableList<String> scheduledShifts = FXCollections
 				.observableArrayList(this.getScheduledShifts(_schedule));
 		ListView<String> scheduledShiftsListView = new ListView<String>(scheduledShifts);
@@ -838,6 +954,12 @@ public class UI extends Application {
 		ListView<String> availableSwapsListView = new ListView<String>();
 		HBox swapBox = new HBox();
 		swapBox.getChildren().add(availableSwapsListView);
+		_performSwapButton = new JFXButton("Swap");
+		
+		
+		if(_currentEmployee == null) _performSwapButton.setDisable(true);
+		else _performSwapButton.setDisable(false);
+		_performSwapButton.setOnAction(this::buttonPressSwap);
 		scheduledShiftsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -851,10 +973,11 @@ public class UI extends Application {
 		});
 		rootPane.setLeft(listBox);
 		rootPane.setRight(swapBox);
-
-		_swapStage.sizeToScene();
-		_swapStage.setResizable(false);
-		_swapStage.setTitle("Available for Swaps");
+		_performSwapButton.setAlignment(Pos.CENTER);
+		_performSwapButton.getStyleClass().add("button-raised");
+		rootPane.setBottom(_performSwapButton);
+		
+		swapTab.setContent(root);
 	}
 
 	// the hour gets passed in as regular time and needs to be converted to
@@ -942,14 +1065,15 @@ public class UI extends Application {
 	}
 
 	private GridPane writeSchedule(Schedule schedule) {
-		GridPane schedulePane = new GridPane();
-		schedulePane.setAlignment(Pos.CENTER);
-		schedulePane.setGridLinesVisible(true);
+		GridPane weekPane = new GridPane();
+		weekPane.setId("pane");
+		weekPane.setAlignment(Pos.CENTER);
+		weekPane.setGridLinesVisible(true);
 		ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(schedule.getWeek());
 
 		for (int day = 0; day < 7; day++) {
 			// +1 for hour column
-			schedulePane.add(new Label(Week.dayString(day)), day + 1, 0);
+			weekPane.add(new Label(Week.dayString(day)), day + 1, 0);
 		}
 
 		int hourRow = 0;
@@ -959,7 +1083,7 @@ public class UI extends Application {
 			dayLabel.setMaxWidth(Double.MAX_VALUE);
 			dayLabel.setAlignment(Pos.CENTER);
 			// +1 to account for day row
-			schedulePane.add(dayLabel, 0, hourRow + 1);
+			weekPane.add(dayLabel, 0, hourRow + 1);
 
 			int max = getMaxSize(hour, schedule.getWeek());
 
@@ -973,15 +1097,96 @@ public class UI extends Application {
 							scheduledEmployee.setTextFill(Color.RED);
 						}
 						// +1 to account for day row
-						schedulePane.add(scheduledEmployee, day + 1, hourRow + i + 1);
+						weekPane.add(scheduledEmployee, day + 1, hourRow + i + 1);
 					}
 				}
 			}
 			hourRow += max;
 		}
-		return schedulePane;
+		return weekPane;
 	}
+	
+	private GridPane writeDay(Schedule schedule, int day){
+		GridPane dayPane = new GridPane();
+		dayPane.setId("pane");
+		dayPane.setAlignment(Pos.CENTER);
+		dayPane.setGridLinesVisible(true);
+		ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(schedule.getWeek());
+		dayPane.add(new Label(Week.dayString(day)), 2, 0);
+		
+		int counter = 0;
+		int col = 0; 
+		int hourRow = 0;
+		for (int hour = getEarliestHour(schedule.getWeek()); hour < getLatestHour(schedule.getWeek()); hour++) {
+			if(counter % 3 == 0){
+				col += 2;
+				hourRow = 1; 
+			}
+			Label dayLabel = new Label(
+					(hour % 12 == 0 ? 12 : hour % 12) + " -- " + ((hour + 1) % 12 == 0 ? 12 : (hour + 1) % 12));
+			dayLabel.setMaxWidth(Double.MAX_VALUE);
+			dayLabel.setAlignment(Pos.CENTER);
+			// +1 to account for day row
+			dayPane.add(dayLabel, col, hourRow + 1);
 
+			int max = shifts.get(day).get(hour).size();
+			if(max == 0) max = 1;
+
+			for (int i = 0; i < max; i++) {
+					if (i < shifts.get(day).get(hour).size()) {
+						Label scheduledEmployee = new Label(shifts.get(day).get(hour).get(i).toString());
+						// highlight your name on the schedule
+						if ((this._currentEmployee != null)
+								&& (shifts.get(day).get(hour).get(i).toString().equals(_currentEmployee.getName()))) {
+							scheduledEmployee.setTextFill(Color.RED);
+						}
+						// +1 to account for day row
+						dayPane.add(scheduledEmployee, col + 1, hourRow + i + 1);
+					}
+					
+			}
+			hourRow += max;
+			counter++;
+		}
+		return dayPane;
+	}
+	
+	private GridPane writeEmployee(Schedule schedule, Employee e){
+		GridPane empPane = new GridPane();
+		empPane.setId("pane");
+		empPane.setAlignment(Pos.CENTER);
+		empPane.setGridLinesVisible(true);
+		ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(schedule.getWeek());
+		int col = 0; 
+		for (int day = 0; day < 7; day++) {
+			int dayShifts = 1; 
+			if(isScheduled(e, schedule, day)){
+				empPane.add(new Label(Week.dayString(day)), col, 0);
+				for(int hour = getEarliestHour(schedule.getWeek()); hour < getLatestHour(schedule.getWeek()); hour++){
+					for(int i = 0; i < shifts.get(day).get(hour).size(); i++){
+						if(shifts.get(day).get(hour).get(i).toString().equals(e.getName())){
+							empPane.add(new Label((hour % 12 == 0 ? 12 : hour % 12) + " -- " + ((hour + 1) % 12 == 0 ? 12 : (hour + 1) % 12)), col, dayShifts); 
+							dayShifts++;
+						}
+				}
+			}
+				col++;
+			}
+		}
+		return empPane;
+	}
+	
+	private boolean isScheduled(Employee e, Schedule schedule, int day){
+		ArrayList<ArrayList<ArrayList<Employee>>> shifts = shiftsAsArray(schedule.getWeek());
+			for(int hour = getEarliestHour(schedule.getWeek()); hour < getLatestHour(schedule.getWeek()); hour++){
+				for(int i = 0; i < shifts.get(day).get(hour).size(); i++){
+					if(shifts.get(day).get(hour).get(i).toString().equals(e.getName())){
+						return true; 
+					}
+			}
+		}
+			return false; 
+	}
 	// gets the size of the longest shift for any given hour across all days
 	private static int getMaxSize(int hour, Week week) {
 		int max = 0;
@@ -1043,28 +1248,24 @@ public class UI extends Application {
 		// called from the controller when an Employee object is ready for
 		// display
 		_currentEmployee = e;
-		renderAvailabilityStage(e);
-		_availabilityStage.show();
+	
+		availabilityTab.setContent(renderAvailabilityStage(_currentEmployee));
+		renderScheduleStage(_schedule);
+		renderSwapStage();	
+		
 	}
 
 	public void displaySchedule(Schedule schedule) {
-		_scheduleStage = new Stage();
-		_scheduleStage.getIcons().add(new Image(getClass().getResource("karen.png").toString()));
+		
 
 		// once we have the schedule we can enable the other buttons
 		// TODO perhaps changes this so that schedule is available from the
 		// start
-		this._showSwapAvailabilityButton.setDisable(false);
-		this._performSwapButton.setDisable(false);
-		renderScheduleStage(schedule);
-		_scheduleStage.show();
-		_scheduleStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			@Override
-			public void handle(WindowEvent event) {
-				_scheduleStageIsOpen = false;
-				_scheduleStage.close();
-			}
-		});
+		//this._showSwapAvailabilityButton.setDisable(false);
+		//this._performSwapButton.setDisable(false);
+		this._schedule = schedule;
+		
+		
 	}
 
 	public void displayPossibleSwaps() {
@@ -1081,6 +1282,8 @@ public class UI extends Application {
 	public void handleCheck(ActionEvent event) {
 		_saveAvailabilityButton.setDisable(false);
 		TimedCheckBox check = (TimedCheckBox) event.getSource();
+		check.getStyleClass().add("jfx-check-box");
+		
 		int[][] updatedAvailability = _currentEmployee.getAvailability();
 		System.out.println("Day: " + check.getDay() + " Hour: " + check.getHour());
 		HBox parent = (HBox) check.getParent();
@@ -1108,6 +1311,7 @@ public class UI extends Application {
 		dialogueBox.getIcons().add(new Image(getClass().getResource("karen.png").toString()));
 		Group root = new Group();
 		Scene scene = new Scene(root);
+		scene.getStylesheets().add("comp110/style.css");
 
 		VBox vbox = new VBox();
 		vbox.setPadding(new Insets(10, 0, 0, 10));
@@ -1155,7 +1359,8 @@ public class UI extends Application {
 			// login was successful
 			// move to next stage
 			// display a null employee because we dont have the onyen yet
-			this.displayAvailable(null);
+			_controller.uiRequestSchedule();
+			setMainStage();
 			// can close the password stage
 			_passwordStage.close();
 		} else {
@@ -1192,4 +1397,48 @@ public class UI extends Application {
 	public void setSchedule(Schedule s){
 		_schedule = s;
 	}
+	
+	public void scheduleChange(MouseEvent e){
+		schedulePane.getChildren().clear();
+		switch(list.getSelectionModel().getSelectedItem().getId()){
+	 	case "week":
+        	schedulePane = writeSchedule(_schedule);
+        	break;
+        case "Employee":
+        	if(_currentEmployee != null){
+        		schedulePane = writeEmployee(_schedule, _currentEmployee);
+        	}
+        	break;
+        case "Sunday":
+        	schedulePane = writeDay(_schedule, 0);
+        	renderScheduleStage(_schedule);
+        	break;
+        case "Monday":
+        	schedulePane = writeDay(_schedule, 1);
+        	renderScheduleStage(_schedule);
+        	break;
+        case "Tuesday":
+        	schedulePane = writeDay(_schedule, 2);
+        	renderScheduleStage(_schedule);
+        	break;
+        case "Wednesday":
+        	schedulePane = writeDay(_schedule, 3);
+        	renderScheduleStage(_schedule);
+        	break;
+        case "Thursday":
+        	schedulePane = writeDay(_schedule, 4);
+        	renderScheduleStage(_schedule);
+        	break;
+        case "Friday":
+        	schedulePane = writeDay(_schedule, 5);
+        	renderScheduleStage(_schedule);
+        	break;
+        default:
+        	schedulePane = writeSchedule(_schedule);
+        	break;
+		
+	}
+		renderScheduleStage(_schedule);
+}
+	
 }

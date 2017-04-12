@@ -1,0 +1,147 @@
+.back{ 
+    -fx-background-color: #303030;
+}
+
+.root{
+	-fx-background-color: #212121 !important;
+}
+.whitelabel{
+	-fx-text-fill: white; 
+}
+
+.button-raised{
+	-fx-padding: 0.7em 0.57em;
+    -fx-font-size: 14px;
+    -jfx-button-type: RAISED;
+    -fx-background-color: rgb(77,102,204);
+    -fx-pref-width: 200;
+    -fx-text-fill: WHITE;
+}
+
+.jfx-tab{
+	-fx-background-color: #212121;
+	-fx-pref-width:229.5;	
+}
+
+.tab-pane-base{
+	-fx-background-color:#212121;
+}
+#pane{
+	-fx-background-insets: 5px !important; 
+	-fx-padding: 5px !important;
+	-fx-background-color: WHITE;
+}
+
+#pane > .label{
+	-fx-background-insets: 5px !important; 
+	-fx-padding: 5px !important;
+}
+#wrapper{
+	-fx-background-color:#212121;
+}
+.scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}
+.scroll-pane{
+	-fx-background-color: #212121;
+}
+
+
+.tab-content-area{
+	-fx-pref-width: 700;
+}
+
+.jfx-tab-pane{
+	-fx-background-color: #212121 !important;
+	-fx-border-color: #212121 !important;
+}
+
+.tab-pane{
+	-fx-background-color: #212121 !important;
+}
+
+
+#availgrid > .label{
+	-fx-text-fill: WHITE;
+	-fx-background-insets: 5px !important; 
+	-fx-padding: 5px !important;
+}
+
+#title{
+	-fx-font-size: 40px;
+	
+}
+
+.text{
+	-fx-text-fill: white;
+}
+
+.jfx-button{ 
+	-fx-background-insets: 5px !important; 
+	-fx-padding: 5px !important;
+	-fx-background-color: rgb(77,102,204);
+	-fx-border-insets: 5px !important;
+    -fx-text-fill: WHITE;
+}
+.combo-box .list-cell 
+{
+	-fx-text-fill: WHITE;
+	}
+	
+.text-field{
+	-fx-text-fill:WHITE;
+}
+
+
+.jfx-list-cell:filled:selected:focused, .jfx-list-cell:filled:selected{
+	
+	-fx-background-color: #212121 !important;
+	-fx-text-fill: WHITE !important;
+}
+
+.list-view{
+	-fx-border-color: #212121 !important;
+}
+
+
+
+.mylistview .scroll-bar:horizontal .track,
+.mylistview .scroll-bar:vertical .track{
+    -fx-background-color:transparent;
+    -fx-border-color:transparent;
+    -fx-background-radius: 0em;
+    -fx-border-radius:2em;
+}
+ 
+.mylistview .scroll-bar:horizontal .increment-button ,
+.mylistview .scroll-bar:horizontal .decrement-button {
+    -fx-background-color:transparent;
+    -fx-background-radius: 0em;
+    -fx-padding:0 0 10 0;
+}
+ 
+.mylistview .scroll-bar:vertical .increment-button ,
+.mylistview .scroll-bar:vertical .decrement-button {
+    -fx-background-color:transparent;
+    -fx-background-radius: 0em;
+    -fx-padding:0 10 0 0;
+}
+.mylistview  .scroll-bar .increment-arrow,
+.mylistview  .scroll-bar .decrement-arrow{
+    -fx-shape:" ";
+    -fx-padding:0;
+}
+ 
+.mylistview .scroll-bar:horizontal .thumb,
+.mylistview .scroll-bar:vertical .thumb {
+    -fx-background-color:derive(black,90%);
+    -fx-background-insets: 2, 0, 0;
+    -fx-background-radius: 2em;
+}
+
+
+	
+	
+	
+
+

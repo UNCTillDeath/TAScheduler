@@ -4,28 +4,34 @@ import java.io.Serializable;
 
 public class Schedule implements Serializable {
 
-  private Staff _staff;
-  private Week _week;
+	// serialization version 
+	private static final long serialVersionUID = 1L;
+	
+	
+	// variables
+	private Staff m_staff;
+	private Week m_week;
+	
+	// functions
+	public Schedule(Staff staff, Week week) {
+		this.m_staff = staff;
+		this.m_week = week;
+	}
 
-  public Schedule(Staff staff, Week week) {
-    _staff = staff;
-    _week = week;
-  }
+	public Staff getStaff() {
+		return this.m_staff;
+	}
 
-  public Staff getStaff() {
-    return _staff;
-  }
+	public Week getWeek() {
+		return this.m_week;
+	}
 
-  public Week getWeek() {
-    return _week;
-  }
+	public boolean equals(Schedule other) {
+		return this.m_staff.equals(other.m_staff) && this.m_week.equals(other.m_week);
+	}
 
-  public boolean equals(Schedule other) {
-    return _staff.equals(other._staff) && _week.equals(other._week);
-  }
-
-  public Schedule copy() {
-    return new Schedule(_staff.copy(), _week.copy());
-  }
+	public Schedule copy() {
+		return new Schedule(this.m_staff.copy(), this.m_week.copy());
+	}
 
 }

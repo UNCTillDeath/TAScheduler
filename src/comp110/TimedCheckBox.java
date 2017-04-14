@@ -1,23 +1,28 @@
 package comp110;
 
-import javafx.scene.control.CheckBox;
+import com.jfoenix.controls.JFXCheckBox;
 
-//decorator for JavaFX checkbox
-public class TimedCheckBox extends CheckBox {
-	private int _day;
-	int _hour;
 
+
+
+public class TimedCheckBox extends JFXCheckBox {
+	
+	// variables
+	private int m_day;
+	int m_hour;
+
+	// functions
 	public TimedCheckBox(int day, int hour) {
 		super();
-		_day = day;
-		_hour = hour;
+		this.m_day = day;
+		this.m_hour = hour;
 	}
 	
 	public int getDay(){
-		return _day;
-	}
-	public int getHour(){
-		return _hour;
+		return this.m_day;
 	}
 
+	public int getHour(){
+		return this.m_hour;
+	}
 }

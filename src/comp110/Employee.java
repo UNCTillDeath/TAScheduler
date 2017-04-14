@@ -4,135 +4,143 @@ import java.io.Serializable;
 
 public class Employee implements Serializable {
 
+	// serialization version 
 	private static final long serialVersionUID = 1L;
+
+	// constants
+	private static final int NUMBER_DAYS = 7;
+	private static final int NUMBER_HOURS = 24;
 	
-  private String _name;
-  private String _onyen;
-  private int          _capacity;
-  private int          _capacityUsed;
-  private boolean      _isFemale;
-  private int          _level;       // 1: in 401, 2: in 410/411, 3: in major
-  private int[][]      _availability;
+	// variables
+	private String m_name;
+	private String m_onyen;
+	private int m_capacity;
+	private int m_capacityUsed;
+	private boolean m_isFemale;
+	private int m_level; // 1: in 401, 2: in 410/411, 3: in major
+	private int[][] m_availability;
 
-  public Employee(String name, String onyen, int capacity, boolean isFemale, int level, int[][] availability) {
-    _onyen = onyen;
-    _availability = availability;
-    _name = name;
-    _capacity = capacity;
-    _isFemale = isFemale;
-    _level = level;
-    _capacityUsed = 0;
-  }
+	// functions
+	public Employee(String name, String onyen, int capacity, boolean isFemale, int level, int[][] availability) {
+		this.m_onyen = onyen;
+		this.m_availability = availability;
+		this.m_name = name;
+		this.m_capacity = capacity;
+		this.m_isFemale = isFemale;
+		this.m_level = level;
+		this.m_capacityUsed = 0;
+	}
 
-  public int hashCode() {
-    return _name.hashCode();
-  }
+	@Override
+	public int hashCode() {
+		return this.m_name.hashCode();
+	}
 
-  public boolean equals(Employee other) {
-    boolean equals = true;
-    equals = equals && _name.equals(other._name);
-    equals = equals && _capacity == other._capacity;
-    equals = equals && _isFemale == other._isFemale;
-    equals = equals && _level == other._level;
-    if (equals) {
-      for (int day = 0; day < _availability.length; day++) {
-        for (int hour = 0; hour < _availability[day].length; hour++) {
-          if (_availability[day][hour] != other._availability[day][hour]) {
-            return false;
-          }
-        }
-      }
-    }
-    return equals;
-  }
+	public boolean equals(Employee other) {
+		if (this.m_name.equals(other.m_name) == false){
+			return false;
+		}
+		if (this.m_capacity != other.m_capacity){
+			return false;
+		}
+		if (this.m_isFemale != other.m_isFemale){
+			return false;
+		}
+		if (this.m_level != other.m_level){
+			return false;
+		}
+		for (int day = 0; day < NUMBER_DAYS; ++day) {
+			for (int hour = 0; hour < NUMBER_HOURS; ++hour) {
+				if (this.m_availability[day][hour] != other.m_availability[day][hour]) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
-  public String getName() {
-    return _name;
-  }
-  
-  public void setName(String name){
-	  _name = name;
-  }
-  
-  public String getOnyen() {
-    return _onyen;
-  }
+	public String getName() {
+		return this.m_name;
+	}
 
-  public int getCapacity() {
-    return _capacity;
-  }
-  
-  public void setCapacity(int capacity){
-	  _capacity = capacity;
-  }
+	public void setName(String name) {
+		this.m_name = name;
+	}
 
-  public int getCapacityUsed() {
-    return _capacityUsed;
-  }
+	public String getOnyen() {
+		return this.m_onyen;
+	}
 
-  void setCapacityUsed(int capacityUsed) {
-    _capacityUsed = capacityUsed;
-  }
+	public int getCapacity() {
+		return this.m_capacity;
+	}
 
-  public int getCapacityRemaining() {
-    return _capacity - _capacityUsed;
-  }
+	public void setCapacity(int capacity) {
+		this.m_capacity = capacity;
+	}
 
-  public boolean getIsFemale() {
-    return _isFemale;
-  }
+	public int getCapacityUsed() {
+		return this.m_capacityUsed;
+	}
 
-  public void setIsFemale(boolean isFemale) {
-    _isFemale = isFemale;
-  }
+	void setCapacityUsed(int capacityUsed) {
+		this.m_capacityUsed = capacityUsed;
+	}
 
-  public int getLevel() {
-    return _level;
-  }
+	public int getCapacityRemaining() {
+		return this.m_capacity - this.m_capacityUsed;
+	}
 
-  public void setLevel(int level) {
-    _level = level;
-  }
+	public boolean getIsFemale() {
+		return this.m_isFemale;
+	}
 
-  public int[][] getAvailability() {
-    return _availability;
-  }
+	public void setIsFemale(boolean isFemale) {
+		this.m_isFemale = isFemale;
+	}
 
-  public void setAvailability(int[][] availability) {
-    _availability = availability;
-  }
+	public int getLevel() {
+		return this.m_level;
+	}
 
-  public boolean isAvailable(int day, int hour) { // we could make day an enum
-                                                  // but then we would need a
-                                                  // map to calculate its
-                                                  // position in the native
-                                                  // array and that just seemed
-                                                  // like a lot
-    return _availability[day][hour] == 1 ? true : false;
-  }
+	public void setLevel(int level) {
+		this.m_level = level;
+	}
 
-  public boolean isAvailable(int day, int startHour, int endHour) {
-    for (int i = startHour; i <= endHour; i++) {
-      if (_availability[day][i] == 0) {
-        return false;
-      }
-    }
-    return true;
-  }
+	public int[][] getAvailability() {
+		return this.m_availability;
+	}
 
-  public Employee copy() {
-    int[][] availability = new int[_availability.length][_availability[0].length];
-    for (int day = 0; day < _availability.length; day++) {
-      for (int hour = 0; hour < _availability[0].length; hour++) {
-        availability[day][hour] = _availability[day][hour];
-      }
-    }
-    Employee copy = new Employee(_name, _onyen, _capacity, _isFemale, _level, availability);
-    return copy;
-  }
-  
-  public String toString(){
-    return this.getName();
-  }
+	public void setAvailability(int[][] availability) {
+		this.m_availability = availability;
+	}
+
+	public boolean isAvailable(int day, int hour) {
+		return this.m_availability[day][hour] == 1 ? true : false;
+	}
+
+	public boolean isAvailable(int day, int startHour, int endHour) {
+		for (int i = startHour; i <= endHour; i++) {
+			if (this.m_availability[day][i] == 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public Employee copy() {
+		int[][] availability = new int[NUMBER_DAYS][NUMBER_HOURS];
+		for (int day = 0; day < NUMBER_DAYS; ++day) {
+			for (int hour = 0; hour < NUMBER_HOURS; ++hour) {
+				availability[day][hour] = this.m_availability[day][hour];
+			}
+		}
+		return new Employee(this.m_name, this.m_onyen, this.m_capacity, this.m_isFemale, this.m_level, availability);
+	}
+
+	@Override
+	public String toString() {
+		return this.m_name;
+	}
 
 }

@@ -14,6 +14,7 @@ import com.jfoenix.*;
 import com.jfoenix.controls.*;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -43,6 +44,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -264,6 +266,22 @@ public class UI extends Application {
 					getAvailability(null);
 				}
 			});
+			this._onyenField.focusedProperty().addListener(new ChangeListener<Boolean>()
+				{
+					@Override
+					public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+					 	if (newValue){
+					 		// just gained focus...text select entire text
+					 		// so when we start typing it will overwrite it
+					 		Platform.runLater(new Runnable(){
+					 			@Override
+					 			public void run(){
+					 				UI.this._onyenField.selectAll();									
+					 			}
+					 		});
+					 	}
+					 }
+				});
 
 		}
 		topBar.getChildren().add(_onyenField);
@@ -298,7 +316,24 @@ public class UI extends Application {
 		HBox middleBar = new HBox(5);
 		topBox.getChildren().add(middleBar);
 
-		JFXTextField nameField = new JFXTextField();
+		//JFXTextField nameField = new JFXTextField();
+		final JFXTextField nameField = new JFXTextField();
+		 	nameField.focusedProperty().addListener(new ChangeListener<Boolean>()
+		 		{
+		 			@Override
+		 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+		 				if (newValue){
+		 					// just gained focus...text select entire text
+		 					// so when we start typing it will overwrite it
+		 					Platform.runLater(new Runnable(){
+		 						@Override
+		 						public void run(){
+		 							nameField.selectAll();									
+		 					}
+		 					});
+		 				}
+		 			}
+		 		});
 		if (e != null) {
 			nameField.setText(e.getName());
 		} else {
@@ -317,7 +352,9 @@ public class UI extends Application {
 		genderDropdown.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				_currentEmployee.setIsFemale(newValue.equals("Female") ? true : false);
+				if (_currentEmployee != null){
+					_currentEmployee.setIsFemale(newValue.equals("Female") ? true : false);
+				}
 				_saveAvailabilityButton.setDisable(false);
 			}
 		});
@@ -334,7 +371,9 @@ public class UI extends Application {
 		capacityDropdown.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Integer>() {
 			@Override
 			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
-				_currentEmployee.setCapacity(newValue);
+				if (_currentEmployee != null){
+					_currentEmployee.setCapacity(newValue);
+				}
 				_saveAvailabilityButton.setDisable(false);
 			}
 		});
@@ -350,7 +389,9 @@ public class UI extends Application {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				// grab the level # and use it to update employee
-				_currentEmployee.setLevel(Integer.parseInt(newValue.split(" ")[0]));
+				if (_currentEmployee != null){
+					_currentEmployee.setLevel(Integer.parseInt(newValue.split(" ")[0]));
+				}
 				_saveAvailabilityButton.setDisable(false);
 			}
 		});
@@ -434,6 +475,10 @@ public class UI extends Application {
 	}
 
 	private void renderPerformSwapStage() {
+		if (this._schedule == null){
+			this.displayMessage("There is no schedule loaded yet.  A schedule must be loaded before swapping.");
+			 return;
+		}
 		Stage performSwapStage = new Stage();
 	    performSwapStage.getIcons().add(new Image(getClass().getResource("karen.png").toString()));
 		Group root = new Group();
@@ -942,6 +987,10 @@ public class UI extends Application {
 
 
 	private void renderSwapStage() {
+		if (this._schedule == null){
+			this.displayMessage("There is no schedule loaded yet.  A schedule must be loaded before swapping.");
+			 return;
+		}
 		Group root = new Group();
 		BorderPane rootPane = new BorderPane();
 		root.getChildren().add(rootPane);
@@ -1257,7 +1306,11 @@ public class UI extends Application {
 	}
 
 	public void displaySchedule(Schedule schedule) {
-		
+		// make sure valid schedule
+		 if (this._schedule == null){
+		 	this.displayMessage("There is no schedule loaded yet.  A schedule must be loaded before swapping.");
+		 	return;
+		 }
 
 		// once we have the schedule we can enable the other buttons
 		// TODO perhaps changes this so that schedule is available from the
@@ -1270,6 +1323,10 @@ public class UI extends Application {
 	}
 
 	public void displayPossibleSwaps() {
+		if (this._schedule == null){
+			this.displayMessage("There is no schedule loaded yet.  A schedule must be loaded before swapping.");
+			return;
+		}
 		_swapStage = new Stage();
 		_swapStage.getIcons().add(new Image(getClass().getResource("karen.png").toString()));
 		renderSwapStage();
@@ -1281,6 +1338,12 @@ public class UI extends Application {
 	}
 
 	public void handleCheck(ActionEvent event) {
+		if (_currentEmployee == null){
+			this.displayMessage("You must first load an Employee");
+			// unselect the one just selected
+			((TimedCheckBox)event.getSource()).setSelected(false);
+			return;
+		}
 		_saveAvailabilityButton.setDisable(false);
 		TimedCheckBox check = (TimedCheckBox) event.getSource();
 		check.getStyleClass().add("jfx-check-box");
@@ -1300,10 +1363,16 @@ public class UI extends Application {
 	}
 
 	public void displayMessage(String message) {
-		Alert alert = new Alert(Alert.AlertType.ERROR);
-		alert.setHeaderText("Error");
-		alert.setContentText(message);
-		alert.showAndWait();
+		// make sure it is always on main thread
+		 		Platform.runLater(() -> {
+		 			Alert alert = new Alert(Alert.AlertType.ERROR);
+					alert.setHeaderText("Error");
+					alert.setContentText(message);
+		 			alert.setResizable(true);
+		 			alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+		 			alert.showAndWait();
+		 			
+		 	});
 	}
 
 	// called whenever someone inputs an invalid onyen
@@ -1322,7 +1391,7 @@ public class UI extends Application {
 		hbox1.setSpacing(10);
 		hbox1.setAlignment(Pos.CENTER_LEFT);
 
-		Label text = new Label(onyen + " does not have an availability object yet. Would you like to create one?");
+		Label text = new Label(onyen + " does not have an availability object yet or the CSV is corrupt. Would you like to create one?");
 		hbox1.getChildren().add(text);
 
 		HBox hbox2 = new HBox();
@@ -1366,7 +1435,7 @@ public class UI extends Application {
 			_passwordStage.close();
 		} else {
 			// pull failed...highly likely wrong username and password
-			this.displayMessage("Unable to pull files from github");
+			this.displayMessage("Unable to pull files from github. " + message + "\nVery likey wrong github username/password or no network connectivity.");
 			// renable the submit button
 			_passwordSubmitButton.setDisable(false);
 		}
@@ -1377,7 +1446,7 @@ public class UI extends Application {
 			// save was successful
 		} else {
 			// push failed
-			this.displayMessage("Unable to push files to github");
+			this.displayMessage("Unable to push files to github. " + message);
 		}
 	}
 

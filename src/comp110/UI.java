@@ -59,14 +59,12 @@ public class UI extends Application {
 
 	private Stage _passwordStage;
 	private Stage _availabilityStage;
-	private Stage _scheduleStage;
 	private Stage mainStage;
 	private Stage _swapStage;
 	private JFXTabPane tabPane;
 	private Tab availabilityTab;
 	private Tab scheduleTab;
 	private Tab swapTab;
-	private int k;
 	private GridPane _grid;
 	private Controller _controller;
 	private JFXTextField _usernameField;
@@ -168,8 +166,8 @@ public class UI extends Application {
 		passwordGroup.getChildren().add(vbox);
 		_passwordStage.sizeToScene();
 		_passwordStage.setResizable(false);
-		_availabilityStage = primaryStage;
-		_availabilityStage.getIcons().add(new Image(getClass().getResource("karen.png").toString()));
+		//_availabilityStage = primaryStage;
+		//_availabilityStage.getIcons().add(new Image(getClass().getResource("karen.png").toString()));
 		// load a blank stage behind password box so it looks pretty
 		
 		// password stage should be modal
@@ -243,8 +241,10 @@ public class UI extends Application {
 		this.schedulePane = new GridPane();
 		this.scroll = new ScrollPane();
 		scroll.setId("scroll");
-		this.schedulePane = writeSchedule(_schedule);
-		renderSwapStage();	
+		if(_schedule != null){
+			this.schedulePane = writeSchedule(_schedule);
+			renderSwapStage();
+		}	
 	}
 
 	private BorderPane renderAvailabilityStage(Employee e) {
@@ -354,8 +354,9 @@ public class UI extends Application {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				if (_currentEmployee != null){
 					_currentEmployee.setIsFemale(newValue.equals("Female") ? true : false);
+					_saveAvailabilityButton.setDisable(false);
 				}
-				_saveAvailabilityButton.setDisable(false);
+				
 			}
 		});
 
@@ -373,8 +374,9 @@ public class UI extends Application {
 			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
 				if (_currentEmployee != null){
 					_currentEmployee.setCapacity(newValue);
+					_saveAvailabilityButton.setDisable(false);
 				}
-				_saveAvailabilityButton.setDisable(false);
+			
 			}
 		});
 
@@ -391,8 +393,9 @@ public class UI extends Application {
 				// grab the level # and use it to update employee
 				if (_currentEmployee != null){
 					_currentEmployee.setLevel(Integer.parseInt(newValue.split(" ")[0]));
+					_saveAvailabilityButton.setDisable(false);
 				}
-				_saveAvailabilityButton.setDisable(false);
+				
 			}
 		});
 
@@ -1363,16 +1366,29 @@ public class UI extends Application {
 	}
 
 	public void displayMessage(String message) {
+		this.displayMessage(message, true);
+	}
+	
+	public void displayMessage(String message, boolean error){
 		// make sure it is always on main thread
-		 		Platform.runLater(() -> {
-		 			Alert alert = new Alert(Alert.AlertType.ERROR);
-					alert.setHeaderText("Error");
-					alert.setContentText(message);
-		 			alert.setResizable(true);
-		 			alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-		 			alert.showAndWait();
-		 			
-		 	});
+		Platform.runLater(() -> {
+			if (error){
+				Alert alert = new Alert(Alert.AlertType.ERROR);
+				alert.setHeaderText("Error");
+				alert.setContentText(message);
+				alert.setResizable(true);
+				alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+				alert.showAndWait();
+			}
+			else{
+				Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				alert.setHeaderText("Info");
+				alert.setContentText(message);
+				alert.setResizable(true);
+				alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+				alert.showAndWait();				
+			}
+		});
 	}
 
 	// called whenever someone inputs an invalid onyen
@@ -1444,15 +1460,19 @@ public class UI extends Application {
 	public void githubPushResult(boolean success, String message) {
 		if (success == true) {
 			// save was successful
+			this.displayMessage("Save complete", false);
 		} else {
 			// push failed
 			this.displayMessage("Unable to push files to github. " + message);
+			this._saveAvailabilityButton.setDisable(false);	
 		}
 	}
 
 	public void saveButtonPressed(ActionEvent e) {
 		// need to send to controller to save the current modified Employee
 		// object
+		//disable button
+		this._saveAvailabilityButton.setDisable(true);
 		if (_currentEmployee != null) {
 			_controller.uiRequestSaveAvailability(_currentEmployee,
 					"AVAILABILITY CHANGE: " + _currentEmployee.getName());

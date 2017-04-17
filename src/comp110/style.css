@@ -3,7 +3,7 @@
 }
 
 .root{
-	-fx-background-color: #212121 !important;
+	-fx-background-color: linear-gradient(to right, #485563, #29323c);
 }
 .whitelabel{
 	-fx-text-fill: white; 
@@ -38,6 +38,18 @@
 }
 #wrapper{
 	-fx-background-color:#212121;
+}
+
+#title{
+	-fx-font-size: 50px;
+	-fx-text-fill: white;
+	-fx-background-insets: 5px !important; 
+	-fx-padding: 5px 5px 0px 5px !important; 
+	-fx-border-insets: 5px !important;
+}
+
+#info{
+	-fx-text-fill: WHITE;
 }
 .scroll-pane > .viewport {
    -fx-background-color: transparent;

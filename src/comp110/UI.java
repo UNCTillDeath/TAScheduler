@@ -130,12 +130,24 @@ public class UI extends Application {
 		VBox vbox = new VBox();
 		vbox.setPadding(new Insets(10, 0, 0, 10));
 		vbox.setSpacing(10);
+		HBox hbox0 = new HBox();
+		HBox hbox1_half = new HBox();
 		HBox hbox1 = new HBox();
 		HBox hbox2 = new HBox();
 		HBox hbox3 = new HBox();
-		hbox1.setSpacing(10);
+		hbox0.setAlignment(Pos.CENTER);
+		Label title = new Label("TA Scheduler");
+		title.setId("title");
+		hbox0.getChildren().add(title);
+		
+		hbox1_half.setSpacing(15);;
+		hbox1_half.setAlignment(Pos.CENTER);
+		Label info = new Label("Please Login to Github");
+		info.setId("info");
+		hbox1_half.getChildren().add(info);
+		hbox1.setSpacing(15);
 		hbox1.setAlignment(Pos.CENTER_LEFT);
-		hbox2.setSpacing(10);
+		hbox2.setSpacing(15);
 		hbox2.setAlignment(Pos.CENTER_LEFT);
 		hbox3.setSpacing(10);
 		hbox3.setAlignment(Pos.CENTER);
@@ -162,7 +174,7 @@ public class UI extends Application {
 		hbox3.getChildren().add(_passwordSubmitButton);
 		hbox1.getChildren().addAll(usernameLabel, _usernameField);
 		hbox2.getChildren().addAll(passwordLabel, _passwordField);
-		vbox.getChildren().addAll(hbox1, hbox2, hbox3);
+		vbox.getChildren().addAll(hbox0, hbox1_half,hbox1, hbox2, hbox3);
 		passwordGroup.getChildren().add(vbox);
 		_passwordStage.sizeToScene();
 		_passwordStage.setResizable(false);

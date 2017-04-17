@@ -18,7 +18,13 @@
     -fx-text-fill: WHITE;
 }
 
-.jfx-tab{
+#swap-button{
+	-fx-background-insets: 10px !important; 
+	-fx-border-insets: 10px !important;
+
+}
+
+.jfx-tab, .jfx-tab-header{
 	-fx-background-color: #212121;
 	-fx-pref-width:229.5;	
 }

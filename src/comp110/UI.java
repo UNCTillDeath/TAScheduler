@@ -211,7 +211,7 @@ public class UI extends Application {
 	}
 	public void setMainStage(){
 		
-		
+
 		//Set up Stage
 		this.mainStage = new Stage();
 		mainStage.getIcons().add(new Image(getClass().getResource("karen.png").toString()));
@@ -1020,6 +1020,7 @@ public class UI extends Application {
 		HBox swapBox = new HBox();
 		swapBox.getChildren().add(availableSwapsListView);
 		_performSwapButton = new JFXButton("Swap");
+	
 		
 		
 		if(_currentEmployee == null) _performSwapButton.setDisable(true);
@@ -1038,9 +1039,10 @@ public class UI extends Application {
 		});
 		rootPane.setLeft(listBox);
 		rootPane.setRight(swapBox);
-		_performSwapButton.setAlignment(Pos.CENTER);
-		_performSwapButton.getStyleClass().add("button-raised");
 		rootPane.setBottom(_performSwapButton);
+		_performSwapButton.setId("swap-button");
+		rootPane.setAlignment(_performSwapButton, Pos.BOTTOM_CENTER);
+		_performSwapButton.getStyleClass().add("button-raised");
 		
 		swapTab.setContent(root);
 	}
@@ -1501,6 +1503,10 @@ public class UI extends Application {
 	}
 	
 	public void scheduleChange(MouseEvent e){
+		if(_schedule == null){
+			this.displayMessage("There is no schedule loaded yet.  A schedule must be loaded before swap");
+			return;
+		} 
 		schedulePane.getChildren().clear();
 		if(list.getSelectionModel().getSelectedItem() == null) return;
 		switch(list.getSelectionModel().getSelectedItem().getId()){

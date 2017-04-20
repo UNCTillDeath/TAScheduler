@@ -53,6 +53,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 public class UI extends Application {
@@ -75,6 +76,7 @@ public class UI extends Application {
 	private Employee _currentEmployee;
 	private JFXButton _showSwapAvailabilityButton;
 	private JFXButton _performSwapButton;
+	private JFXButton saveButton;
 	private Schedule _schedule;
 	private JFXListView<Label> list;
 	private ScrollPane scroll;
@@ -114,7 +116,8 @@ public class UI extends Application {
 		wrapper.getStyleClass().add("back");
 		wrapper.getChildren().add(passwordGroup);
 		
-		Scene passwordScene = new Scene(wrapper);
+		JFXDecorator decorator = new JFXDecorator(_passwordStage, wrapper, false, false, true);
+		Scene passwordScene = new Scene(decorator);
 			
 		passwordScene.getStylesheets().add("comp110/style.css");
 		_passwordStage.setScene(passwordScene);
@@ -186,16 +189,7 @@ public class UI extends Application {
 		_passwordStage.initModality(Modality.APPLICATION_MODAL);
 		_passwordStage.showAndWait();
 
-		// code to call on exit of the application
-		mainStage.setOnCloseRequest(event -> {
-			// call the controller cleanup
-			_controller.cleanup();
-			try {
-				// give time for cleanup to complete
-				Thread.sleep(2000);
-			} catch (Exception e) {
-				/* dont care about an exception here */}
-		});
+		
 		_scheduleStageIsOpen = false;
 	}
 
@@ -214,18 +208,32 @@ public class UI extends Application {
 
 		//Set up Stage
 		this.mainStage = new Stage();
+		
+		// code to call on exit of the application
+				mainStage.setOnCloseRequest(event -> {
+					// call the controller cleanup
+					_controller.cleanup();
+					try {
+						// give time for cleanup to complete
+						Thread.sleep(2000);
+					} catch (Exception e) {
+						/* dont care about an exception here */}
+				});
+		
+		
+		
 		mainStage.getIcons().add(new Image(getClass().getResource("karen.png").toString()));
 		mainStage.setTitle("TA Scheduler: COMP 110");
 		
 		//Set Main Group and Scene/
 		Group mainGroup = new Group();
-		Scene mainScene = new Scene(mainGroup);
-		mainScene.getStylesheets().add("comp110/style.css");
+		
 		
 		//Set up schedulePane
 		
 		//Set up Main Tab Pane
 		JFXTabPane tabPane = new JFXTabPane();
+		
 		tabPane.getStyleClass().add("back");
 		this.availabilityTab = new Tab();
 		availabilityTab.setText("Availability");
@@ -243,11 +251,13 @@ public class UI extends Application {
 		//Render Availability Tab
 		availabilityTab.setContent(renderAvailabilityStage(null));
 		
-		mainGroup.getChildren().add(tabPane);
+		JFXDecorator decorator = new JFXDecorator(mainStage, tabPane, false, false, true);
+		Scene mainScene = new Scene(decorator);
+		mainScene.getStylesheets().add("comp110/style.css");
 		mainStage.setScene(mainScene);
 		mainStage.setTitle("COMP110 TA Availability");
 		mainStage.sizeToScene();
-		mainStage.setResizable(true);
+		mainStage.setResizable(false);
 		mainStage.show();
 		
 		this.schedulePane = new GridPane();
@@ -361,6 +371,7 @@ public class UI extends Application {
 			genderDropdown.getSelectionModel().select(e.getIsFemale() ? "Female" : "Male");
 		}
 		genderDropdown.getItems().addAll("Male", "Female");
+		genderDropdown.setPromptText("Gender");
 		genderDropdown.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -373,6 +384,7 @@ public class UI extends Application {
 		});
 
 		JFXComboBox<Integer> capacityDropdown = new JFXComboBox<Integer>();
+		capacityDropdown.setPromptText("Capacity");
 		for (int i = 1; i <= 10; i++) {
 			capacityDropdown.getItems().add(i);
 		}
@@ -393,6 +405,7 @@ public class UI extends Application {
 		});
 
 		JFXComboBox<String> levelDropdown = new JFXComboBox<String>();
+		levelDropdown.setPromptText("Level");
 		levelDropdown.getItems().addAll("1 - In 401", "2 - In 410/411", "3 - In Major");
 		if (e != null) {
 			// have to -1 because it is pulling by index and list is zero
@@ -497,17 +510,17 @@ public class UI extends Application {
 		Stage performSwapStage = new Stage();
 	    performSwapStage.getIcons().add(new Image(getClass().getResource("karen.png").toString()));
 		Group root = new Group();
-		TabPane rootTabPane = new TabPane();
+		JFXTabPane rootTabPane = new JFXTabPane();
+		
 		rootTabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 		BorderPane rootSwapPane = new BorderPane();
 		Tab t1 = new Tab("Swap", rootSwapPane);
 		Tab t2 = new Tab("Add/Drop", this.getAddDropPane());
+		t1.getStyleClass().add("swaptab");
+		t2.getStyleClass().add("swaptab");
 		rootTabPane.getTabs().addAll(t1, t2);
 		root.getChildren().add(rootTabPane);
-		Scene scene = new Scene(root);
-		scene.getStylesheets().add("comp110/style.css");
-		performSwapStage.setScene(scene);
-		Button saveButton = new Button("Swap!");
+		this.saveButton = new JFXButton("Swap!");
 		HBox topBox = new HBox();
 		HBox bottomBox = new HBox();
 		// TOP BOX STUFF
@@ -631,6 +644,10 @@ public class UI extends Application {
 		performSwapStage.sizeToScene();
 		performSwapStage.setResizable(false);
 		performSwapStage.setTitle("Perform Swap");
+		JFXDecorator decorator = new JFXDecorator(performSwapStage, rootTabPane, false, false, true);
+		Scene scene = new Scene(decorator);
+		scene.getStylesheets().add("comp110/style.css");
+		performSwapStage.setScene(scene);
 		performSwapStage.show();
 	}
 
@@ -638,6 +655,7 @@ public class UI extends Application {
 		_addOrDropPane = new BorderPane();
 
 		_addOrDropJFXComboBox = new JFXComboBox<String>();
+		_addOrDropJFXComboBox.getStyleClass().add("adddropbox");
 		_addOrDropJFXComboBox.getSelectionModel().selectFirst();
 		_addOrDropJFXComboBox.setPrefWidth(744);
 		_addOrDropJFXComboBox.setItems(FXCollections.observableArrayList("Drop", "Add"));
@@ -664,17 +682,18 @@ public class UI extends Application {
 		});
 		_addOrDropPane.setTop(_addOrDropJFXComboBox);
 
-		this.setupForDrop(); // first time through we want to setup for drop
+		// first time through we want to setup for drop
 
 		_addOrDropButton = new JFXButton("Save");
 		_addOrDropButton.setPrefWidth(744);
 		_addOrDropButton.setOnAction(this::addDropButtonPress);
 		_addOrDropPane.setBottom(_addOrDropButton);
+		this.setupForDrop(); 
 		return _addOrDropPane;
 	}
 
 	private void setupForDrop() {
-
+		_addOrDropButton.setDisable(true);
 		javafx.collections.ObservableList<String> dayList = FXCollections.observableArrayList(getDaysList());
 		ListView<String> dayListView = new ListView<String>(dayList);
 		_addOrDropPane.setLeft(dayListView);
@@ -715,11 +734,13 @@ public class UI extends Application {
 			@Override
 			public void changed(ObservableValue<? extends Label> observable, Label oldValue, Label newValue) {
 				_employeeToAddOrDrop = _schedule.getStaff().getEmployeeByName(newValue.getText());
+				_addOrDropButton.setDisable(false);
 			}
 		});
 	}
 
 	private void setupForAdd() {
+		_addOrDropButton.setDisable(true);
 		javafx.collections.ObservableList<String> dayList = FXCollections.observableArrayList(getDaysList());
 		ListView<String> dayListView = new ListView<String>(dayList);
 		_addOrDropPane.setLeft(dayListView);
@@ -760,12 +781,14 @@ public class UI extends Application {
 			@Override
 			public void changed(ObservableValue<? extends Label> observable, Label oldValue, Label newValue) {
 				_employeeToAddOrDrop = _schedule.getStaff().getEmployeeByName(newValue.getText());
+				_addOrDropButton.setDisable(false);
 			}
 		});
 
 	}
 
 	private void addDropButtonPress(ActionEvent event) {
+		_addOrDropButton.setDisable(true);
 
 		if (_addOrDrop.equals("Add")) {
 			_schedule.getWeek().getShift(_addDay, _addHour).add(_employeeToAddOrDrop);
@@ -792,6 +815,7 @@ public class UI extends Application {
 	}
 
 	private void performSwap(ActionEvent event) {
+		this.saveButton.setDisable(true);
 		String unavailableEmployee = "";
 		if (!_swapEmployee1.isAvailable(_swapDay2, _swapHour2)) {
 			unavailableEmployee = _swapEmployee1.getName();
@@ -1475,6 +1499,7 @@ public class UI extends Application {
 		if (success == true) {
 			// save was successful
 			this.displayMessage("Save complete", false);
+			this._saveAvailabilityButton.setDisable(false);
 		} else {
 			// push failed
 			this.displayMessage("Unable to push files to github. " + message);
@@ -1520,34 +1545,28 @@ public class UI extends Application {
         	break;
         case "Sunday":
         	schedulePane = writeDay(_schedule, 0);
-        	renderScheduleStage(_schedule);
         	break;
         case "Monday":
         	schedulePane = writeDay(_schedule, 1);
-        	renderScheduleStage(_schedule);
         	break;
         case "Tuesday":
         	schedulePane = writeDay(_schedule, 2);
-        	renderScheduleStage(_schedule);
         	break;
         case "Wednesday":
         	schedulePane = writeDay(_schedule, 3);
-        	renderScheduleStage(_schedule);
         	break;
         case "Thursday":
         	schedulePane = writeDay(_schedule, 4);
-        	renderScheduleStage(_schedule);
         	break;
         case "Friday":
         	schedulePane = writeDay(_schedule, 5);
-        	renderScheduleStage(_schedule);
         	break;
         default:
         	schedulePane = writeSchedule(_schedule);
         	break;
 		
 	}
-		renderScheduleStage(_schedule);
+		scroll.setContent(schedulePane);
 }
 	
 }

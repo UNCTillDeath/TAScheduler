@@ -22,8 +22,8 @@ public class Storage {
 
     // constants
     private static final String DEFAULT_LOCAL_REPO_FOLDER = "/repo";
-    private static final String DEFAULT_GITHUB_REPO = "https://github.com/comp110/KarenBot.git";
-    //private static final String DEFAULT_GITHUB_REPO = "https://github.com/UNCTillDeath/TAScheduler";
+    //private static final String DEFAULT_GITHUB_REPO = "https://github.com/comp110/KarenBot.git";
+    private static final String DEFAULT_GITHUB_REPO = "https://github.com/UNCTillDeath/TAScheduler";
     private static final String DEFAULT_GITHUB_USERNAME = "";
     private static final String DEFAULT_GITHUB_PASSWORD = "";
     private static final String DEFAULT_COMMIT_MESSAGE = "Updated TA Availability by TAScheduler";

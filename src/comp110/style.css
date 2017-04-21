@@ -8,7 +8,9 @@
 	-fx-background-color: linear-gradient(to bottom, #212121, #424242);
 }
 
-.jfx-decorator{
+.jfx-decorator-buttons-container{
+	-fx-background-color: #212121;
+	-fx-border-color: #212121;
   
 	
 }
@@ -24,9 +26,10 @@
 
 .jfx-decorator-content-container{
 	-fx-background-color: linear-gradient(to bottom, #212121, #424242); 
+	
 }
 .titlelabel{
-	-fx-background-color: black;
+	-fx-background-color: #212121;
 	-fx-text-fill: WHITE !important;
 }
 .whitelabel{
@@ -66,7 +69,7 @@
 }
 
 .swaptab{
-	-fx-background-color: #212121;
+	-fx-background-color: #303030;
 }
 
 #pane{
@@ -80,7 +83,7 @@
 	-fx-padding: 5px !important;
 }
 #wrapper{
-	-fx-background-color:#212121;
+	-fx-background-color:#303030;
 }
 
 #title{
@@ -98,7 +101,7 @@
    -fx-background-color: transparent;
 }
 .scroll-pane{
-	-fx-background-color: #212121;
+	-fx-background-color: #303030;
 }
 
 
@@ -107,12 +110,12 @@
 }
 
 .jfx-tab-pane{
-	-fx-background-color: #212121 !important;
+	-fx-background-color: #303030 !important;
 	-fx-border-color: #212121 !important;
 }
 
 .tab-pane{
-	-fx-background-color: #212121 !important;
+	-fx-background-color: #303030 !important;
 }
 
 
@@ -172,7 +175,7 @@
 	-fx-text-fill: WHITE !important; 
 }
 .list-view{
-	-fx-border-color: #212121 !important;
+	-fx-border-color: #303030 !important;
 }
 
 

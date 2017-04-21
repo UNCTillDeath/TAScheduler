@@ -81,6 +81,7 @@ public class JFXDecorator extends VBox {
     private BoundingBox maximizedBox;
 
     private JFXButton btnMax;
+    public JFXButton btnClose;
 
     /**
      * Create a window decorator for the specified node with the options:
@@ -112,6 +113,7 @@ public class JFXDecorator extends VBox {
         // Note that setting the style to TRANSPARENT is causing performance
         // degradation, as an alternative we set it to UNDECORATED instead.
         primaryStage.initStyle(StageStyle.UNDECORATED);
+   
   
 
         setPickOnBounds(false);
@@ -152,7 +154,7 @@ public class JFXDecorator extends VBox {
         btnFull.setTranslateX(-30);
         btnFull.setRipplerFill(Color.WHITE);
 
-        JFXButton btnClose = new JFXButton();
+        this.btnClose = new JFXButton();
         btnClose.getStyleClass().add("jfx-decorator-button");
         btnClose.getStyleClass().add("close");
         btnClose.setCursor(Cursor.HAND);
@@ -277,7 +279,7 @@ public class JFXDecorator extends VBox {
         ((Region) node).setMinSize(0, 0);
         VBox.setVgrow(contentPlaceHolder, Priority.ALWAYS);
         contentPlaceHolder.getStyleClass().add("resize-border");
-        contentPlaceHolder.setBorder(new Border(new BorderStroke(Color.BLACK,
+        contentPlaceHolder.setBorder(new Border(new BorderStroke(Color.web("#212121"),
             BorderStrokeStyle.SOLID,
             CornerRadii.EMPTY,
             new BorderWidths(0, 4, 4, 4))));

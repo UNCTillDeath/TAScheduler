@@ -252,6 +252,8 @@ public class UI extends Application {
 		availabilityTab.setContent(renderAvailabilityStage(null));
 		
 		JFXDecorator decorator = new JFXDecorator(mainStage, tabPane, false, false, true);
+		decorator.btnClose.setOnAction((action) -> Platform.exit());
+		
 		Scene mainScene = new Scene(decorator);
 		mainScene.getStylesheets().add("comp110/style.css");
 		mainStage.setScene(mainScene);
@@ -984,13 +986,12 @@ public class UI extends Application {
 			Label emp = new Label("Me (" + _currentEmployee.getName() + ")");
 			emp.setId("Employee");
 			list.getItems().add(emp);
-			
 		}
 		Label week = new Label("Week");
 		week.setId("week");
 		list.getItems().add(week);
 	
-		for(int i = 0 ; i < 6 ; i++){
+		for(int i = 0 ; i < 7 ; i++){
 			Label day = new Label(Week.dayString(i));
 			day.setId(Week.dayString(i));
 			list.getItems().add(day);
@@ -1500,6 +1501,12 @@ public class UI extends Application {
 			// save was successful
 			this.displayMessage("Save complete", false);
 			this._saveAvailabilityButton.setDisable(false);
+			
+			if(_schedule != null){
+				schedulePane = writeSchedule(_schedule);
+				scroll.setContent(schedulePane);
+				renderSwapStage();
+			}
 		} else {
 			// push failed
 			this.displayMessage("Unable to push files to github. " + message);
@@ -1561,6 +1568,9 @@ public class UI extends Application {
         case "Friday":
         	schedulePane = writeDay(_schedule, 5);
         	break;
+        case "Saturday":
+        	schedulePane = writeDay(_schedule, 6);
+        	break;
         default:
         	schedulePane = writeSchedule(_schedule);
         	break;
@@ -1568,5 +1578,14 @@ public class UI extends Application {
 	}
 		scroll.setContent(schedulePane);
 }
-	
+	@Override	
+	public void stop(){
+		_controller.cleanup();
+		try {
+			// give time for cleanup to complete
+			Thread.sleep(2000);
+		} catch (Exception e) {
+			/* dont care about an exception here */
+		}	
+	}
 }

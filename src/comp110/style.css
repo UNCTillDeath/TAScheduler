@@ -174,11 +174,10 @@
 	-fx-background-color: #909090 !important; 
 	-fx-text-fill: WHITE !important; 
 }
-.list-view{
+.jfx-list-view{
 	-fx-border-color: #303030 !important;
+	-fx-focus-color: #303030 !important;
 }
-
-
 
 .mylistview .scroll-bar:horizontal .track,
 .mylistview .scroll-bar:vertical .track{

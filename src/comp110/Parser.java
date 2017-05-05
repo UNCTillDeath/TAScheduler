@@ -11,6 +11,8 @@ import java.util.Scanner;
 import com.google.gson.Gson;
 import java.io.PrintWriter;
 
+/* Created by Keith Whitley */
+
 public class Parser {
 
 	// constants
